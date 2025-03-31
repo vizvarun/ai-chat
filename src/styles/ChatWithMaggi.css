@@ -365,7 +365,7 @@
   display: none;
 }
 
-/* Mic button styles */
+/* Mic button styles - updated with subtle waves animation */
 .mic-button {
   width: 50px;
   height: 50px;
@@ -380,30 +380,93 @@
   transition: all 0.2s ease;
   padding: 0;
   margin-right: 0.75rem;
+  position: relative;
+  outline: none !important;
+  overflow: hidden;
 }
 
 .mic-button svg {
   width: 20px;
   height: 20px;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .mic-button:hover {
   background-color: var(--color-background-quaternary);
   color: var(--color-primary);
+  transform: translateY(-2px);
 }
 
+/* New styles for waves animation */
 .mic-button.listening {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-  animation: pulse 1.5s infinite;
+  background-color: rgba(42, 60, 151, 0.05);
+  color: rgba(42, 60, 151, 1); /* Primary loader color */
+  border-color: rgba(42, 60, 151, 0.3);
+}
+
+.mic-button.listening svg {
+  color: rgba(42, 60, 151, 1);
+}
+
+/* Create wave animation elements */
+.mic-button.listening::before,
+.mic-button.listening::after {
+  content: "";
+  position: absolute;
+  background: rgba(42, 60, 151, 0.2);
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* First wave */
+.mic-button.listening::before {
+  animation: wave 2s infinite ease-out;
+}
+
+/* Second wave with delay */
+.mic-button.listening::after {
+  animation: wave 2s infinite 0.5s ease-out;
+}
+
+@keyframes wave {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.8;
+  }
+  100% {
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+  }
 }
 
 .mic-button:disabled {
   background-color: var(--color-button-disabled);
   color: var(--color-text-tertiary);
   cursor: not-allowed;
-  animation: none;
+  transform: none;
+}
+
+.mic-button:disabled::before,
+.mic-button:disabled::after {
+  display: none;
+}
+
+/* Remove previous animation styles */
+.mic-button::after {
+  content: none;
+}
+
+.mic-button.listening::after {
+  content: "";
 }
 
 /* Refined, more visible loader styles */
