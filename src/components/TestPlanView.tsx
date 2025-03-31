@@ -1,4 +1,4 @@
-import { TestPlan, TestPlanViewProps } from "../types/testTypes";
+import { TestPlanViewProps } from "../types/testTypes";
 import "../styles/TestPlanView.css";
 
 const TestPlanView: React.FC<TestPlanViewProps> = ({ testPlan }) => {

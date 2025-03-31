@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { TestCase, TestCasesTableProps } from "../types/testTypes";
 import "../styles/TestCasesTable.css";
 import AIAssistModal from "./AIAssistModal";
-import Loader from "./Loader";
 
 // Sample large data for testing overflow
 const sampleLargeTestCase: TestCase = {

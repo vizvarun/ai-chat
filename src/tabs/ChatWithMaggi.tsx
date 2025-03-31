@@ -3,6 +3,18 @@ import "../styles/Tabs.css";
 import "../styles/ChatWithMaggi.css";
 import { MessageType, SpeakingStateRecord } from "../types/chatTypes";
 
+// Define a type for SpeechRecognition event
+interface SpeechRecognitionEvent {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+  error?: string;
+}
+
 const ChatWithMaggi = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -11,7 +23,7 @@ const ChatWithMaggi = () => {
   const [isListening, setIsListening] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null); // Use any temporarily
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -27,7 +39,7 @@ const ChatWithMaggi = () => {
   useEffect(() => {
     // Check if browser supports speech recognition
     if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
-      const SpeechRecognition =
+      const SpeechRecognition: any = 
         window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
 
@@ -38,9 +50,9 @@ const ChatWithMaggi = () => {
       recognition.lang = "en-US";
 
       // Handle the results of speech recognition
-      recognition.onresult = (event) => {
-        const transcript = Array.from(event.results)
-          .map((result) => result[0].transcript)
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        const transcript = Array.from(Object.values(event.results))
+          .map((result) => result[0]?.transcript || "")
           .join("");
 
         setInputMessage(transcript);
@@ -52,7 +64,7 @@ const ChatWithMaggi = () => {
       };
 
       // Handle errors
-      recognition.onerror = (event) => {
+      recognition.onerror = (event: { error?: string }) => {
         console.error("Speech recognition error", event.error);
         setIsListening(false);
       };
@@ -410,11 +422,11 @@ const ChatWithMaggi = () => {
   );
 };
 
-// Add TypeScript declaration for Web Speech API
+// Fix the global declaration for TypeScript
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
   }
 }
 
