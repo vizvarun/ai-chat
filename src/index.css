@@ -1,0 +1,78 @@
+/* Import theme first */
+@import "./styles/theme.css";
+
+/* Import Work Sans font */
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap");
+
+:root {
+  font-family: "Work Sans", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light; /* Changed from light dark to just light */
+  color: var(--color-text-primary); /* Changed to use theme variable */
+  background-color: var(
+    --color-background-secondary
+  ); /* Changed to use theme variable */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-heading); /* Changed to use theme variable */
+}
+
+a {
+  font-weight: 500;
+  color: var(--color-link); /* Changed to use theme variable */
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: var(--color-link-hover); /* Changed to use theme variable */
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid var(--color-border); /* Changed to use theme variable */
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(
+    --color-background-primary
+  ); /* Changed to use theme variable */
+  color: var(--color-text-primary); /* Changed to use theme variable */
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+button:hover {
+  border-color: var(--color-link);
+  background-color: var(--color-button-hover);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 3px solid var(--color-focus-outline); /* Changed to use theme variable */
+}
+
+/* Remove media query for light theme as we're always using light theme now */

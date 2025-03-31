@@ -1,0 +1,49 @@
+.tab-container {
+  padding: 1.5rem 2.5rem;
+  height: calc(
+    100vh - 54px - 37px
+  ); /* Adjusted for navbar (54px) and footer (37px) */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tab-header {
+  margin-bottom: 1.5rem;
+}
+
+.tab-header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  color: #333333; /* Changed to dark color */
+}
+
+.tab-header p {
+  color: #666666; /* Changed to medium gray */
+  font-size: 1.1rem;
+}
+
+.content-area {
+  flex: 1;
+  background-color: #ffffff; /* Changed to white */
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Lighter shadow */
+  border: 1px solid #eaeaea; /* Lighter border */
+  overflow: hidden; /* Default to hidden overflow */
+}
+
+.content-area.scrollable {
+  overflow-y: auto; /* Make scrollable when needed */
+  max-height: calc(100vh - 180px); /* Leave room for header and footer */
+}
+
+.placeholder-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #777777; /* Darker gray for better contrast */
+  font-size: 1.1rem;
+}

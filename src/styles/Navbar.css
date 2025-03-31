@@ -1,0 +1,96 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  background-color: #ffffff; /* Changed to white */
+  min-height: 60px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Lighter shadow */
+  position: relative;
+  z-index: 10;
+  font-family: "Work Sans", sans-serif;
+  border-bottom: 1px solid #eaeaea; /* Added subtle border */
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.brand-link {
+  color: rgba(41, 63, 150, 1); /* Updated to new primary color */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.brand-link:hover {
+  color: rgba(33, 50, 120, 1); /* Darker shade of primary color */
+}
+
+.brand-logo {
+  height: 22px;
+  margin-right: 6px;
+  width: auto;
+}
+
+.brand-content {
+  display: flex;
+  align-items: center;
+}
+
+.magnit-logo {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+}
+
+.divider {
+  margin: 0 8px;
+}
+
+.app-name {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-link {
+  color: #555555; /* Darker text for light background */
+  text-decoration: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+
+.nav-link:hover {
+  color: #333333;
+  background-color: rgba(
+    41,
+    63,
+    150,
+    0.05
+  ); /* Updated hover background to match primary color */
+}
+
+.nav-link.active {
+  color: rgba(41, 63, 150, 1); /* Primary color */
+  background-color: rgba(
+    41,
+    63,
+    150,
+    0.08
+  ); /* Faded box instead of underline */
+  border-bottom: none; /* Remove the underline */
+  border-radius: 4px; /* Rounded corners for the box */
+  font-weight: 500;
+}

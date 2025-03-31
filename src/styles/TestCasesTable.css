@@ -1,0 +1,326 @@
+.test-cases-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--color-primary);
+  background-color: var(--color-background-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.test-cases-table th,
+.test-cases-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for overflow text */
+  word-wrap: break-word; /* Allow text to break and wrap */
+}
+
+.test-cases-table th {
+  background-color: var(--color-background-secondary);
+  color: var(--color-primary);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+}
+
+.test-cases-table tr:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-accent);
+}
+
+.test-cases-container {
+  position: relative;
+  height: auto; /* Use auto height */
+  overflow: visible;
+  background-color: var(--color-background-primary);
+  display: flex;
+  flex-direction: column;
+  max-height: 64vh; /* Leave room for header and footer */
+}
+
+.table-scroll-wrapper {
+  position: relative;
+  height: auto; /* Use auto height */
+  max-height: 78vh; /* Limit maximum height */
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+/* Set column widths */
+.test-cases-table th:nth-child(1),
+.test-cases-table td:nth-child(1) {
+  width: 12%; /* Test Case ID */
+}
+
+.test-cases-table th:nth-child(2),
+.test-cases-table td:nth-child(2) {
+  width: 20%; /* Test Case Description */
+}
+
+.test-cases-table th:nth-child(3),
+.test-cases-table td:nth-child(3) {
+  width: 45%; /* Test Steps */
+}
+
+.test-cases-table th:nth-child(4),
+.test-cases-table td:nth-child(4) {
+  width: 8%; /* Priority */
+}
+
+.test-cases-table th:nth-child(5),
+.test-cases-table td:nth-child(5) {
+  width: 15%; /* Test Data */
+}
+
+/* Nested table styling */
+.nested-steps-table {
+  width: 100%;
+  table-layout: fixed; /* Use fixed layout */
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+  border-radius: 4px;
+}
+
+.nested-steps-table th,
+.nested-steps-table td {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+.nested-steps-table th {
+  background-color: var(--color-background-secondary);
+  position: static !important;
+  top: 39px; /* Position below the main header */
+  z-index: 0;
+  color: var(--color-primary);
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.nested-steps-table tr:hover {
+  background-color: var(--color-background-accent-subtle);
+}
+
+/* Set widths for nested table columns */
+.nested-steps-table th:nth-child(1),
+.nested-steps-table td:nth-child(1) {
+  width: 15%; /* Step ID */
+}
+
+.nested-steps-table th:nth-child(2),
+.nested-steps-table td:nth-child(2) {
+  width: 40%; /* Description */
+}
+
+.nested-steps-table th:nth-child(3),
+.nested-steps-table td:nth-child(3) {
+  width: 45%;
+}
+
+.test-cases-table-body-container {
+  overflow: visible;
+  /* Remove margin */
+}
+
+.test-cases-table tr.selected {
+  background-color: var(--color-background-accent);
+  color: var(--color-text-on-accent);
+}
+
+.priority-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.priority-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+}
+
+.test-case-id,
+.step-case-id {
+  color: var(--color-primary) !important;
+  font-weight: 600;
+}
+
+/* Add this new style to create space after the last row */
+.test-cases-table tr:last-child td {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 20px; /* Moderate padding for the last row */
+}
+
+.nested-steps-table tr:last-child td {
+  padding-bottom: 20px;
+}
+
+/* Step description cell with AI icon button */
+.step-description-cell {
+  position: relative;
+}
+
+.step-description-content {
+  position: relative;
+  display: flex;
+  align-items: center; /* Changed from flex-start to center to vertically align items */
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ai-assist-button {
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.1);
+  border: none;
+  cursor: pointer;
+  color: var(--color-primary);
+  padding: 4px;
+  border-radius: 50%;
+  margin-left: 8px;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.ai-assist-button:hover {
+  background-color: var(--color-primary-light);
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb, 42, 60, 151), 0.2);
+}
+
+.ai-icon {
+  width: 18px;
+  height: 18px;
+  display: block; /* Ensure block display for better centering */
+}
+
+/* AI Modal Styles */
+.ai-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.ai-modal-content {
+  background-color: var(--color-background-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modal-appear 0.3s ease;
+  margin: 20px;
+  border: 1px solid var(--color-border-light);
+}
+
+.ai-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ai-modal-header h3 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+
+.ai-modal-body {
+  padding: 20px;
+}
+
+.ai-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ai-modal-close:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+}
+
+/* Selected step and AI response styles */
+.selected-step-label {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.selected-step-content {
+  background-color: var(--color-background-table-primary);
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.ai-response-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 16px 0;
+}
+
+.ai-response-content {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+/* Animation for modal appearance */
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Remove loader styles as they are now in Loader.css */

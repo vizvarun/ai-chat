@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500&display=swap");
+
+/* Reset conflicting styles */
+#root {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+  height: 100vh;
+  font-family: "Work Sans", sans-serif;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+/* Remove unused animation styles */
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #555;
+}
+
+.app-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #f5f7fa; /* Changed to light background */
+}
+
+main {
+  flex: 1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0; /* Lighter border */
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: "Work Sans", sans-serif;
+}

@@ -1,0 +1,484 @@
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.chat-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.empty-chat-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.empty-chat-prompt {
+  max-width: 500px;
+}
+
+.empty-chat-prompt h3 {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.empty-chat-prompt p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message-wrapper {
+  display: flex;
+  width: 100%;
+  align-items: center; /* Changed from flex-end to center for vertical alignment */
+  margin-bottom: 0.5rem;
+}
+
+.user-message-wrapper {
+  justify-content: flex-end;
+}
+
+.bot-message-wrapper {
+  justify-content: flex-start;
+}
+
+.message {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  position: relative;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.user-message {
+  background-color: var(--color-primary);
+  color: white;
+  border-top-right-radius: 4px;
+  margin-right: 0; /* Remove right margin since there's no avatar */
+}
+
+.bot-message {
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  border-top-left-radius: 4px;
+  box-shadow: 0 2px 4px var(--color-shadow-light);
+  position: relative;
+  margin-left: 0; /* Remove left margin since there's no avatar */
+}
+
+.loading-message {
+  display: none;
+}
+
+.loading-dots {
+  display: none;
+}
+
+.loading-dots span {
+  opacity: 0;
+  animation: loadingDots 1.4s infinite;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loadingDots {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.chat-input-container {
+  display: flex;
+  padding: 1rem;
+  background-color: var(--color-background-primary);
+  border-top: 1px solid var(--color-border);
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  resize: none;
+  height: 50px;
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: "Work Sans", sans-serif;
+  font-size: 0.95rem;
+  margin-right: 0.75rem;
+  transition: border-color 0.2s ease;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-focus-outline);
+}
+
+.send-button {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.send-button:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.send-button:active {
+  transform: translateY(0);
+}
+
+.send-button:disabled {
+  background-color: var(--color-button-disabled);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+  background-color: var(--color-background-quaternary);
+  color: var(--color-primary);
+}
+
+.copy-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.chat-messages-copy-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.copy-button-container {
+  display: flex;
+  justify-content: flex-start;
+  width: calc(70% - 40px);
+  margin-left: 40px;
+}
+
+/* Message container adjustments for no avatars */
+.message-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%; /* Adjusted since we're not accounting for avatar width now */
+  position: relative;
+}
+
+/* Action buttons container - hidden by default, visible on hover */
+.message-actions {
+  display: flex;
+  gap: 8px;
+  padding: 4px 8px;
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  justify-content: flex-start;
+}
+
+/* Show actions on message container hover */
+.message-container:hover .message-actions {
+  opacity: 1;
+}
+
+/* Individual action buttons */
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--color-background-tertiary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  position: relative;
+}
+
+.action-button:hover {
+  background-color: var(--color-background-quaternary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.action-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Tooltips */
+.tooltip {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 10;
+}
+
+.action-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Specific button colors on hover */
+.thumbs-up-button:hover {
+  color: #4caf50;
+  border-color: #4caf50;
+}
+
+.thumbs-down-button:hover {
+  color: #f44336;
+  border-color: #f44336;
+}
+
+.copy-button:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Remove the old copy button styles */
+.message .copy-button {
+  display: none;
+}
+
+/* Adjust message style */
+.message {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  position: relative;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.user-message {
+  background-color: var(--color-primary);
+  color: white;
+  border-top-right-radius: 4px;
+}
+
+.bot-message {
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  border-top-left-radius: 4px;
+  box-shadow: 0 2px 4px var(--color-shadow-light);
+  position: relative;
+}
+
+.bot-message-wrapper {
+  justify-content: flex-start;
+}
+
+.bot-message-wrapper .avatar {
+  margin-right: 10px;
+}
+
+.user-message-wrapper {
+  justify-content: flex-end;
+}
+
+.user-message-wrapper .avatar {
+  margin-left: 10px;
+}
+
+/* Remove all avatar-related styles */
+.avatar,
+.bot-avatar,
+.user-avatar,
+.bot-message-wrapper .avatar,
+.user-message-wrapper .avatar {
+  display: none;
+}
+
+/* Mic button styles */
+.mic-button {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin-right: 0.75rem;
+}
+
+.mic-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.mic-button:hover {
+  background-color: var(--color-background-quaternary);
+  color: var(--color-primary);
+}
+
+.mic-button.listening {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  animation: pulse 1.5s infinite;
+}
+
+.mic-button:disabled {
+  background-color: var(--color-button-disabled);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  animation: none;
+}
+
+/* Refined, more visible loader styles */
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0.5rem 0;
+}
+
+.animated-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.loader-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  position: relative;
+  background-color: transparent;
+}
+
+.loader-dot::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  animation: subtlePulse 1.5s infinite ease-in-out;
+}
+
+.loader-dot.primary::after {
+  background-color: rgba(
+    42,
+    60,
+    151,
+    1
+  ); /* Primary color with higher opacity */
+}
+
+.loader-dot.secondary::after {
+  background-color: rgba(
+    242,
+    103,
+    82,
+    1
+  ); /* Secondary color with higher opacity */
+  animation-delay: 0.3s;
+}
+
+.loader-dot:nth-child(3)::after {
+  animation-delay: 0.6s;
+}
+
+@keyframes subtlePulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+/* Remove old animations */
+@keyframes subtleWave,
+@keyframes loaderFloat,
+@keyframes loaderPulse {
+  /* These can be safely removed */
+}
