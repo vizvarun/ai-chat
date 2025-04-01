@@ -29,8 +29,8 @@
   padding: 3.5rem 1rem 0rem; /* Increase bottom padding */
   background: linear-gradient(
     135deg,
-    rgba(250, 250, 255, 0.4) 0%,
-    rgba(240, 245, 255, 0.8) 100%
+    var(--color-gradient-hero-start) 0%,
+    var(--color-gradient-hero-end) 100%
   );
   border-radius: 0 0 0 0; /* Remove bottom border radius */
   margin-bottom: 0; /* Remove margin to avoid separation */
@@ -51,30 +51,30 @@
   margin-bottom: 0.5rem;
   opacity: 0;
   transform: translateY(-20px);
-  animation: fadeInDown 0.8s ease 0.1s forwards;
+  animation: fadeInDown 0.8s ease 0.2s forwards; /* Changed from 0.1s to 0.2s */
 }
 
 .hero-title {
   font-size: 3.5rem;
-  background: linear-gradient(90deg, #3a7bd5, #6d5bf2);
+  background: var(--color-gradient-accent);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin-bottom: 1rem;
   opacity: 0;
   transform: translateY(-20px);
-  animation: fadeInDown 0.8s ease 0.4s forwards;
+  animation: fadeInDown 0.8s ease 0.2s forwards; /* Changed from 0.4s to 0.2s */
 }
 
 .hero-subtitle {
   font-size: 1.2rem;
-  color: #555;
+  color: var(--color-text-secondary);
   max-width: 650px;
   line-height: 1.6;
   margin-bottom: 2rem;
   opacity: 0;
   transform: translateY(-10px);
-  animation: fadeInDown 0.8s ease 0.2s forwards;
+  animation: fadeInDown 0.8s ease 0.2s forwards; /* Already at 0.2s, no change needed */
 }
 
 /* Tools section */
@@ -92,23 +92,23 @@
 }
 
 .tool-card {
-  background: white;
+  background: var(--color-background-primary);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 30px var(--color-shadow-card);
   transition: all 0.3s ease;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border-subtle);
   position: relative;
   overflow: hidden;
 }
 
 .tool-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 35px var(--color-shadow-medium);
 }
 
 .tool-card::before {
@@ -118,7 +118,7 @@
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, #3a7bd5, #6d5bf2);
+  background: var(--color-gradient-accent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -128,7 +128,7 @@
 }
 
 .tool-icon {
-  background: linear-gradient(135deg, #f0f4ff, #e6eeff);
+  background: var(--color-icon-gradient);
   width: 60px;
   height: 60px;
   border-radius: 12px;
@@ -141,25 +141,25 @@
 .tool-icon svg {
   width: 28px;
   height: 28px;
-  color: #4a6cf7;
+  color: var(--color-accent-primary);
 }
 
 .tool-title {
   font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 0.8rem;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .tool-description {
-  color: #666;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: 1.5rem;
   flex-grow: 1;
 }
 
 .tool-action {
-  color: #4a6cf7;
+  color: var(--color-accent-primary);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -189,7 +189,7 @@
   font-size: 2.2rem;
   margin-bottom: 2rem;
   text-align: center;
-  color: #333;
+  color: var(--color-text-primary);
   position: relative;
   display: inline-block;
   width: 100%; /* Make sure it centers properly */
@@ -203,7 +203,7 @@
   transform: translateX(-50%);
   width: 60px;
   height: 3px;
-  background: linear-gradient(90deg, #3a7bd5, #6d5bf2);
+  background: var(--color-gradient-accent);
   border-radius: 3px;
 }
 
@@ -215,12 +215,12 @@
 }
 
 .feature-item {
-  background: white;
+  background: var(--color-background-primary);
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 5px 20px var(--color-shadow-subtle);
   transition: transform 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border-subtle);
 }
 
 .feature-item:hover {
@@ -228,7 +228,7 @@
 }
 
 .feature-icon {
-  background: linear-gradient(135deg, #f0f4ff, #e6eeff);
+  background: var(--color-icon-gradient);
   width: 50px;
   height: 50px;
   border-radius: 10px;
@@ -241,18 +241,18 @@
 .feature-icon svg {
   width: 24px;
   height: 24px;
-  color: #4a6cf7;
+  color: var(--color-accent-primary);
 }
 
 .feature-title {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 0.6rem;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .feature-description {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -280,13 +280,13 @@
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(74, 108, 247, 0.4);
+    box-shadow: 0 0 0 0 var(--color-pulse-start);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(74, 108, 247, 0);
+    box-shadow: 0 0 0 10px var(--color-pulse-end);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(74, 108, 247, 0);
+    box-shadow: 0 0 0 0 var(--color-pulse-end);
   }
 }
 

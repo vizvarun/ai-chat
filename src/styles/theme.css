@@ -33,4 +33,37 @@
   --color-shadow: rgba(0, 0, 0, 0.08);
   --color-shadow-light: rgba(0, 0, 0, 0.06);
   --color-focus-outline: rgba(71, 82, 233, 0.2);
+
+  /* Accent/Highlight colors */
+  --color-accent-blue: #3a7bd5;
+  --color-accent-purple: #6d5bf2;
+  --color-accent-primary: #4a6cf7;
+
+  /* Background gradients */
+  --color-gradient-hero-start: rgba(250, 250, 255, 0.4);
+  --color-gradient-hero-end: rgba(240, 245, 255, 0.8);
+  --color-gradient-accent: linear-gradient(
+    90deg,
+    var(--color-accent-blue),
+    var(--color-accent-purple)
+  );
+
+  /* Component specific colors */
+  --color-icon-background-start: #f0f4ff;
+  --color-icon-background-end: #e6eeff;
+  --color-icon-gradient: linear-gradient(
+    135deg,
+    var(--color-icon-background-start),
+    var(--color-icon-background-end)
+  );
+
+  /* Shadow variations */
+  --color-shadow-medium: rgba(0, 0, 0, 0.1);
+  --color-shadow-card: rgba(0, 0, 0, 0.06);
+  --color-shadow-subtle: rgba(0, 0, 0, 0.04);
+  --color-border-subtle: rgba(0, 0, 0, 0.05);
+
+  /* Animation colors */
+  --color-pulse-start: rgba(74, 108, 247, 0.4);
+  --color-pulse-end: rgba(74, 108, 247, 0);
 }
