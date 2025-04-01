@@ -20,7 +20,7 @@ const TestCaseGenerator = () => {
   const [activeTab, setActiveTab] = useState("testPlans");
   const [inputCollapsed, setInputCollapsed] = useState(false);
   // Change initial state to false so reset button doesn't show initially
-  const [formDirty, setFormDirty] = useState(false);
+  const [formDirty, setFormDirty] = useState(true);
   // Track last submitted values to compare for changes
   const [lastSubmitted, setLastSubmitted] = useState({
     title: "",
@@ -118,8 +118,8 @@ const TestCaseGenerator = () => {
 
   // Reset form to last submitted state or empty if never submitted
   const resetForm = () => {
-    setTitle(lastSubmitted.title);
-    setDescription(lastSubmitted.description);
+    setTitle("");
+    setDescription("");
     setFormDirty(false);
   };
 
@@ -212,7 +212,6 @@ const TestCaseGenerator = () => {
               placeholder="e.g., User Authentication Feature"
             />
           </div>
-
           <div className="input-field">
             <label htmlFor="story-description">Enter Story Description</label>
             <textarea
@@ -268,7 +267,7 @@ const TestCaseGenerator = () => {
               )}
             </button>
 
-            {formDirty && (
+            {(title.length > 0 || description.length > 0) && (
               <button
                 className="reset-button"
                 onClick={resetForm}

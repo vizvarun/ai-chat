@@ -11,11 +11,11 @@ export interface TestStep {
 }
 
 export interface TestCase {
-  "Test Case ID": string;
+  "Test Case ID": string | number;
   "Test Case Description": string;
   "Test Steps": TestStep[];
   Priority: string;
-  "Test Data": string;
+  "Test Data": string | {};
 }
 
 export interface GenerateResponse {
