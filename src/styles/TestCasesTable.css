@@ -1,11 +1,12 @@
 .test-cases-table {
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto; /* Changed from fixed to auto */
   border-collapse: collapse;
   color: var(--color-text-primary);
   background-color: var(--color-background-primary);
   border: none;
   font-size: 0.92rem;
+  min-width: 100%;
 }
 
 .test-cases-table th,
@@ -18,6 +19,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: break-word;
+  min-width: 120px; /* Minimum width for all columns */
 }
 
 .test-cases-table th {
@@ -26,7 +28,7 @@
   font-weight: 500;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2; /* Keep header row above all */
   /* Enhanced border-bottom effect for header when scrolling */
   box-shadow: 0 1px 0 var(--color-border), 0 2px 5px rgba(0, 0, 0, 0.03);
   white-space: nowrap;
@@ -81,7 +83,7 @@
   height: auto;
   max-height: 58vh; /* Reduced from 78vh to 58vh to ensure pagination is visible */
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto; /* Enable horizontal scrolling */
   border: 1px solid var(--color-border-light);
   border-radius: 8px;
   background-color: var(--color-background-primary);
@@ -91,37 +93,36 @@
 .test-cases-table th:nth-child(1),
 .test-cases-table td:nth-child(1) {
   width: 12%;
+  min-width: 120px;
+  max-width: 150px;
 }
 
 .test-cases-table th:nth-child(2),
 .test-cases-table td:nth-child(2) {
   width: 20%;
+  min-width: 200px;
 }
 
+/* Remove these fixed width definitions for dynamic columns */
 .test-cases-table th:nth-child(3),
-.test-cases-table td:nth-child(3) {
-  width: 45%;
-}
-
+.test-cases-table td:nth-child(3),
 .test-cases-table th:nth-child(4),
-.test-cases-table td:nth-child(4) {
-  width: 8%;
-}
-
+.test-cases-table td:nth-child(4),
 .test-cases-table th:nth-child(5),
 .test-cases-table td:nth-child(5) {
-  width: 15%;
+  /* Remove fixed width settings to let them be dynamic */
 }
 
 /* Nested table styling - modernized */
 .nested-steps-table {
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
   background-color: transparent;
   border: none;
   margin: 0.5rem 0;
   font-size: 0.9rem;
+  min-width: 100%;
 }
 
 .nested-steps-table th,
@@ -285,12 +286,12 @@
   padding: 4px;
   border-radius: 50%;
   margin-left: 8px;
-  min-width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.7;
+  opacity: 0.85;
   transition: all 0.2s ease;
   flex-shrink: 0;
   align-self: center;
@@ -303,8 +304,8 @@
 }
 
 .ai-icon {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   display: block;
 }
 
@@ -593,4 +594,325 @@
 
 .retry-button:active {
   transform: translateY(0);
+}
+
+.table-container.horizontal-scroll {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+}
+
+/* Sticky Column Styles */
+.sticky-column {
+  position: sticky;
+  z-index: 2;
+  background-color: var(--color-background-primary);
+}
+
+/* First two columns sticky positioning */
+th.sticky-column,
+td.sticky-column {
+  position: sticky;
+  background-color: var(--color-background-primary);
+  /* Add shadow for separation */
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure sticky columns are above other cells */
+th.sticky-column {
+  z-index: 3; /* Higher z-index for headers */
+}
+
+td.sticky-column {
+  z-index: 1;
+}
+
+/* Improve expandable section styles */
+.expandable-section {
+  cursor: pointer;
+  position: relative;
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  user-select: none; /* Prevent text selection on click */
+}
+
+.expandable-section:hover {
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.05);
+}
+
+.expandable-section:active {
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.1);
+}
+
+.expanded-indicator {
+  margin-right: 8px;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.1);
+  font-weight: bold;
+  pointer-events: none; /* Make sure clicks go through to the parent */
+}
+
+/* Improve horizontal scroll behavior */
+.table-container.horizontal-scroll {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+}
+
+/* Fix the table-scroll-wrapper to enable horizontal scroll */
+.table-scroll-wrapper {
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+/* Enhance sticky column behavior */
+.sticky-column {
+  position: sticky;
+  z-index: 2;
+  background-color: var(--color-background-primary);
+}
+
+/* First two columns sticky positioning with better shadows */
+th.sticky-column,
+td.sticky-column {
+  position: sticky;
+  background-color: var(--color-background-primary);
+  /* Improved shadow for better visual separation */
+  box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure sticky headers stay on top when scrolling both horizontally and vertically */
+th.sticky-column {
+  z-index: 4; /* Higher z-index for sticky headers */
+}
+
+td.sticky-column {
+  z-index: 1;
+}
+
+/* Enhance the nested tables for better display */
+.nested-steps-table {
+  /* ...existing code... */
+}
+
+/* Add visualization styles for expanding/collapsing nested tables */
+.expandable-section {
+  cursor: pointer;
+  position: relative;
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.expandable-section:hover {
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.05);
+}
+
+.expanded-indicator {
+  margin-right: 8px;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.1);
+  font-weight: bold;
+}
+
+/* Style for rendering arrays that aren't tables */
+.array-value-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  list-style-type: disc;
+}
+
+.array-value-list li {
+  margin-bottom: 0.25rem;
+}
+
+.array-value-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Empty value styling */
+.empty-value {
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+/* Generic nested table styling to handle any array data */
+.nested-data-table {
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  background-color: rgba(0, 0, 0, 0.01);
+  border: none;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  min-width: 100%;
+  border-radius: 4px;
+}
+
+.nested-data-table th,
+.nested-data-table td {
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  padding: 0.6rem 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+.nested-data-table th {
+  background-color: rgba(0, 0, 0, 0.02);
+  position: static !important;
+  color: var(--color-text-secondary);
+  box-shadow: none;
+  white-space: nowrap;
+  font-weight: normal;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.nested-data-table tr:hover {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+.nested-data-table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.005);
+}
+
+.nested-data-table td {
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.015);
+  border-right: 1px solid rgba(0, 0, 0, 0.01);
+  padding: 0.6rem 0.5rem;
+}
+
+.nested-data-table td:last-child {
+  border-right: none;
+}
+
+.nested-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Styling for nested objects */
+.object-value {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.object-property {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.object-key {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* Make sure all nested tables use the same classes for consistency */
+.nested-steps-table {
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  background-color: rgba(0, 0, 0, 0.01);
+  border: none;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  min-width: 100%;
+  border-radius: 4px;
+}
+
+.page-size-selector select {
+  font-family: "Work Sans", sans-serif;
+}
+
+/* AI Modal loading state */
+.ai-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--color-text-secondary);
+}
+
+.ai-loading .spinner {
+  animation: spin 1.5s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* AI Modal error state */
+.ai-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: #d32f2f;
+  text-align: center;
+}
+
+.ai-error .error-icon {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.ai-error p {
+  margin-bottom: 1.5rem;
+  color: var(--color-text-secondary);
+}
+
+.ai-error .retry-button {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-error .retry-button:hover {
+  background-color: var(--color-primary-dark);
 }

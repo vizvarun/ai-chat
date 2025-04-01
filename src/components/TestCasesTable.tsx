@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { TestCasesTableProps } from "../types/testTypes";
 import "../styles/TestCasesTable.css";
 import AIAssistModal from "./AIAssistModal";
+import { generateChatId } from "../utils/idGenerator";
 
 const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,27 +10,47 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [loadingAI, setLoadingAI] = useState(false);
   const [selectedStepDescription, setSelectedStepDescription] = useState("");
   const [hasError, setHasError] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<
+    Record<string, boolean>
+  >({});
+  const [apiError, setApiError] = useState<string | null>(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Use only the test cases provided through props
+  const testCasesData = useMemo(() => {
+    return Array.isArray(testCases) ? testCases : [];
+  }, [testCases]);
+
+  // Extract dynamic column headers from data
+  const columnHeaders = useMemo(() => {
+    if (!Array.isArray(testCasesData) || testCasesData.length === 0) {
+      return [];
+    }
+
+    return Object.keys(testCasesData[0]);
+  }, [testCasesData]);
 
   // Check for data validity
   useEffect(() => {
     try {
-      // Validate if testCases is an array
-      if (!Array.isArray(testCases)) {
+      // Validate if testCasesData is an array
+      if (!Array.isArray(testCasesData)) {
         setHasError(true);
         return;
       }
 
-      // Check if each test case has required properties
-      const isValid = testCases.every(
-        (testCase) =>
-          testCase &&
-          typeof testCase === "object" &&
-          testCase["Test Case ID"] &&
-          Array.isArray(testCase["Test Steps"])
+      // Check if we have any test cases
+      if (testCasesData.length === 0) {
+        setHasError(false); // Not an error, just empty
+        return;
+      }
+
+      // Check if each test case has some minimal structure
+      const isValid = testCasesData.every(
+        (testCase) => testCase && typeof testCase === "object"
       );
 
       setHasError(!isValid);
@@ -37,7 +58,42 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
       console.error("Error in TestCasesTable data validation:", error);
       setHasError(true);
     }
-  }, [testCases]);
+  }, [testCasesData]);
+
+  // Generate all possible section IDs on initial load and set them to collapsed
+  useEffect(() => {
+    const initialExpandedState: Record<string, boolean> = {};
+
+    if (Array.isArray(testCasesData)) {
+      testCasesData.forEach((testCase, rowIndex) => {
+        const testCaseId = `row-${rowIndex}`;
+
+        // Check all properties of the test case for arrays
+        Object.entries(testCase).forEach(([key, value]) => {
+          if (
+            Array.isArray(value) &&
+            value.length > 0 &&
+            typeof value[0] === "object"
+          ) {
+            initialExpandedState[`${testCaseId}-${key}`] = false; // Default to collapsed
+          }
+        });
+      });
+    }
+
+    setExpandedSections(initialExpandedState);
+  }, [testCasesData]);
+
+  // Toggle expanded state for nested sections - simplified to ensure single click works
+  const toggleExpandSection = (id: string, e: React.MouseEvent) => {
+    // Prevent event bubbling
+    e.stopPropagation();
+
+    setExpandedSections((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   // If there's an error, show error message
   if (hasError) {
@@ -65,6 +121,7 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
               y2="12"
               stroke="currentColor"
               strokeWidth="2"
+              strokeLinecap="round"
             />
             <line
               x1="12"
@@ -92,7 +149,21 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     );
   }
 
+  // Check if test cases array is empty
+  if (!Array.isArray(testCasesData) || testCasesData.length === 0) {
+    return (
+      <div className="test-cases-error-container">
+        <div className="test-cases-error">
+          <h3>No Test Cases Available</h3>
+          <p>No test cases were found. Try generating new test cases.</p>
+        </div>
+      </div>
+    );
+  }
+
   const renderPriorityWithIcon = (priority: string) => {
+    if (!priority) return null;
+
     const priorityLower = priority.toLowerCase();
 
     if (priorityLower.includes("high")) {
@@ -130,21 +201,50 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     setSelectedStepDescription(stepDescription);
     setIsModalOpen(true);
     setLoadingAI(true);
+    setApiError(null);
 
-    // Simulate API call
-    setTimeout(() => {
-      const aiResponse =
-        `AI Analysis for step: "${stepDescription.substring(0, 50)}..."\n\n` +
-        "This step appears to be testing the application's ability to handle complex configurations. " +
-        "Consider adding validation for edge cases such as:\n" +
-        "- Maximum character limits\n" +
-        "- Special character handling\n" +
-        "- Performance under load\n" +
-        "- Error recovery scenarios";
+    // Generate random chat ID
+    const chatId = generateChatId();
 
-      setModalContent(aiResponse);
-      setLoadingAI(false);
-    }, 1500);
+    // Make API call to get AI analysis
+    fetch(
+      process.env.REACT_APP_AI_API_URL ||
+        "http://10.5.80.80:3001/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: "user123", // This could be made dynamic in the future
+          userType: "msp",
+          chatId: chatId,
+          message: stepDescription, // Adding the step description to provide context to the AI
+        }),
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`API responded with status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data && data.response && data.response.content) {
+          setModalContent(data.response.content);
+        } else {
+          throw new Error("Invalid response format from API");
+        }
+        setLoadingAI(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching AI analysis:", error);
+        setApiError(
+          error.message || "Failed to get AI analysis. Please try again."
+        );
+        setModalContent("");
+        setLoadingAI(false);
+      });
   };
 
   const closeModal = () => {
@@ -153,14 +253,14 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   };
 
   // Calculate pagination
-  const totalItems = testCases.length;
+  const totalItems = testCasesData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
 
   // Get current page items
   const currentItems = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return testCases.slice(startIndex, startIndex + pageSize);
-  }, [testCases, currentPage, pageSize]);
+    return testCasesData.slice(startIndex, startIndex + pageSize);
+  }, [testCasesData, currentPage, pageSize]);
 
   // Handle page change
   const handlePageChange = (page: number) => {
@@ -307,86 +407,211 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     return buttons;
   };
 
+  // Check if a value is an array
+  const isArrayValue = (value: any) => Array.isArray(value);
+
+  // Render a cell based on its content type
+  const renderCellContent = (key: string, value: any, testCaseId: string) => {
+    // If value is null/undefined
+    if (value === null || value === undefined) {
+      return <span className="empty-value">-</span>;
+    }
+
+    // If value is an array, render as nested table, regardless of the key name
+    if (isArrayValue(value)) {
+      const sectionId = `${testCaseId}-${key}`;
+      const isExpanded = expandedSections[sectionId] === true; // Default to collapsed
+
+      // Check if array has objects with key-value pairs
+      if (value.length > 0 && typeof value[0] === "object") {
+        // Extract all possible keys from all objects in the array
+        const nestedHeaders = Array.from(
+          new Set(value.flatMap((item) => Object.keys(item)))
+        );
+
+        const displayName = key.replace(/([A-Z])/g, " $1").trim(); // Add spaces before capital letters
+
+        return (
+          <div>
+            <div
+              className="expandable-section"
+              onClick={(e) => toggleExpandSection(sectionId, e)}
+            >
+              <span className="expanded-indicator">
+                {isExpanded ? "−" : "+"}
+              </span>
+              <span>
+                {displayName} ({value.length})
+              </span>
+            </div>
+
+            {isExpanded && (
+              <div className="nested-table-wrapper">
+                <table className="nested-data-table">
+                  <thead>
+                    <tr>
+                      {nestedHeaders.map((header) => (
+                        <th key={header}>{header}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {value.map((item: any, index: number) => (
+                      <tr key={`${testCaseId}-${key}-${index}`}>
+                        {nestedHeaders.map((header) => (
+                          <td key={`${testCaseId}-${key}-${header}-${index}`}>
+                            {typeof item[header] === "string" &&
+                            header.toLowerCase().includes("description") ? (
+                              <div className="step-description-content">
+                                <div className="step-description-text">
+                                  {item[header]}
+                                </div>
+                                <button
+                                  className="ai-assist-button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAIAssist(item[header]);
+                                  }}
+                                >
+                                  <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="ai-icon"
+                                  >
+                                    <circle
+                                      cx="12"
+                                      cy="12"
+                                      r="10"
+                                      fill="currentColor"
+                                    />
+                                    <text
+                                      x="12"
+                                      y="16"
+                                      fontSize="10"
+                                      fontWeight="bold"
+                                      fill="white"
+                                      textAnchor="middle"
+                                      dominantBaseline="middle"
+                                    >
+                                      AI
+                                    </text>
+                                  </svg>
+                                </button>
+                              </div>
+                            ) : item[header] !== undefined ? (
+                              // Recursively handle nested objects and arrays
+                              typeof item[header] === "object" ? (
+                                renderCellContent(
+                                  header,
+                                  item[header],
+                                  `${testCaseId}-${key}-${index}`
+                                )
+                              ) : (
+                                <span className="full-content">
+                                  {item[header].toString()}
+                                </span>
+                              )
+                            ) : (
+                              <span className="empty-value">-</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      // Simple array of values
+      return (
+        <ul className="array-value-list">
+          {value.map((item: any, index: number) => (
+            <li key={`${testCaseId}-${key}-${index}`}>
+              {typeof item === "object"
+                ? JSON.stringify(item)
+                : item.toString()}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
+    // If key contains "priority" (case insensitive)
+    if (typeof value === "string" && key.toLowerCase().includes("priority")) {
+      return renderPriorityWithIcon(value);
+    }
+
+    // Handle objects (non-array)
+    if (typeof value === "object") {
+      return (
+        <div className="object-value">
+          {Object.entries(value).map(([objKey, objValue]) => (
+            <div
+              key={`${testCaseId}-${key}-${objKey}`}
+              className="object-property"
+            >
+              <span className="object-key">{objKey}:</span>
+              <span className="object-value">
+                {typeof objValue === "object"
+                  ? JSON.stringify(objValue)
+                  : objValue?.toString()}
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Default case for simple values - wrap in a span for better styling control
+    return <span className="full-content">{value.toString()}</span>;
+  };
+
   return (
     <div className="test-cases-container">
       <div className="table-scroll-wrapper">
-        <table className="test-cases-table">
-          <thead>
-            <tr>
-              <th>Test Case ID</th>
-              <th>Test Case Description</th>
-              <th>Test Steps</th>
-              <th>Priority</th>
-              <th>Test Data</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.map((testCase) => (
-              <tr key={testCase["Test Case ID"]}>
-                <td className="test-case-id">{testCase["Test Case ID"]}</td>
-                <td>{testCase["Test Case Description"]}</td>
-                <td>
-                  <table className="nested-steps-table">
-                    <thead>
-                      <tr>
-                        <th>Step ID</th>
-                        <th>Description</th>
-                        <th>Expected Result</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {testCase["Test Steps"].map((step) => (
-                        <tr key={step["Step ID"]}>
-                          <td className="step-case-id">{step["Step ID"]}</td>
-                          <td className="step-description-cell">
-                            <div className="step-description-content">
-                              {step["Step Description"]}
-                              <button
-                                className="ai-assist-button"
-                                onClick={() =>
-                                  handleAIAssist(step["Step Description"])
-                                }
-                              >
-                                <svg
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="ai-icon"
-                                >
-                                  {/* Simple AI text in circle icon */}
-                                  <circle
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    fill="currentColor"
-                                  />
-                                  <text
-                                    x="12"
-                                    y="16"
-                                    fontSize="10"
-                                    fontWeight="bold"
-                                    fill="white"
-                                    textAnchor="middle"
-                                    dominantBaseline="middle"
-                                  >
-                                    AI
-                                  </text>
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                          <td>{step["Expected Result"]}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </td>
-                <td>{renderPriorityWithIcon(testCase["Priority"])}</td>
-                <td>{testCase["Test Data"]}</td>
+        <div className="table-container horizontal-scroll">
+          <table className="test-cases-table">
+            <thead>
+              <tr>
+                {columnHeaders.map((header, index) => (
+                  <th
+                    key={header}
+                    className={index < 2 ? "sticky-column" : ""}
+                    style={index < 2 ? { left: index === 0 ? 0 : "12%" } : {}}
+                  >
+                    {header}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentItems.map((testCase, rowIndex) => (
+                <tr key={`row-${rowIndex}`}>
+                  {columnHeaders.map((header, colIndex) => (
+                    <td
+                      key={`${rowIndex}-${header}`}
+                      className={colIndex < 2 ? "sticky-column" : ""}
+                      style={
+                        colIndex < 2 ? { left: colIndex === 0 ? 0 : "12%" } : {}
+                      }
+                    >
+                      {renderCellContent(
+                        header,
+                        testCase[header],
+                        `row-${rowIndex}`
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination UI */}
@@ -419,6 +644,7 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
         selectedStepDescription={selectedStepDescription}
         modalContent={modalContent}
         loading={loadingAI}
+        error={apiError} // Pass the error to the modal
       />
     </div>
   );

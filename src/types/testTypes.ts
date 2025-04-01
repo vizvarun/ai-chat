@@ -15,7 +15,7 @@ export interface TestCase {
   "Test Case Description": string;
   "Test Steps": TestStep[];
   Priority: string;
-  "Test Data": string | {};
+  "Test Data": string;
 }
 
 export interface GenerateResponse {
@@ -26,7 +26,7 @@ export interface GenerateResponse {
 
 // Add component props interfaces
 export interface TestCasesTableProps {
-  testCases: TestCase[];
+  testCases: Record<string, any>[]; // Allow any structure of test case data
 }
 
 export interface TestPlanViewProps {
