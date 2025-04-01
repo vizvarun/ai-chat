@@ -28,7 +28,7 @@
   background-color: #ffffff; /* Changed to white */
   border-radius: 10px;
   padding: 1rem 1.5rem;
-  margin-top: 0; /* Changed from 0.5rem to accommodate breadcrumbs */
+  margin-top: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Lighter shadow */
   border: 1px solid #eaeaea; /* Lighter border */
   overflow-y: auto; /* Changed from hidden to auto to enable scrolling */
