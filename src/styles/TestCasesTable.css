@@ -142,16 +142,69 @@
   color: var(--color-text-on-accent);
 }
 
-.priority-wrapper {
+/* Improved priority badges */
+.priority-badge {
   display: flex;
   align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  width: fit-content;
 }
 
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.priority-high {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #d32f2f;
+  border: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+.priority-high .priority-dot {
+  background-color: #d32f2f;
+}
+
+.priority-medium {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #ed6c02;
+  border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+.priority-medium .priority-dot {
+  background-color: #ed6c02;
+}
+
+.priority-low {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #2e7d32;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.priority-low .priority-dot {
+  background-color: #2e7d32;
+}
+
+.priority-default {
+  background-color: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
+  border: 1px solid rgba(25, 118, 210, 0.2);
+}
+
+.priority-default .priority-dot {
+  background-color: #1976d2;
+}
+
+/* Remove old priority styling */
+.priority-wrapper,
 .priority-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 4px;
+  /* Replaced with new priority badge styling */
 }
 
 .test-case-id,

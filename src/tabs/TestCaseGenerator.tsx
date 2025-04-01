@@ -249,8 +249,12 @@ const TestCaseGenerator = () => {
 
         {loading && (
           <div className="loading">
-            <Loader size="medium" />
-            <p>Generating test cases, please wait...</p>
+            <div className="loader-with-text">
+              <Loader size="medium" />
+              <p className="loading-text">
+                Generating test cases, please wait...
+              </p>
+            </div>
           </div>
         )}
 

@@ -62,28 +62,33 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
 
     if (priorityLower.includes("high")) {
       return (
-        <div className="priority-wrapper high-priority">
-          <span className="priority-icon">⚠️</span>
+        <div className="priority-badge priority-high">
+          <span className="priority-dot"></span>
           {priority}
         </div>
       );
     } else if (priorityLower.includes("medium")) {
       return (
-        <div className="priority-wrapper medium-priority">
-          <span className="priority-icon">⚡</span>
+        <div className="priority-badge priority-medium">
+          <span className="priority-dot"></span>
           {priority}
         </div>
       );
     } else if (priorityLower.includes("low")) {
       return (
-        <div className="priority-wrapper low-priority">
-          <span className="priority-icon">📌</span>
+        <div className="priority-badge priority-low">
+          <span className="priority-dot"></span>
           {priority}
         </div>
       );
     }
 
-    return priority;
+    return (
+      <div className="priority-badge priority-default">
+        <span className="priority-dot"></span>
+        {priority}
+      </div>
+    );
   };
 
   const handleAIAssist = (stepDescription: string) => {

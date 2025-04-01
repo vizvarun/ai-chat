@@ -183,13 +183,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem; /* Reduced from 2rem to reduce overall padding */
   color: var(--color-text-secondary);
 }
 
-.loading p {
+.loading-text {
   font-style: italic;
-  margin-top: 1rem;
+  margin-top: 0.5rem; /* Reduced from 1rem to create tighter spacing */
 }
 
 @keyframes spin {

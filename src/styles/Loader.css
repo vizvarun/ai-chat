@@ -3,20 +3,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0;
+  padding: 0.25rem 0; /* Reduced from 0.5rem to reduce vertical spacing */
 }
 
 /* Size variations */
 .loader-container.small {
-  min-height: 50px;
+  min-height: 40px; /* Reduced from 50px */
 }
 
 .loader-container.medium {
-  min-height: 100px;
+  min-height: 80px; /* Reduced from 100px */
 }
 
 .loader-container.large {
-  min-height: 150px;
+  min-height: 120px; /* Reduced from 150px */
+}
+
+/* Add a new class for compact display with text */
+.loader-with-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem; /* Small gap between loader and text */
 }
 
 .animated-loader {
