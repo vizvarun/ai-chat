@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/Tabs.css";
 import "../styles/Home.css";
+import mockingbirdLogo from "../assets/mockingbird.svg";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 const Home = () => {
@@ -11,7 +12,14 @@ const Home = () => {
       <Breadcrumbs />
       <div className="home-content-wrapper">
         <section className="hero-section">
-          <h1 className="hero-title">MockingBird</h1>
+          <div className="hero-wrapper">
+            <img
+              src={mockingbirdLogo}
+              alt="MockingBird Logo"
+              className="hero-logo"
+            />
+            <h1 className="hero-title">MockingBird</h1>
+          </div>
           <p className="hero-subtitle">
             Intelligent AI-powered testing assistant that streamlines your test
             case creation and management workflow
