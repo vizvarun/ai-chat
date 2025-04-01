@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { TestCasesTableProps } from "../types/testTypes";
 import "../styles/TestCasesTable.css";
 import AIAssistModal from "./AIAssistModal";
@@ -8,10 +8,89 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [modalContent, setModalContent] = useState("");
   const [loadingAI, setLoadingAI] = useState(false);
   const [selectedStepDescription, setSelectedStepDescription] = useState("");
+  const [hasError, setHasError] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+
+  // Check for data validity
+  useEffect(() => {
+    try {
+      // Validate if testCases is an array
+      if (!Array.isArray(testCases)) {
+        setHasError(true);
+        return;
+      }
+
+      // Check if each test case has required properties
+      const isValid = testCases.every(
+        (testCase) =>
+          testCase &&
+          typeof testCase === "object" &&
+          testCase["Test Case ID"] &&
+          Array.isArray(testCase["Test Steps"])
+      );
+
+      setHasError(!isValid);
+    } catch (error) {
+      console.error("Error in TestCasesTable data validation:", error);
+      setHasError(true);
+    }
+  }, [testCases]);
+
+  // If there's an error, show error message
+  if (hasError) {
+    return (
+      <div className="test-cases-error-container">
+        <div className="test-cases-error">
+          <svg
+            className="error-icon"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <line
+              x1="12"
+              y1="8"
+              x2="12"
+              y2="12"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <line
+              x1="12"
+              y1="16"
+              x2="12"
+              y2="16"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <h3>Something went wrong</h3>
+          <p>
+            We encountered an issue displaying the test cases. Please try again
+            later.
+          </p>
+          <button
+            className="retry-button"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const renderPriorityWithIcon = (priority: string) => {
     const priorityLower = priority.toLowerCase();
