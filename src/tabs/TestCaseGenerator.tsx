@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { GenerateResponse } from "../types/testTypes";
 import { testCasesService } from "../services/api/testCasesService";
+import { UI_CONFIG } from "../config/env";
 
 const TestCaseGenerator = () => {
   const [title, setTitle] = useState("");
@@ -63,7 +64,7 @@ const TestCaseGenerator = () => {
       const timeoutId = setTimeout(() => {
         setLoading(false);
         setError("Request timed out. Please try again later.");
-      }, 30000); // 30 seconds timeout
+      }, UI_CONFIG.REQUEST_TIMEOUT); // Use timeout from environment config
 
       const response = await testCasesService.generateTestCases(
         title,

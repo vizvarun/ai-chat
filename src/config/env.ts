@@ -15,6 +15,14 @@ export const API_ENDPOINTS = {
   GENERATE_TEST_CASES: import.meta.env.VITE_API_GENERATE_TEST_CASES,
 };
 
+// UI Configuration - Add timeout settings for UI operations
+export const UI_CONFIG = {
+  REQUEST_TIMEOUT: Number(
+    import.meta.env.VITE_UI_REQUEST_TIMEOUT || API_CONFIG.TIMEOUT
+  ),
+  ANIMATION_DELAY: Number(import.meta.env.VITE_UI_ANIMATION_DELAY || 300),
+};
+
 // Validate required environment variables during development
 if (import.meta.env.DEV) {
   const requiredVars = ["VITE_API_BASE_URL"];
