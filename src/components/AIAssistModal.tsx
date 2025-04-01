@@ -21,11 +21,11 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
   return (
     <div className="ai-modal-overlay" onClick={onClose}>
       <div className="ai-modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="ai-modal-close" onClick={onClose}>
-          ×
-        </button>
         <div className="ai-modal-header">
           <h3>AI Step Analysis</h3>
+          <button className="ai-modal-close" onClick={onClose}>
+            ×
+          </button>
         </div>
         <div className="ai-modal-body">
           {loading ? (
@@ -39,6 +39,13 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
             </div>
           )}
         </div>
+        {!loading && (
+          <div className="ai-modal-footer">
+            <button className="ai-modal-close-btn" onClick={onClose}>
+              Close
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

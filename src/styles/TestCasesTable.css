@@ -248,6 +248,9 @@
 .ai-modal-header {
   padding: 16px 20px;
   border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .ai-modal-header h3 {
@@ -261,9 +264,6 @@
 }
 
 .ai-modal-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   background: none;
   border: none;
   font-size: 24px;
@@ -282,6 +282,34 @@
 .ai-modal-close:hover {
   background-color: var(--color-background-tertiary);
   color: var(--color-primary);
+}
+
+/* Add footer styles */
+.ai-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ai-modal-close-btn {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.ai-modal-close-btn:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.ai-modal-close-btn:active {
+  transform: translateY(0);
 }
 
 /* Selected step and AI response styles */

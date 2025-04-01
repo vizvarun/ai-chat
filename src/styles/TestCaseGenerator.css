@@ -8,6 +8,8 @@
   max-height: 500px; /* Adjust based on your content */
   overflow: hidden;
   opacity: 1;
+  position: relative; /* Added for positioning context */
+  padding-bottom: 80px; /* Increased from 60px to 80px to add more space */
 }
 
 .input-section.collapsed {
@@ -77,6 +79,8 @@
 .input-field textarea {
   resize: vertical;
   min-height: 80px; /* Reduced minimum height */
+  max-height: 250px; /* Added maximum height */
+  overflow-y: auto; /* Added scroll for overflow */
 }
 
 .generate-button {
@@ -94,6 +98,9 @@
   transition: all 0.2s ease;
   max-width: fit-content;
   box-shadow: 0 2px 4px var(--color-shadow);
+  position: absolute; /* Position absolutely */
+  bottom: 20px; /* Increased from 15px to 20px to position it lower */
+  left: 0; /* Align to left */
 }
 
 .generate-button:hover {

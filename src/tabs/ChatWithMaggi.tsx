@@ -39,7 +39,7 @@ const ChatWithMaggi = () => {
   useEffect(() => {
     // Check if browser supports speech recognition
     if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
-      const SpeechRecognition: any = 
+      const SpeechRecognition: any =
         window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
 
