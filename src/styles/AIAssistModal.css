@@ -1,0 +1,409 @@
+/* AI Assistant Modal Styles */
+
+.ai-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.ai-modal-content {
+  background-color: var(--color-background-primary);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modal-appear 0.3s ease;
+  margin: 20px;
+  border: 1px solid var(--color-border-light);
+}
+
+/* Modal Header */
+.ai-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: var(--color-background-primary);
+  z-index: 10;
+}
+
+.ai-modal-header h3 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.ai-modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ai-modal-close:hover {
+  background-color: var(--color-background-quaternary);
+  color: var(--color-primary);
+}
+
+/* Modal Body */
+.ai-modal-body {
+  padding: 20px;
+}
+
+/* Selected Step */
+.selected-step {
+  margin-bottom: 20px;
+}
+
+.selected-step-label {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.selected-step-content {
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.04);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* Divider */
+.ai-response-divider {
+  height: 1px;
+  background-color: var(--color-border-light);
+  margin: 16px 0;
+}
+
+/* Loading State */
+.ai-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--color-text-secondary);
+  min-height: 180px;
+}
+
+.ai-loading p {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+/* Error State */
+.ai-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  min-height: 180px;
+}
+
+.ai-error .error-icon {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.ai-error h3 {
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.ai-error p {
+  margin-bottom: 1.5rem;
+  color: var(--color-text-secondary);
+  max-width: 400px;
+}
+
+.ai-error .retry-button {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-error .retry-button:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Response Container */
+.response-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Chat-like message styling */
+.ai-message-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.ai-message-wrapper {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ai-bot-message-wrapper {
+  justify-content: flex-start;
+  width: 100%; /* Full width for bot messages */
+}
+
+.ai-message {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  position: relative;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.ai-bot-message {
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  position: relative;
+  width: 100%; /* Full width for bot messages */
+  border: 1px solid var(--color-border-light);
+}
+
+/* Copy Button at bottom */
+.copy-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.copy-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-button-icon:hover {
+  background-color: var(--color-background-quaternary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.copy-button-icon:active {
+  transform: translateY(0);
+}
+
+/* Remove unused CSS */
+.message-container,
+.message-wrapper,
+.bot-message-wrapper,
+.message,
+.bot-message,
+.copy-button-container,
+.copy-button,
+.message-actions,
+.action-button {
+  display: none;
+}
+
+/* Response Content */
+.ai-response-content {
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  padding: 8px;
+}
+
+/* Typography styling for the AI response content */
+.ai-response-content h1,
+.ai-response-content h2,
+.ai-response-content h3,
+.ai-response-content h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.ai-response-content h1 {
+  font-size: 1.4rem;
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: 0.5rem;
+}
+
+.ai-response-content h2 {
+  font-size: 1.2rem;
+}
+
+.ai-response-content h3 {
+  font-size: 1.1rem;
+}
+
+.ai-response-content h4 {
+  font-size: 1rem;
+}
+
+.ai-response-content p {
+  margin-bottom: 1em;
+}
+
+.ai-response-content ul,
+.ai-response-content ol {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.ai-response-content li {
+  margin-bottom: 0.5em;
+}
+
+.ai-response-content code {
+  background-color: var(--color-background-tertiary);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.ai-response-content pre {
+  background-color: var(--color-background-secondary);
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  margin: 1em 0;
+  border: 1px solid var(--color-border-light);
+}
+
+.ai-response-content pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.ai-response-content blockquote {
+  border-left: 3px solid var(--color-primary-light);
+  padding-left: 1em;
+  margin-left: 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin-bottom: 1em;
+}
+
+.ai-response-content a {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.ai-response-content a:hover {
+  color: var(--color-link-hover);
+}
+
+.ai-response-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+  font-size: 0.9rem;
+}
+
+.ai-response-content th,
+.ai-response-content td {
+  border: 1px solid var(--color-border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.ai-response-content th {
+  background-color: var(--color-background-tertiary);
+  font-weight: 600;
+}
+
+/* Modal Footer */
+.ai-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: flex-end;
+  position: sticky;
+  bottom: 0;
+  background-color: var(--color-background-primary);
+  z-index: 10;
+}
+
+.ai-modal-close-btn {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.ai-modal-close-btn:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ai-modal-close-btn:active {
+  transform: translateY(0);
+}
+
+/* Animation for modal appearance */
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

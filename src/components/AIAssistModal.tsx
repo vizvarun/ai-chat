@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import Loader from "./Loader";
-
+import "../styles/AIAssistModal.css"; // Adjust the path as necessary
 interface AIAssistModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,7 +18,15 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
   loading,
   error,
 }) => {
+  const [copied, setCopied] = useState(false);
+
   if (!isOpen) return null;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(modalContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="ai-modal-overlay" onClick={onClose}>
@@ -39,22 +47,7 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
           <div className="ai-response-divider"></div>
           {loading ? (
             <div className="ai-loading">
-              <svg
-                className="spinner"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  strokeDasharray="30 30"
-                />
-              </svg>
+              <Loader />
               <p>Getting AI analysis...</p>
             </div>
           ) : error ? (
@@ -93,15 +86,21 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
                 />
               </svg>
               <p>{error}</p>
-              <button
-                className="retry-button"
-                onClick={() => window.location.reload()}
-              >
-                Retry
-              </button>
             </div>
           ) : (
-            <div className="ai-response-content">{modalContent}</div>
+            <div className="response-container">
+              <div className="ai-message-container">
+                <div className="selected-step-label">AI Response:</div>
+                <div className="ai-message-wrapper ai-bot-message-wrapper">
+                  <div className="ai-message ai-bot-message">
+                    <div
+                      className="ai-response-content"
+                      dangerouslySetInnerHTML={{ __html: modalContent }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
         <div className="ai-modal-footer">

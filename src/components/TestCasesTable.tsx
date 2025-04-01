@@ -3,6 +3,7 @@ import { TestCasesTableProps } from "../types/testTypes";
 import "../styles/TestCasesTable.css";
 import AIAssistModal from "./AIAssistModal";
 import { generateChatId } from "../utils/idGenerator";
+import axiosInstance from "../services/api/axios"; // Import axios instance
 
 const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -203,35 +204,33 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     setLoadingAI(true);
     setApiError(null);
 
-    // Generate random chat ID
     const chatId = generateChatId();
 
-    // Make API call to get AI analysis
-    fetch(
-      process.env.REACT_APP_AI_API_URL ||
-        "http://10.5.80.80:3001/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const aiApiUrl = import.meta.env.VITE_AI_API_URL;
+
+    // Define the request payload
+    const requestData = {
+      userId: "user123", // This could be made dynamic in the future
+      userType: "msp",
+      chatId: chatId,
+      messages: [
+        {
+          role: "user",
+          content: stepDescription, // Providing context to the AI
         },
-        body: JSON.stringify({
-          userId: "user123", // This could be made dynamic in the future
-          userType: "msp",
-          chatId: chatId,
-          message: stepDescription, // Adding the step description to provide context to the AI
-        }),
-      }
-    )
+      ],
+      tools: [
+        { function: { name: "scheduleInterview" } },
+        { function: { name: "knowledge" } },
+      ],
+      stream: false,
+    };
+
+    axiosInstance
+      .post(aiApiUrl, requestData)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`API responded with status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data && data.response && data.response.content) {
-          setModalContent(data.response.content);
+        if (response) {
+          setModalContent(response?.data?.choices[0]?.message?.content);
         } else {
           throw new Error("Invalid response format from API");
         }
@@ -240,7 +239,9 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
       .catch((error) => {
         console.error("Error fetching AI analysis:", error);
         setApiError(
-          error.message || "Failed to get AI analysis. Please try again."
+          error.response?.data?.message ||
+            error.message ||
+            "Failed to get AI analysis. Please try again."
         );
         setModalContent("");
         setLoadingAI(false);
