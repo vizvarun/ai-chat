@@ -133,7 +133,8 @@ const TestCaseGenerator = () => {
   // Determine if test plans tab should be enabled
   const hasTestPlansContent =
     generatedData &&
-    (generatedData.testPlans?.length > 0 || !!generatedData.testExecutionPlan);
+    ((generatedData.testPlans && generatedData.testPlans.length > 0) ||
+      !!generatedData.testExecutionPlan);
 
   // Determine if test cases tab should be enabled
   const hasTestCasesContent =

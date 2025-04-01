@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { TestCase, TestCasesTableProps } from "../types/testTypes";
+import { TestCasesTableProps } from "../types/testTypes";
 import "../styles/TestCasesTable.css";
 import AIAssistModal from "./AIAssistModal";
 

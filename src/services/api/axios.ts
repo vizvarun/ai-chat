@@ -1,6 +1,6 @@
 import axios, {
   AxiosInstance,
-  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
   AxiosResponse,
   AxiosError,
 } from "axios";
@@ -17,7 +17,7 @@ const axiosInstance: AxiosInstance = axios.create({
 
 // Request interceptor
 axiosInstance.interceptors.request.use(
-  (config: AxiosRequestConfig): AxiosRequestConfig => {
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     // Add timestamp to prevent caching
     const originalUrl = config.url || "";
     const separator = originalUrl.includes("?") ? "&" : "?";
