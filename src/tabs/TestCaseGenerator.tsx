@@ -4,6 +4,7 @@ import "../styles/TestCaseGenerator.css";
 import TestPlanView from "../components/TestPlanView";
 import TestCasesTable from "../components/TestCasesTable";
 import Loader from "../components/Loader";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { GenerateResponse } from "../types/testTypes";
 
 const TestCaseGenerator = () => {
@@ -142,6 +143,7 @@ const TestCaseGenerator = () => {
 
   return (
     <div className="tab-container">
+      <Breadcrumbs />
       <div
         className={`content-area ${
           !inputCollapsed && generatedData ? "scrollable" : ""

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "../styles/Tabs.css";
 import "../styles/ChatWithMaggi.css";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { MessageType, SpeakingStateRecord } from "../types/chatTypes";
 
 // Define a type for SpeechRecognition event
@@ -211,6 +212,7 @@ const ChatWithMaggi = () => {
 
   return (
     <div className="tab-container chat-container">
+      <Breadcrumbs />
       <div className="content-area chat-content">
         <div className="chat-messages-container">
           {messages.length === 0 ? (

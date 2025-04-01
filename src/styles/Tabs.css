@@ -1,11 +1,11 @@
 .tab-container {
   padding: 1.5rem 2.5rem;
   height: calc(
-    100vh - 54px - 37px
-  ); /* Adjusted for navbar (54px) and footer (37px) */
+    100vh - 60px - 45px
+  ); /* Adjusted for navbar (60px) and footer (45px) */
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; /* Keep this as hidden for the container */
 }
 
 .tab-header {
@@ -28,14 +28,16 @@
   background-color: #ffffff; /* Changed to white */
   border-radius: 10px;
   padding: 1.5rem;
-  margin-top: 0.5rem;
+  margin-top: 0; /* Changed from 0.5rem to accommodate breadcrumbs */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Lighter shadow */
   border: 1px solid #eaeaea; /* Lighter border */
-  overflow: hidden; /* Default to hidden overflow */
+  overflow-y: auto; /* Changed from hidden to auto to enable scrolling */
+  position: relative; /* Ensure positioned context for children */
+  max-height: calc(100% - 28px); /* Added to account for smaller breadcrumbs */
 }
 
 .content-area.scrollable {
-  overflow-y: auto; /* Make scrollable when needed */
+  overflow-y: auto; /* Keep this as auto */
   max-height: calc(100vh - 180px); /* Leave room for header and footer */
 }
 
@@ -46,4 +48,15 @@
   height: 100%;
   color: #777777; /* Darker gray for better contrast */
   font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tab-container {
+    padding: 1rem 1.5rem;
+  }
+
+  .content-area {
+    padding: 1.25rem;
+  }
 }

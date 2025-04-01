@@ -49,3 +49,19 @@ button {
   font-weight: 500;
   font-family: "Work Sans", sans-serif;
 }
+
+.main-content {
+  transition: margin-left 0.3s ease;
+  min-height: calc(
+    100vh - 60px - 45px
+  ); /* Updated to account for new footer height (45px) */
+  position: relative; /* Add position relative */
+  z-index: 1; /* Lower z-index so sidebar overlaps */
+}
+
+/* Remove margin changes when sidebar is open since we want it to overlap */
+@media (min-width: 992px) {
+  .sidebar-open .main-content {
+    margin-left: 0; /* No margin change, sidebar will overlap */
+  }
+}

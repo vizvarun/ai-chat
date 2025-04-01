@@ -1,9 +1,13 @@
 .footer {
   background-color: #ffffff;
-  padding: 6px;
+  padding: 12px; /* Increased from 6px to 12px */
   text-align: center;
   font-size: 0.75rem;
   color: #666666;
   border-top: 1px solid #eaeaea;
   font-family: "Work Sans", sans-serif;
+  height: 45px; /* Explicitly set height instead of letting it be determined by content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

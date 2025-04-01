@@ -1,0 +1,54 @@
+.breadcrumbs-container {
+  padding: 0.25rem 0; /* Reduced from 0.5rem to 0.25rem */
+  margin-bottom: 0.5rem; /* Reduced from 1rem to 0.5rem */
+}
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8rem; /* Reduced from 0.85rem to 0.8rem */
+  color: var(--color-text-tertiary);
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+  content: "/";
+  margin: 0 0.5rem;
+  color: var(--color-text-tertiary);
+  opacity: 0.6;
+}
+
+.breadcrumb-item a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-item a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+/* Make breadcrumbs responsive */
+@media (max-width: 576px) {
+  .breadcrumbs-container {
+    padding: 0.2rem 0; /* Reduced from 0.3rem to 0.2rem */
+    margin-bottom: 0.5rem; /* Reduced from 0.75rem to 0.5rem */
+  }
+
+  .breadcrumbs {
+    font-size: 0.7rem; /* Reduced from 0.75rem to 0.7rem */
+  }
+}

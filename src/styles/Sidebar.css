@@ -1,0 +1,106 @@
+.sidebar {
+  position: fixed;
+  top: 60px; /* Height of navbar */
+  left: 0;
+  height: calc(100vh - 60px); /* Full viewport height minus navbar */
+  width: 264px; /* Increased from 220px to 250px for more text space */
+  background-color: var(--color-background-primary);
+  border-right: 1px solid var(--color-border);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 100; /* Increased z-index to ensure it's above content */
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* Add backdrop overlay when sidebar is open - making it more subtle */
+.sidebar-backdrop {
+  position: fixed;
+  top: 60px; /* Same as sidebar to start below navbar */
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 60px); /* Full height minus navbar */
+  background-color: rgba(0, 0, 0, 0.2); /* More subtle dark background */
+  backdrop-filter: blur(2px); /* Less blur */
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 99; /* Just below sidebar but above content */
+}
+
+.sidebar-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px 0; /* Added padding top and bottom */
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Added gap between menu items */
+  padding: 0 8px; /* Reduced side padding */
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px; /* Adjusted padding */
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem; /* Smaller font size */
+  transition: all 0.2s ease;
+  font-weight: 500;
+  gap: 12px;
+  cursor: pointer; /* Added to make div look clickable */
+  border-radius: 8px; /* Rounded corners */
+  width: 100%; /* Ensure the link takes full width */
+}
+
+.sidebar-link:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+  transform: translateX(2px); /* Slight movement on hover */
+}
+
+.sidebar-link.active {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-right: none; /* Removed right border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+.sidebar-link svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.sidebar-link-text {
+  white-space: normal; /* Changed from nowrap to normal to allow wrapping */
+  overflow: visible; /* Changed from hidden to visible */
+  text-overflow: clip; /* Changed from ellipsis to clip */
+  word-break: normal; /* Ensure proper word breaking */
+  line-height: 1.2; /* Added proper line height for multi-line text */
+}
+
+/* Add responsive styles */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 220px; /* Increased from 190px to 220px for mobile */
+  }
+
+  .sidebar-link {
+    padding: 10px 14px; /* Smaller padding on mobile */
+  }
+}
