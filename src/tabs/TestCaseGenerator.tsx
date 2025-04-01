@@ -19,8 +19,8 @@ const TestCaseGenerator = () => {
   );
   const [activeTab, setActiveTab] = useState("testPlans");
   const [inputCollapsed, setInputCollapsed] = useState(false);
-  // Add state to track if form is dirty (modified since last submission)
-  const [formDirty, setFormDirty] = useState(true);
+  // Change initial state to false so reset button doesn't show initially
+  const [formDirty, setFormDirty] = useState(false);
   // Track last submitted values to compare for changes
   const [lastSubmitted, setLastSubmitted] = useState({
     title: "",
@@ -114,6 +114,13 @@ const TestCaseGenerator = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Reset form to last submitted state or empty if never submitted
+  const resetForm = () => {
+    setTitle(lastSubmitted.title);
+    setDescription(lastSubmitted.description);
+    setFormDirty(false);
   };
 
   // Change to test cases tab if there are test cases but no test plans
@@ -216,49 +223,67 @@ const TestCaseGenerator = () => {
             />
           </div>
 
-          <button
-            className="generate-button"
-            onClick={generateTestCases}
-            disabled={
-              loading || !title.trim() || !description.trim() || !formDirty
-            }
-          >
-            {loading ? (
-              <>
-                <svg
-                  className="spinner"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  height="16"
-                >
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    strokeDasharray="30 30"
-                  />
-                </svg>
-                Generating...
-              </>
-            ) : (
-              <>
+          <div className="button-container">
+            <button
+              className="generate-button"
+              onClick={generateTestCases}
+              disabled={
+                loading || !title.trim() || !description.trim() || !formDirty
+              }
+            >
+              {loading ? (
+                <>
+                  <svg
+                    className="spinner"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      strokeDasharray="30 30"
+                    />
+                  </svg>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path
+                      fill="currentColor"
+                      d="M19.5 5.5h-15v2h15v-2zm0 6h-15v2h15v-2zm-15 8h7v-2h-7v2z"
+                    />
+                    <path
+                      fill="currentColor"
+                      d="M16.5 17.5l2-1.5 2 1.5v-4h-4v4z"
+                    />
+                  </svg>
+                  Generate Test Cases
+                </>
+              )}
+            </button>
+
+            {formDirty && (
+              <button
+                className="reset-button"
+                onClick={resetForm}
+                aria-label="Reset form"
+              >
                 <svg viewBox="0 0 24 24" width="16" height="16">
                   <path
                     fill="currentColor"
-                    d="M19.5 5.5h-15v2h15v-2zm0 6h-15v2h15v-2zm-15 8h7v-2h-7v2z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M16.5 17.5l2-1.5 2 1.5v-4h-4v4z"
+                    d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
                   />
                 </svg>
-                Generate Test Cases
-              </>
+                Clear
+              </button>
             )}
-          </button>
+          </div>
         </div>
 
         {error && (
