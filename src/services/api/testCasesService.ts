@@ -1,6 +1,7 @@
 import { GenerateResponse } from "../../types/testTypes";
 import { encodeHtml, markdownToHtml } from "../../utils/textProcessing";
 import axiosInstance from "./axios";
+import { API_ENDPOINTS } from "../../config/env";
 
 interface GenerateTestCasesRequest {
   storyTitle: string;
@@ -25,10 +26,13 @@ export const testCasesService = {
     storyDescription: string
   ): Promise<GenerateResponse> => {
     try {
-      const response = await axiosInstance.post<any>("/generate-test-cases", {
-        storyTitle,
-        storyDescription,
-      });
+      const response = await axiosInstance.post<any>(
+        API_ENDPOINTS.GENERATE_TEST_CASES,
+        {
+          storyTitle,
+          storyDescription,
+        }
+      );
 
       // Validate response structure
       const data = response.data;

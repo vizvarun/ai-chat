@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { TestCase, TestCasesTableProps } from "../types/testTypes";
 import "../styles/TestCasesTable.css";
 import AIAssistModal from "./AIAssistModal";
@@ -8,6 +8,10 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [modalContent, setModalContent] = useState("");
   const [loadingAI, setLoadingAI] = useState(false);
   const [selectedStepDescription, setSelectedStepDescription] = useState("");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const renderPriorityWithIcon = (priority: string) => {
     const priorityLower = priority.toLowerCase();
@@ -69,6 +73,161 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     setModalContent("");
   };
 
+  // Calculate pagination
+  const totalItems = testCases.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  // Get current page items
+  const currentItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return testCases.slice(startIndex, startIndex + pageSize);
+  }, [testCases, currentPage, pageSize]);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Handle page size change
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSize = parseInt(e.target.value, 10);
+    setPageSize(newSize);
+    setCurrentPage(1); // Reset to first page when changing page size
+  };
+
+  // Generate page buttons
+  const renderPaginationButtons = () => {
+    const buttons = [];
+
+    // Previous button
+    buttons.push(
+      <button
+        key="prev"
+        className="pagination-button"
+        disabled={currentPage === 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+        aria-label="Previous page"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    );
+
+    // First page
+    buttons.push(
+      <button
+        key={1}
+        className={`pagination-button ${currentPage === 1 ? "active" : ""}`}
+        onClick={() => handlePageChange(1)}
+      >
+        1
+      </button>
+    );
+
+    // Ellipsis or pages
+    if (totalPages > 7) {
+      if (currentPage > 3) {
+        buttons.push(
+          <span key="ellipsis-1" className="pagination-ellipsis">
+            ...
+          </span>
+        );
+      }
+
+      // Pages around current page
+      const startPage = Math.max(2, currentPage - 1);
+      const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        if (i !== 1 && i !== totalPages) {
+          buttons.push(
+            <button
+              key={i}
+              className={`pagination-button ${
+                currentPage === i ? "active" : ""
+              }`}
+              onClick={() => handlePageChange(i)}
+            >
+              {i}
+            </button>
+          );
+        }
+      }
+
+      if (currentPage < totalPages - 2) {
+        buttons.push(
+          <span key="ellipsis-2" className="pagination-ellipsis">
+            ...
+          </span>
+        );
+      }
+    } else {
+      // Show all pages if total pages <= 7
+      for (let i = 2; i < totalPages; i++) {
+        buttons.push(
+          <button
+            key={i}
+            className={`pagination-button ${currentPage === i ? "active" : ""}`}
+            onClick={() => handlePageChange(i)}
+          >
+            {i}
+          </button>
+        );
+      }
+    }
+
+    // Last page (if more than 1 page)
+    if (totalPages > 1) {
+      buttons.push(
+        <button
+          key={totalPages}
+          className={`pagination-button ${
+            currentPage === totalPages ? "active" : ""
+          }`}
+          onClick={() => handlePageChange(totalPages)}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+
+    // Next button
+    buttons.push(
+      <button
+        key="next"
+        className="pagination-button"
+        disabled={currentPage === totalPages}
+        onClick={() => handlePageChange(currentPage + 1)}
+        aria-label="Next page"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    );
+
+    return buttons;
+  };
+
   return (
     <div className="test-cases-container">
       <div className="table-scroll-wrapper">
@@ -83,7 +242,7 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
             </tr>
           </thead>
           <tbody>
-            {testCases.map((testCase) => (
+            {currentItems.map((testCase) => (
               <tr key={testCase["Test Case ID"]}>
                 <td className="test-case-id">{testCase["Test Case ID"]}</td>
                 <td>{testCase["Test Case Description"]}</td>
@@ -151,7 +310,30 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
         </table>
       </div>
 
-      {/* Use the AIAssistModal component */}
+      {/* Pagination UI */}
+      <div className="pagination-container">
+        <div className="pagination-info">
+          Showing {(currentPage - 1) * pageSize + 1} to{" "}
+          {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
+          <div className="page-size-selector">
+            <label htmlFor="page-size">Show:</label>
+            <select
+              id="page-size"
+              value={pageSize}
+              onChange={handlePageSizeChange}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="pagination-controls">{renderPaginationButtons()}</div>
+      </div>
+
+      {/* AIAssistModal */}
       <AIAssistModal
         isOpen={isModalOpen}
         onClose={closeModal}

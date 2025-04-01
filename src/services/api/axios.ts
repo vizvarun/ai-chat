@@ -4,14 +4,15 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
+import { API_CONFIG } from "../../config/env";
 
 // Create axios instance
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: API_CONFIG.BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 30000, // 30 seconds
+  timeout: API_CONFIG.TIMEOUT, // Use environment variable for timeout
 });
 
 // Request interceptor

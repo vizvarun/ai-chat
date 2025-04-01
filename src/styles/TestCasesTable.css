@@ -73,13 +73,13 @@
   background-color: var(--color-background-primary);
   display: flex;
   flex-direction: column;
-  max-height: 64vh;
+  max-height: 64vh; /* Reduced from 64vh to 62vh */
 }
 
 .table-scroll-wrapper {
   position: relative;
   height: auto;
-  max-height: 78vh;
+  max-height: 58vh; /* Reduced from 78vh to 58vh to ensure pagination is visible */
   overflow-y: auto;
   overflow-x: hidden;
   border: 1px solid var(--color-border-light);
@@ -175,6 +175,22 @@
 
 .nested-steps-table tr:last-child td {
   border-bottom: none;
+}
+
+/* Adjust nested table column widths to give more space to step description */
+.nested-steps-table th:nth-child(1),
+.nested-steps-table td:nth-child(1) {
+  width: 10%; /* Step ID width */
+}
+
+.nested-steps-table th:nth-child(2),
+.nested-steps-table td:nth-child(2) {
+  width: 50%; /* Balanced step description width (reduced from 55% back to 50%) */
+}
+
+.nested-steps-table th:nth-child(3),
+.nested-steps-table td:nth-child(3) {
+  width: 40%; /* Balanced expected result width (increased from 30% back to 35%) */
 }
 
 .test-cases-table-body-container {
@@ -428,4 +444,91 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Pagination styles */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0.5rem 0rem; /* Reduced top/bottom padding from 1rem to 0.75rem */
+  border-top: 1px solid var(--color-border-light);
+  margin-top: 0.25rem; /* Reduced from 0.5rem to 0.25rem */
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  font-size: 0.85rem;
+}
+
+.page-size-selector label {
+  margin-right: 0.5rem;
+  color: var(--color-text-secondary);
+}
+
+.page-size-selector select {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-primary);
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+  border-color: var(--color-primary-light);
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-button.active {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary-light);
+}
+
+.pagination-ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-tertiary);
 }
