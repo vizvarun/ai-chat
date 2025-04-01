@@ -19,8 +19,9 @@ export interface TestCase {
 }
 
 export interface GenerateResponse {
-  testPlans: TestPlan[];
+  testPlans?: TestPlan[];
   testCases: TestCase[];
+  testExecutionPlan?: string; // Add this new field for the execution plan string
 }
 
 // Add component props interfaces
@@ -29,5 +30,6 @@ export interface TestCasesTableProps {
 }
 
 export interface TestPlanViewProps {
-  testPlan: TestPlan;
+  testPlan?: TestPlan;
+  executionPlan?: string; // Add this to support the execution plan string
 }

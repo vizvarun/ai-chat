@@ -73,3 +73,30 @@
   margin-bottom: 0;
   border-bottom: none;
 }
+
+/* Add styles for execution plan display */
+.test-plan-execution {
+  background-color: var(--color-background-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  overflow: auto;
+}
+
+.execution-plan-content {
+  white-space: pre-wrap;
+  font-family: "Work Sans", system-ui, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.empty-test-plan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}

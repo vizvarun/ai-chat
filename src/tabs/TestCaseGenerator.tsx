@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/Tabs.css";
 import "../styles/TestCaseGenerator.css";
 import TestPlanView from "../components/TestPlanView";
@@ -6,11 +6,13 @@ import TestCasesTable from "../components/TestCasesTable";
 import Loader from "../components/Loader";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { GenerateResponse } from "../types/testTypes";
+import { testCasesService } from "../services/api/testCasesService";
 
 const TestCaseGenerator = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [generatedData, setGeneratedData] = useState<GenerateResponse | null>(
     null
   );
@@ -22,124 +24,99 @@ const TestCaseGenerator = () => {
     setInputCollapsed(!inputCollapsed);
   };
 
-  // Mock API call
-  const generateTestCases = () => {
+  // Generate test cases using API call
+  const generateTestCases = async () => {
     setLoading(true);
+    setError(null);
 
-    // Simulate API delay
-    setTimeout(() => {
-      const mockResponse: GenerateResponse = {
-        testPlans: [
-          {
-            title: "Test Plan for " + title,
-            description: "This test plan addresses: " + description,
-            steps: [
-              "1. Create supplier funded invoices with early pay reduction",
-              "2. Verify MUM used is supplier funded",
-              "3. Test early pay discount reduction types",
-              "4. Verify reduction calculation logic for different invoice types",
-              "5. Ensure calculations are applied against gross bill amount",
-            ],
-          },
-        ],
-        testCases: [
-          {
-            "Test Case ID": "1",
-            "Test Case Description":
-              "Verify Early Pay Reduction Calculation Logic Change for Supplier Funded Invoices",
-            "Test Steps": [
-              {
-                "Step ID": "1",
-                "Step Description":
-                  "Create a supplier funded invoice with early pay reduction type",
-                "Expected Result": "Invoice should be created successfully",
-              },
-              {
-                "Step ID": "2",
-                "Step Description":
-                  "Verify that reduction calculation is applied against gross bill amount",
-                "Expected Result": "Early pay reduction calculated correctly",
-              },
-            ],
-            Priority: "High",
-            "Test Data":
-              "Supplier funded invoice with early pay reduction type",
-          },
-          {
-            "Test Case ID": "2",
-            "Test Case Description":
-              "Verify MUM Used is Supplier Funded (Admin Fee Reduced from Supplier Invoice)",
-            "Test Steps": [
-              {
-                "Step ID": "1",
-                "Step Description":
-                  "Create a supplier funded invoice with admin fee reduced from supplier invoice",
-                "Expected Result": "Invoice should be created successfully",
-              },
-              {
-                "Step ID": "2",
-                "Step Description":
-                  "Verify that MUM used is Supplier Funded (Admin Fee reduced from Supplier invoice)",
-                "Expected Result": "MUM used is Supplier Funded",
-              },
-            ],
-            Priority: "High",
-            "Test Data":
-              "Supplier funded invoice with admin fee reduced from supplier invoice",
-          },
-          {
-            "Test Case ID": "3",
-            "Test Case Description":
-              "Verify that Early Pay Discount reduction type is applicable for supplier funded invoices",
-            "Test Steps": [
-              {
-                "Step ID": "1",
-                "Step Description":
-                  "Create a supplier funded invoice with early pay discount reduction type",
-                "Expected Result": "Invoice should be created successfully",
-              },
-              {
-                "Step ID": "2",
-                "Step Description":
-                  "Verify that early pay discount reduction type is applicable for supplier funded invoices",
-                "Expected Result":
-                  "Early pay discount reduction type is applicable",
-              },
-            ],
-            Priority: "Low",
-            "Test Data":
-              "Supplier funded invoice with early pay discount reduction type",
-          },
-          {
-            "Test Case ID": "4",
-            "Test Case Description":
-              "Verify that no changes to early pay reduction for customer or non-supplier funded invoices",
-            "Test Steps": [
-              {
-                "Step ID": "1",
-                "Step Description":
-                  "Create a customer invoice with early pay reduction type",
-                "Expected Result": "Invoice should be created successfully",
-              },
-              {
-                "Step ID": "2",
-                "Step Description":
-                  "Verify that no changes to early pay reduction for customer invoices",
-                "Expected Result":
-                  "No changes to early pay reduction for customer invoices",
-              },
-            ],
-            Priority: "Medium",
-            "Test Data": "Customer invoice with early pay reduction type",
-          },
-        ],
-      };
-      setGeneratedData(mockResponse);
+    try {
+      // Add a timeout to cancel the request if it takes too long
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+        setError("Request timed out. Please try again later.");
+      }, 30000); // 30 seconds timeout
+
+      const response = await testCasesService.generateTestCases(
+        title,
+        description
+      );
+
+      // Clear timeout as request succeeded
+      clearTimeout(timeoutId);
+
+      // Check if we got any useful data
+      if (
+        (!response.testCases || response.testCases.length === 0) &&
+        (!response.testPlans || response.testPlans.length === 0) &&
+        !response.testExecutionPlan
+      ) {
+        setError(
+          "No test cases or plans were generated. Please try with a more detailed description."
+        );
+      } else {
+        setGeneratedData(response);
+        setInputCollapsed(true); // Auto-collapse input section when results are ready
+      }
+    } catch (err: any) {
+      // Enhanced error handling with more specific messages
+      if (err.response) {
+        if (err.response.status === 429) {
+          setError("Too many requests. Please wait a moment and try again.");
+        } else if (err.response.status >= 500) {
+          setError("Server error. Our team has been notified.");
+        } else {
+          setError(
+            `Request failed: ${err.response.data?.message || "Unknown error"}`
+          );
+        }
+      } else if (err.request) {
+        setError(
+          "No response from server. Please check your internet connection."
+        );
+      } else {
+        setError("Failed to generate test cases. Please try again later.");
+      }
+      console.error("Error generating test cases:", err);
+    } finally {
       setLoading(false);
-      // Auto-collapse input section when results are ready
-      setInputCollapsed(true);
-    }, 1500); // 1.5 seconds delay to simulate API call
+    }
   };
+
+  // Change to test cases tab if there are test cases but no test plans
+  useEffect(() => {
+    if (generatedData) {
+      const hasTestPlans =
+        generatedData.testPlans && generatedData.testPlans.length > 0;
+      const hasExecutionPlan = !!generatedData.testExecutionPlan;
+      const hasTestCases =
+        generatedData.testCases && generatedData.testCases.length > 0;
+
+      if (!hasTestPlans && !hasExecutionPlan && hasTestCases) {
+        setActiveTab("testCases");
+      }
+    }
+  }, [generatedData]);
+
+  // Determine if test plans tab should be enabled
+  const hasTestPlansContent =
+    generatedData &&
+    (generatedData.testPlans?.length > 0 || !!generatedData.testExecutionPlan);
+
+  // Determine if test cases tab should be enabled
+  const hasTestCasesContent =
+    generatedData &&
+    generatedData.testCases &&
+    generatedData.testCases.length > 0;
+
+  // Render empty state when no test cases or plans are available
+  const renderEmptyState = () => (
+    <div className="empty-results">
+      <p>
+        No test cases or plans were generated. Please try with a more detailed
+        description.
+      </p>
+    </div>
+  );
 
   return (
     <div className="tab-container">
@@ -247,6 +224,12 @@ const TestCaseGenerator = () => {
           </button>
         </div>
 
+        {error && (
+          <div className="error-message">
+            <p>{error}</p>
+          </div>
+        )}
+
         {loading && (
           <div className="loading">
             <div className="loader-with-text">
@@ -267,6 +250,7 @@ const TestCaseGenerator = () => {
                 }`}
                 onClick={() => setActiveTab("testPlans")}
                 style={{ outline: "none" }}
+                disabled={!hasTestPlansContent}
               >
                 Test Plans
               </button>
@@ -276,18 +260,27 @@ const TestCaseGenerator = () => {
                 }`}
                 onClick={() => setActiveTab("testCases")}
                 style={{ outline: "none" }}
+                disabled={!hasTestCasesContent}
               >
                 Test Cases
               </button>
             </div>
 
             <div className="tab-content">
-              {activeTab === "testPlans" && (
-                <TestPlanView testPlan={generatedData.testPlans[0]} />
-              )}
-
-              {activeTab === "testCases" && (
+              {activeTab === "testPlans" && hasTestPlansContent ? (
+                <TestPlanView
+                  testPlan={
+                    generatedData.testPlans &&
+                    generatedData.testPlans.length > 0
+                      ? generatedData.testPlans[0]
+                      : undefined
+                  }
+                  executionPlan={generatedData.testExecutionPlan}
+                />
+              ) : activeTab === "testCases" && hasTestCasesContent ? (
                 <TestCasesTable testCases={generatedData.testCases} />
+              ) : (
+                renderEmptyState()
               )}
             </div>
           </div>
