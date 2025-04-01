@@ -7,7 +7,7 @@ interface AIAssistModalProps {
   selectedStepDescription: string;
   modalContent: string;
   loading: boolean;
-  error?: string | null;
+  error: string | null;
 }
 
 const AIAssistModal: React.FC<AIAssistModalProps> = ({
@@ -38,69 +38,56 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
           </button>
         </div>
         <div className="ai-modal-body">
-          <div className="selected-step">
-            <div className="selected-step-label">Selected test step:</div>
-            <div className="selected-step-content">
-              {selectedStepDescription}
-            </div>
-          </div>
+          <p className="selected-step-label">Selected Step:</p>
+          <div className="selected-step-content">{selectedStepDescription}</div>
+
           <div className="ai-response-divider"></div>
+
           {loading ? (
-            <div className="ai-loading">
-              <Loader />
-              <p>Getting AI analysis...</p>
+            <div className="ai-loading-state">
+              <Loader size="medium" />
+              <p>Analyzing step...</p>
             </div>
           ) : error ? (
-            <div className="ai-error">
-              <svg
-                className="error-icon"
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <line
-                  x1="12"
-                  y1="8"
-                  x2="12"
-                  y2="12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="12"
-                  y1="16"
-                  x2="12"
-                  y2="16"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <p>{error}</p>
+            <div className="ai-error-state">
+              <p className="error-message">{error}</p>
             </div>
           ) : (
-            <div className="response-container">
-              <div className="ai-message-container">
-                <div className="selected-step-label">AI Response:</div>
-                <div className="ai-message-wrapper ai-bot-message-wrapper">
-                  <div className="ai-message ai-bot-message">
-                    <div
-                      className="ai-response-content"
-                      dangerouslySetInnerHTML={{ __html: modalContent }}
-                    />
-                  </div>
+            <>
+              <div className="ai-response-content">{modalContent}</div>
+              {modalContent && (
+                <div className="copy-button-wrapper">
+                  <button
+                    className="copy-button-icon"
+                    onClick={handleCopy}
+                    title="Copy to clipboard"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                      <rect
+                        x="8"
+                        y="2"
+                        width="8"
+                        height="4"
+                        rx="1"
+                        ry="1"
+                      ></rect>
+                    </svg>
+                    {copied ? "Copied!" : ""}
+                  </button>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
           )}
         </div>
         <div className="ai-modal-footer">
