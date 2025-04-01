@@ -18,10 +18,39 @@ const TestCaseGenerator = () => {
   );
   const [activeTab, setActiveTab] = useState("testPlans");
   const [inputCollapsed, setInputCollapsed] = useState(false);
+  // Add state to track if form is dirty (modified since last submission)
+  const [formDirty, setFormDirty] = useState(true);
+  // Track last submitted values to compare for changes
+  const [lastSubmitted, setLastSubmitted] = useState({
+    title: "",
+    description: "",
+  });
 
   // Toggle input section visibility
   const toggleInputSection = () => {
     setInputCollapsed(!inputCollapsed);
+  };
+
+  // Update title and mark form as dirty if value changed
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+    setFormDirty(
+      newTitle !== lastSubmitted.title ||
+        description !== lastSubmitted.description
+    );
+  };
+
+  // Update description and mark form as dirty if value changed
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const newDescription = e.target.value;
+    setDescription(newDescription);
+    setFormDirty(
+      title !== lastSubmitted.title ||
+        newDescription !== lastSubmitted.description
+    );
   };
 
   // Generate test cases using API call
@@ -56,6 +85,10 @@ const TestCaseGenerator = () => {
       } else {
         setGeneratedData(response);
         setInputCollapsed(true); // Auto-collapse input section when results are ready
+
+        // Store current values as last submitted and mark form as not dirty
+        setLastSubmitted({ title, description });
+        setFormDirty(false);
       }
     } catch (err: any) {
       // Enhanced error handling with more specific messages
@@ -166,7 +199,7 @@ const TestCaseGenerator = () => {
               type="text"
               id="story-title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={handleTitleChange}
               placeholder="e.g., User Authentication Feature"
             />
           </div>
@@ -176,7 +209,7 @@ const TestCaseGenerator = () => {
             <textarea
               id="story-description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={handleDescriptionChange}
               placeholder="Provide a detailed description of the story..."
             />
           </div>
@@ -184,7 +217,9 @@ const TestCaseGenerator = () => {
           <button
             className="generate-button"
             onClick={generateTestCases}
-            disabled={loading || !title.trim() || !description.trim()}
+            disabled={
+              loading || !title.trim() || !description.trim() || !formDirty
+            }
           >
             {loading ? (
               <>

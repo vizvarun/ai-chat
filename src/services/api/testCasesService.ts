@@ -1,5 +1,6 @@
+import { GenerateResponse } from "../../types/testTypes";
+import { encodeHtml, markdownToHtml } from "../../utils/textProcessing";
 import axiosInstance from "./axios";
-import { GenerateResponse, TestPlan } from "../../types/testTypes";
 
 interface GenerateTestCasesRequest {
   storyTitle: string;
@@ -65,17 +66,25 @@ function processApiResponse(data: any): GenerateResponse {
 
   // Process test execution plan if available
   if (data.testExecutionPlan && typeof data.testExecutionPlan === "string") {
-    processed.testExecutionPlan = data.testExecutionPlan.trim();
+    // First encode the raw text to prevent XSS
+    const encodedText = encodeHtml(data.testExecutionPlan.trim());
+    // const testText = "**Test Plan for SOW | SI | Early Pay Reduction Calculation Logic Change**\n\n**Objectives:**\nThe objective of this test plan is to verify that the early pay reduction calculation logic has been changed correctly to reflect the supplier-funded scenario, ensuring accurate calculations and reduced errors.\n\n**Scope:**\nThis test plan includes testing the early pay reduction calculation logic for:\n\n* Supplier invoices\n* Customer invoices (excluding those with Admin Fee reductions)\n* Scenarios where Admin Fee is NOT reduced from Supplier invoice\n\nThe following elements are OUT OF SCOPE:\n\n* Testing of other features or functionality within the VMS system\n* Manual data entry or creation of test cases\n* Stress testing or performance testing\n\n**Test Strategy:**\n\n1. **Functional Testing**: Validate that the early pay reduction calculation logic is applied correctly to supplier invoices in the following scenarios:\n\t* Supplier-funded (Admin Fee reduced from Supplier invoice)\n\t* Non-Supplier-funded (Admin Fee not reduced from Supplier invoice)\n2. **Integration Testing**: Verify that the early pay reduction calculation logic integrates correctly with other system components, including:\n\t* MUM calculations\n\t* Fees and taxes calculations\n\n**Test Environment:**\n\n1. **Hardware**: Test on a standard configuration of servers, clients, and databases.\n2. **Software**: Use the latest version of the VMS system.\n3. **Network Configuration**: Ensure that network connections are stable and functional.\n\n**Test Schedule:**\nThis test plan will be executed over a period of 8 weeks (2 weeks per sprint), with each sprint consisting of:\n\n* Monday to Friday (5 days)\n* Start date: Current Date (2025-04-01)\n\nSprint 1 (Weeks 1-2): \n- Identify and create test cases for supplier-funded scenarios\n- Review and refine test cases for accuracy\n\nSprint 2 (Weeks 3-4):\n- Execute functional testing on supplier-funded scenarios\n- Review results and report any defects or issues found\n\nSprint 3 (Weeks 5-6): \n- Identify and create test cases for non-Supplier-funded scenarios\n- Review and refine test cases for accuracy\n\nSprint 4 (Weeks 7-8):\n- Execute functional testing on non-Supplier-funded scenarios\n- Review results and report any defects or issues found\n\n**Entry Criteria:**\nBefore starting the test, the following conditions must be met:\n\n* The VMS system is up-to-date with the latest version.\n* All necessary credentials and permissions are provided.\n\n**Exit Criteria:**\nAfter completing the test, the following conditions must be met:\n\n* A comprehensive report of defects or issues found during testing.\n* Validation that all functional requirements have been met.\n\n**Risks and Mitigation:**\n\n1. **Risk**: Changes to the VMS system may impact existing workflows or processes.\n2. **Mitigation**: Collaborate with stakeholders to ensure minimal disruption and provide training as needed.\n3. **Risk**: Integration issues may arise during testing.\n4. **Mitigation**: Perform thorough integration testing and review results carefully.\n\nBy following this test plan, we aim to ensure that the early pay reduction calculation logic has been changed correctly to reflect the supplier-funded scenario, reducing errors and improving overall system accuracy."
+    // const encodedText = encodeHtml(data.testExecutionPlan.trim());
+
+    // Convert encoded markdown to HTML
+    processed.testExecutionPlan = markdownToHtml(encodedText);
 
     // Generate a test plan from the execution plan string
+    // Use the original text for steps, but encode each step
     processed.testPlans = [
       {
         title: "Test Execution Plan",
         description: "Generated from the test execution plan",
-        steps: processed?.testExecutionPlan
+        steps: data.testExecutionPlan
+          .trim()
           .split("\n")
           .filter((line) => line.trim() !== "")
-          .map((line) => line.trim()),
+          .map((line) => encodeHtml(line.trim())),
       },
     ];
   }
@@ -85,7 +94,9 @@ function processApiResponse(data: any): GenerateResponse {
     processed.testPlans = data.testPlans.map((plan: any) => ({
       title: plan.title || "Untitled Test Plan",
       description: plan.description || "No description available",
-      steps: Array.isArray(plan.steps) ? plan.steps : [],
+      steps: Array.isArray(plan.steps)
+        ? plan.steps.map((step: string) => encodeHtml(step))
+        : [],
     }));
   }
 

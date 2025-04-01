@@ -1,170 +1,213 @@
 .test-cases-table {
   width: 100%;
   table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 0;
-  color: var(--color-primary);
+  border-collapse: collapse;
+  color: var(--color-text-primary);
   background-color: var(--color-background-primary);
-  border-bottom: 1px solid var(--color-border);
+  border: none;
+  font-size: 0.92rem;
 }
 
 .test-cases-table th,
 .test-cases-table td {
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   text-align: left;
-  border: 1px solid var(--color-border);
+  border: none;
+  border-bottom: 1px solid var(--color-border-light);
   color: var(--color-text-primary);
   overflow: hidden;
-  text-overflow: ellipsis; /* Add ellipsis for overflow text */
-  word-wrap: break-word; /* Allow text to break and wrap */
+  text-overflow: ellipsis;
+  word-wrap: break-word;
 }
 
 .test-cases-table th {
-  background-color: var(--color-background-secondary);
+  background-color: var(--color-background-primary);
   color: var(--color-primary);
-  font-weight: 600;
+  font-weight: 500;
   position: sticky;
   top: 0;
   z-index: 1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* Enhanced border-bottom effect for header when scrolling */
+  box-shadow: 0 1px 0 var(--color-border), 0 2px 5px rgba(0, 0, 0, 0.03);
   white-space: nowrap;
+  padding-bottom: 0.85rem;
+  font-size: 0.9rem;
+}
+
+.test-cases-table tr {
+  /* Very light border for row separation */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .test-cases-table tr:hover {
-  background-color: var(--color-background-tertiary);
-  color: var(--color-text-accent);
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+/* Subtle zebra-striping for better row distinction */
+.test-cases-table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+
+.test-cases-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border: none;
+  /* Add very light borders on all sides for cell separation */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+/* Remove right border from last cell in each row */
+.test-cases-table td:last-child {
+  border-right: none;
 }
 
 .test-cases-container {
   position: relative;
-  height: auto; /* Use auto height */
+  height: auto;
   overflow: visible;
   background-color: var(--color-background-primary);
   display: flex;
   flex-direction: column;
-  max-height: 64vh; /* Leave room for header and footer */
+  max-height: 64vh;
 }
 
 .table-scroll-wrapper {
   position: relative;
-  height: auto; /* Use auto height */
-  max-height: 78vh; /* Limit maximum height */
+  height: auto;
+  max-height: 78vh;
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  background-color: var(--color-background-primary);
 }
 
 /* Set column widths */
 .test-cases-table th:nth-child(1),
 .test-cases-table td:nth-child(1) {
-  width: 12%; /* Test Case ID */
+  width: 12%;
 }
 
 .test-cases-table th:nth-child(2),
 .test-cases-table td:nth-child(2) {
-  width: 20%; /* Test Case Description */
+  width: 20%;
 }
 
 .test-cases-table th:nth-child(3),
 .test-cases-table td:nth-child(3) {
-  width: 45%; /* Test Steps */
+  width: 45%;
 }
 
 .test-cases-table th:nth-child(4),
 .test-cases-table td:nth-child(4) {
-  width: 8%; /* Priority */
+  width: 8%;
 }
 
 .test-cases-table th:nth-child(5),
 .test-cases-table td:nth-child(5) {
-  width: 15%; /* Test Data */
+  width: 15%;
 }
 
-/* Nested table styling */
+/* Nested table styling - modernized */
 .nested-steps-table {
   width: 100%;
-  table-layout: fixed; /* Use fixed layout */
-  border-collapse: separate;
-  border-spacing: 0;
-  background-color: var(--color-background-secondary);
-  border: 1px solid var(--color-border);
-  box-shadow: none;
-  border-radius: 4px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background-color: transparent;
+  border: none;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
 }
 
 .nested-steps-table th,
 .nested-steps-table td {
-  border: 1px solid var(--color-border);
-  padding: 0.5rem;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  padding: 0.6rem 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: break-word;
 }
 
 .nested-steps-table th {
-  background-color: var(--color-background-secondary);
+  background-color: transparent;
   position: static !important;
-  top: 39px; /* Position below the main header */
-  z-index: 0;
-  color: var(--color-primary);
+  color: var(--color-text-secondary);
   box-shadow: none;
   white-space: nowrap;
+  font-weight: normal;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding-bottom: 0.75rem;
+  /* Slightly more visible header border */
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .nested-steps-table tr:hover {
-  background-color: var(--color-background-accent-subtle);
+  background-color: rgba(0, 0, 0, 0.015);
 }
 
-/* Set widths for nested table columns */
-.nested-steps-table th:nth-child(1),
-.nested-steps-table td:nth-child(1) {
-  width: 15%; /* Step ID */
+.nested-steps-table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.005);
 }
 
-.nested-steps-table th:nth-child(2),
-.nested-steps-table td:nth-child(2) {
-  width: 40%; /* Description */
+.nested-steps-table td {
+  border: none;
+  /* Very subtle borders for nested table cells */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.015);
+  border-right: 1px solid rgba(0, 0, 0, 0.01);
+  padding: 0.6rem 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
 }
 
-.nested-steps-table th:nth-child(3),
-.nested-steps-table td:nth-child(3) {
-  width: 45%;
+/* Remove right border from last cell in nested tables */
+.nested-steps-table td:last-child {
+  border-right: none;
+}
+
+.nested-steps-table tr:last-child td {
+  border-bottom: none;
 }
 
 .test-cases-table-body-container {
   overflow: visible;
-  /* Remove margin */
 }
 
 .test-cases-table tr.selected {
-  background-color: var(--color-background-accent);
-  color: var(--color-text-on-accent);
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.04);
 }
 
-/* Improved priority badges */
+/* Improved priority badges - more minimal */
 .priority-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
   font-weight: 500;
   width: fit-content;
+  border: none;
 }
 
 .priority-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   display: inline-block;
 }
 
 .priority-high {
-  background-color: rgba(244, 67, 54, 0.1);
+  background-color: rgba(244, 67, 54, 0.08);
   color: #d32f2f;
-  border: 1px solid rgba(244, 67, 54, 0.2);
 }
 
 .priority-high .priority-dot {
@@ -172,9 +215,8 @@
 }
 
 .priority-medium {
-  background-color: rgba(255, 152, 0, 0.1);
+  background-color: rgba(255, 152, 0, 0.08);
   color: #ed6c02;
-  border: 1px solid rgba(255, 152, 0, 0.2);
 }
 
 .priority-medium .priority-dot {
@@ -182,9 +224,8 @@
 }
 
 .priority-low {
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: rgba(76, 175, 80, 0.08);
   color: #2e7d32;
-  border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .priority-low .priority-dot {
@@ -192,35 +233,19 @@
 }
 
 .priority-default {
-  background-color: rgba(25, 118, 210, 0.1);
+  background-color: rgba(25, 118, 210, 0.08);
   color: #1976d2;
-  border: 1px solid rgba(25, 118, 210, 0.2);
 }
 
 .priority-default .priority-dot {
   background-color: #1976d2;
 }
 
-/* Remove old priority styling */
-.priority-wrapper,
-.priority-icon {
-  /* Replaced with new priority badge styling */
-}
-
 .test-case-id,
 .step-case-id {
   color: var(--color-primary) !important;
-  font-weight: 600;
-}
-
-/* Add this new style to create space after the last row */
-.test-cases-table tr:last-child td {
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 20px; /* Moderate padding for the last row */
-}
-
-.nested-steps-table tr:last-child td {
-  padding-bottom: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 /* Step description cell with AI icon button */
@@ -231,41 +256,40 @@
 .step-description-content {
   position: relative;
   display: flex;
-  align-items: center; /* Changed from flex-start to center to vertically align items */
+  align-items: center;
   justify-content: space-between;
   width: 100%;
 }
 
 .ai-assist-button {
-  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.1);
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.06);
   border: none;
   cursor: pointer;
   color: var(--color-primary);
   padding: 4px;
   border-radius: 50%;
   margin-left: 8px;
-  min-width: 24px;
-  height: 24px;
+  min-width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.85;
+  opacity: 0.7;
   transition: all 0.2s ease;
   flex-shrink: 0;
   align-self: center;
 }
 
 .ai-assist-button:hover {
-  background-color: var(--color-primary-light);
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.1);
   opacity: 1;
   transform: scale(1.1);
-  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb, 42, 60, 151), 0.2);
 }
 
 .ai-icon {
-  width: 18px;
-  height: 18px;
-  display: block; /* Ensure block display for better centering */
+  width: 14px;
+  height: 14px;
+  display: block;
 }
 
 /* AI Modal Styles */
@@ -275,19 +299,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.65);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 .ai-modal-content {
   background-color: var(--color-background-primary);
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   width: 90%;
   max-width: 600px;
   max-height: 80vh;
@@ -295,12 +319,12 @@
   position: relative;
   animation: modal-appear 0.3s ease;
   margin: 20px;
-  border: 1px solid var(--color-border-light);
+  border: none;
 }
 
 .ai-modal-header {
   padding: 16px 20px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-light);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -309,7 +333,8 @@
 .ai-modal-header h3 {
   margin: 0;
   color: var(--color-primary);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .ai-modal-body {
@@ -319,12 +344,12 @@
 .ai-modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 22px;
   cursor: pointer;
   color: var(--color-text-secondary);
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -333,14 +358,14 @@
 }
 
 .ai-modal-close:hover {
-  background-color: var(--color-background-tertiary);
+  background-color: rgba(0, 0, 0, 0.04);
   color: var(--color-primary);
 }
 
 /* Add footer styles */
 .ai-modal-footer {
   padding: 16px 20px;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-light);
   display: flex;
   justify-content: flex-end;
 }
@@ -350,7 +375,7 @@
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s ease;
@@ -367,23 +392,24 @@
 
 /* Selected step and AI response styles */
 .selected-step-label {
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-bottom: 4px;
 }
 
 .selected-step-content {
-  background-color: var(--color-background-table-primary);
-  padding: 12px;
-  border-radius: 6px;
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.04);
+  padding: 12px 16px;
+  border-radius: 8px;
   margin-bottom: 16px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  border: none;
 }
 
 .ai-response-divider {
   height: 1px;
-  background-color: var(--color-border);
+  background-color: var(--color-border-light);
   margin: 16px 0;
 }
 
@@ -396,12 +422,10 @@
 @keyframes modal-appear {
   from {
     opacity: 0;
-    transform: translateY(-30px) scale(0.95);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
-
-/* Remove loader styles as they are now in Loader.css */

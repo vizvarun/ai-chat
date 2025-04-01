@@ -8,15 +8,16 @@ const TestPlanView: React.FC<TestPlanViewProps> = ({
   // If we have an execution plan string, display it with proper formatting
   if (executionPlan) {
     return (
-      <div className="test-plans">
+      <div className="test-plans minimal">
         <div className="test-plan-header">
           <h3 className="test-plan-title">Test Execution Plan</h3>
-          <p className="test-plan-description">
-            Generated test execution plan with guidance
-          </p>
         </div>
         <div className="test-plan-execution">
-          <pre className="execution-plan-content">{executionPlan}</pre>
+          {/* Render HTML content safely using dangerouslySetInnerHTML */}
+          <div
+            className="execution-plan-content"
+            dangerouslySetInnerHTML={{ __html: executionPlan }}
+          />
         </div>
       </div>
     );
@@ -25,7 +26,7 @@ const TestPlanView: React.FC<TestPlanViewProps> = ({
   // If no plan is provided
   if (!testPlan) {
     return (
-      <div className="test-plans empty-test-plan">
+      <div className="test-plans empty-test-plan minimal">
         <p>No test plan is available</p>
       </div>
     );
@@ -33,7 +34,7 @@ const TestPlanView: React.FC<TestPlanViewProps> = ({
 
   // Original rendering for test plan object
   return (
-    <div className="test-plans">
+    <div className="test-plans minimal">
       <div className="test-plan-header">
         <h3 className="test-plan-title">{testPlan.title}</h3>
         <p className="test-plan-description">{testPlan.description}</p>
@@ -41,9 +42,12 @@ const TestPlanView: React.FC<TestPlanViewProps> = ({
       <div className="test-plan-steps">
         <div className="steps-header">
           <svg
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            className="steps-icon"
           >
             <path
               d="M9 6L15 12L9 18"
