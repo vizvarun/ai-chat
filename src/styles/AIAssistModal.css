@@ -745,7 +745,7 @@
 
 /* Error Container - adjust alignment */
 .error-container {
-  padding: 16px;
+  padding: 8px;
   background-color: var(--color-error-light);
   border-radius: 8px;
   border-left: 3px solid var(--color-error);
@@ -753,10 +753,11 @@
   align-self: flex-start;
 }
 
-.error-message {
+.ai-error-message {
   margin: 0;
   color: var(--color-error-dark);
   font-size: 0.9rem;
+  padding: 8px;
 }
 
 /* Clean up some redundant styles that were duplicated */

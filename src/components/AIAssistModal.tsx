@@ -55,13 +55,15 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
                 <Loader size="medium" />
                 <p className="loading-text">Analyzing step...</p>
               </div>
-            ) : error ? (
+            ) : !error ? (
               <div className="error-wrapper-ai-assistant">
                 <div className="message-metadata">
                   <div className="message-sender">AI Assistant</div>
                 </div>
                 <div className="error-container">
-                  <p className="error-message">{error}</p>
+                  <p className="ai-error-message">
+                    {error ? error : "Something went wrong"}
+                  </p>
                 </div>
               </div>
             ) : (
