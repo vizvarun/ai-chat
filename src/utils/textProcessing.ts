@@ -37,23 +37,23 @@ export function markdownToHtml(markdown: string): string {
   // Handle tables
   html = html.replace(
     /^\|(.*)\|\r?\n\|([-:\|\s]+)\|\r?\n((?:\|.*\|\r?\n?)+)/gm,
-    (match, header, separator, rows) => {
+    (_match, header, _separator, rows) => {
       const headerCells = header
         .split("|")
-        .map((cell) => cell.trim())
+        .map((cell: string) => cell.trim())
         .filter(Boolean)
-        .map((cell) => `<th>${cell}</th>`)
+        .map((cell: string) => `<th>${cell}</th>`)
         .join("");
 
       const bodyRows = rows
         .trim()
         .split(/\r?\n/)
-        .map((row) => {
+        .map((row: string) => {
           const cells = row
             .split("|")
-            .map((cell) => cell.trim())
+            .map((cell: string) => cell.trim())
             .filter(Boolean)
-            .map((cell) => `<td>${cell}</td>`)
+            .map((cell: string) => `<td>${cell}</td>`)
             .join("");
           return `<tr>${cells}</tr>`;
         })
@@ -62,6 +62,30 @@ export function markdownToHtml(markdown: string): string {
       return `<table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>`;
     }
   );
+
+  const processRows = (rows: string[][]): string[][] => {
+    return rows.map((row: string[]) => {
+      return row
+        .map((cell: string) => {
+          return cell.trim();
+        })
+        .filter((cell: string) => cell.length > 0);
+    });
+  };
+
+  const processTable = (rows: string[][]): string[][] => {
+    return rows
+      .filter((row: string[]) => {
+        return row.length > 0;
+      })
+      .map((row: string[]) => {
+        return row
+          .map((cell: string) => {
+            return cell.trim();
+          })
+          .filter((cell: string) => cell.length > 0);
+      });
+  };
 
   // Convert headers: # Header -> <h1>Header</h1>
   html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
