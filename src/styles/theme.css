@@ -1,24 +1,76 @@
 :root {
-  /* Primary Colors */
-  --color-primary: #2a3c97;
-  --color-primary-light: rgba(42, 60, 151, 0.08);
-  --color-primary-dark: #22305d;
+  /* Primary brand colors */
+  --color-primary: rgba(41, 63, 150, 1);
+  --color-primary-dark: rgba(33, 50, 120, 1);
+  --color-primary-light: rgba(41, 63, 150, 0.08);
+  --color-primary-lighter: rgba(41, 63, 150, 0.05);
   --color-primary-rgb: 42, 60, 151;
 
-  /* Background Colors */
-  --color-background-primary: #fff;
-  --color-background-secondary: #f8f9fa;
-  --color-background-tertiary: #f5f5f5;
-  --color-background-quaternary: #e9ecef;
+  /* Link colors */
+  --color-link: #4752e9;
+  --color-link-hover: #3740c0;
 
-  /* Text Colors */
-  --color-text-primary: #333;
-  --color-text-secondary: #666;
-  --color-text-light: #fff;
+  /* Text colors */
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #777777;
+  --color-text-light: #ffffff;
+  --color-heading: #222222;
 
-  /* Border Colors */
-  --color-border-light: #e6e6e6;
-  --color-border: #ddd;
+  /* Background colors */
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f7fa;
+  --color-background-tertiary: #f9f9f9;
+  --color-background-quaternary: #f5f5f5;
+  --color-button-disabled: #cccccc;
+  --color-button-hover: #fafbff;
+  --color-background-table-primary: rgba(41, 63, 150, 0.12);
+
+  /* Border colors */
+  --color-border: #e0e0e0;
+  --color-border-light: #eaeaea;
+
+  /* Effect colors */
+  --color-shadow: rgba(0, 0, 0, 0.08);
+  --color-shadow-light: rgba(0, 0, 0, 0.06);
+  --color-focus-outline: rgba(71, 82, 233, 0.2);
+
+  /* Accent/Highlight colors */
+  --color-accent-blue: #3a7bd5;
+  --color-accent-purple: #6d5bf2;
+  --color-accent-primary: #4a6cf7;
+
+  /* Background gradients */
+  --color-gradient-hero-start: rgba(250, 250, 255, 0.4);
+  --color-gradient-hero-end: rgba(240, 245, 255, 0.8);
+  --color-gradient-accent: linear-gradient(
+    90deg,
+    var(--color-accent-blue),
+    var(--color-accent-purple)
+  );
+
+  /* Component specific colors */
+  --color-icon-background-start: #f0f4ff;
+  --color-icon-background-end: #e6eeff;
+  --color-icon-gradient: linear-gradient(
+    135deg,
+    var(--color-icon-background-start),
+    var(--color-icon-background-end)
+  );
+
+  /* Shadow variations */
+  --color-shadow-medium: rgba(0, 0, 0, 0.1);
+  --color-shadow-card: rgba(0, 0, 0, 0.06);
+  --color-shadow-subtle: rgba(0, 0, 0, 0.04);
+  --color-border-subtle: rgba(0, 0, 0, 0.05);
+
+  /* Shadow Colors */
+  --color-shadow: rgba(0, 0, 0, 0.12);
+  --color-shadow-light: rgba(0, 0, 0, 0.08);
+
+  /* Animation colors */
+  --color-pulse-start: rgba(74, 108, 247, 0.4);
+  --color-pulse-end: rgba(74, 108, 247, 0);
 
   /* Status Colors */
   --color-success: #4caf50;
@@ -29,14 +81,6 @@
 
   /* Button Colors */
   --color-button-disabled: #cccccc;
-
-  /* Link Colors */
-  --color-link: #2a3c97;
-  --color-link-hover: #22305d;
-
-  /* Shadow Colors */
-  --color-shadow: rgba(0, 0, 0, 0.12);
-  --color-shadow-light: rgba(0, 0, 0, 0.08);
 
   /* Overlay Colors */
   --color-overlay: rgba(0, 0, 0, 0.5);
