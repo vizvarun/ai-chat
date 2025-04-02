@@ -702,6 +702,12 @@
   box-shadow: 0 1px 3px var(--color-shadow-light);
 }
 
+.error-wrapper-ai-assistant {
+  display: flex;
+  flex-direction: column !important;
+  align-items: start;
+}
+
 .ai-message:hover .ai-copy-button {
   opacity: 1;
 }
