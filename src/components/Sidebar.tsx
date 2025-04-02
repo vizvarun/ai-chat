@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import React from "react"; // Add import for React
 import "../styles/Sidebar.css";
 
 interface SidebarProps {
@@ -10,7 +11,7 @@ interface SidebarProps {
 interface NavItem {
   path: string;
   label: string;
-  icon: JSX.Element;
+  icon: React.ReactNode; // Changed from JSX.Element to React.ReactNode
 }
 
 // Sidebar Link Component
