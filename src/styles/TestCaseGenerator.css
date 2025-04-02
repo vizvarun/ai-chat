@@ -226,7 +226,6 @@
 
 .loading-text {
   font-style: italic;
-  margin-top: 0.5rem; /* Reduced from 1rem to create tighter spacing */
 }
 
 @keyframes spin {

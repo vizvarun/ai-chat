@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--color-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,7 +18,7 @@
 .ai-modal-content {
   background-color: var(--color-background-primary);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px var(--color-shadow);
   width: 90%;
   max-width: 700px;
   max-height: 85vh;
@@ -44,8 +44,8 @@
 
 .ai-modal-header h3 {
   margin: 0;
-  color: var(--color-primary);
-  font-size: 1.15rem;
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: -0.2px;
 }
@@ -67,8 +67,8 @@
 }
 
 .ai-modal-close:hover {
-  background-color: var(--color-background-quaternary);
-  color: var(--color-primary);
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-primary);
 }
 
 /* Modal Body */
@@ -133,7 +133,7 @@
 }
 
 .ai-error .error-icon {
-  color: #d32f2f;
+  color: var(--color-error-dark);
   margin-bottom: 1rem;
 }
 
@@ -200,6 +200,17 @@
   overflow-wrap: break-word;
   word-break: break-word;
   line-height: 1.5;
+  padding-right: 16px; /* Reset padding to normal */
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
+  border-top-left-radius: 2px;
+  border-top-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  position: relative;
+  align-self: flex-start;
+  max-width: 85%;
 }
 
 .ai-bot-message {
@@ -212,32 +223,11 @@
 
 /* Copy Button at bottom */
 .copy-button-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 4px;
-  margin-bottom: 8px;
+  display: none;
 }
 
 .copy-button-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: var(--color-background-tertiary);
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border-light);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.copy-button-icon:hover {
-  background-color: var(--color-background-quaternary);
-  color: var(--color-primary);
-  transform: translateY(-1px);
-}
-
-.copy-button-icon:active {
-  transform: translateY(0);
+  display: none;
 }
 
 /* Remove unused CSS */
@@ -254,10 +244,75 @@
 }
 
 /* Response Content */
+.ai-response-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
 .ai-response-content {
   line-height: 1.6;
   color: var(--color-text-primary);
-  padding: 8px;
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.06);
+  padding: 16px 20px;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* Copy button styling */
+.response-copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+}
+
+.ai-response-content:hover .response-copy-button {
+  opacity: 1;
+}
+
+.response-copy-button:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.response-copy-button:active {
+  transform: translateY(0);
+}
+
+.response-copy-button.copied {
+  background-color: var(--color-success);
+  color: var(--color-text-light);
+  border-color: var(--color-success);
+}
+
+.copy-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 0; /* Hide the text in normal state */
+}
+
+.copy-feedback svg {
+  margin: 0 auto;
 }
 
 /* Typography styling for the AI response content */
@@ -365,7 +420,7 @@
 
 /* Modal Footer */
 .ai-modal-footer {
-  padding: 16px 20px;
+  padding: 14px 20px;
   border-top: 1px solid var(--color-border-light);
   display: flex;
   justify-content: flex-end;
@@ -377,19 +432,19 @@
 
 .ai-modal-close-btn {
   background-color: var(--color-primary);
-  color: white;
+  color: var(--color-text-light);
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+  font-size: 0.9rem;
   transition: all 0.2s ease;
 }
 
 .ai-modal-close-btn:hover {
   background-color: var(--color-primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .ai-modal-close-btn:active {
@@ -406,4 +461,359 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* Add these styles to your existing CSS file */
+
+.ai-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.loading-text {
+  margin-top: 12px;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* Chat container */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+/* Chat message common styles */
+.chat-message {
+  display: flex;
+  gap: 12px;
+  max-width: 100%;
+}
+
+.message-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.user-avatar {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.ai-avatar {
+  background-color: var(--color-background-quaternary);
+  color: var(--color-text-primary);
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100% - 48px);
+  position: relative;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  position: relative;
+  word-break: break-word;
+}
+
+.user-bubble {
+  background-color: var(--color-primary);
+  color: white;
+  border-top-right-radius: 4px;
+}
+
+.ai-bubble {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-light);
+  border-top-left-radius: 4px;
+  padding: 0;
+}
+
+.message-info {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+/* AI response content inside chat bubble */
+.ai-bubble .ai-response-content {
+  background-color: transparent;
+  padding: 16px;
+  margin: 0;
+}
+
+/* Copy button positioning inside message bubble */
+.ai-bubble .response-copy-button {
+  top: 8px;
+  right: 8px;
+}
+
+/* Hide the old selected step content since we've replaced it */
+.selected-step-label,
+.selected-step-content,
+.ai-response-divider {
+  display: none;
+}
+
+/* Loading state inside chat */
+.ai-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin-left: 48px; /* Align with AI message */
+}
+
+/* Error state inside chat */
+.ai-error-state {
+  padding: 16px;
+  margin-left: 48px; /* Align with AI message */
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 8px;
+}
+
+.ai-response-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Chat Container */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Message Groups */
+.message-group {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+/* Message Metadata */
+.message-metadata {
+  display: flex;
+  margin-bottom: 6px;
+  padding: 0 4px;
+}
+
+.user-group .message-metadata {
+  justify-content: flex-end;
+}
+
+.message-sender {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.user-group .message-sender {
+  color: var(--color-primary);
+}
+
+.ai-group .message-sender {
+  color: var(--color-text-secondary);
+}
+
+/* Message Bubbles */
+.message-bubble {
+  border-radius: 12px;
+  padding: 14px 16px;
+  position: relative;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.message-bubble p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.message-bubble p:not(:last-child) {
+  margin-bottom: 12px;
+}
+
+/* User Message - now positioned on the right */
+.user-message {
+  background-color: var(--color-primary-light);
+  color: var(--color-text-primary);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  align-self: flex-end;
+  max-width: 85%;
+  text-align: left;
+}
+
+/* AI Message - positioned on the left */
+.ai-message {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
+  border-top-left-radius: 2px;
+  border-top-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  position: relative;
+  align-self: flex-start;
+  max-width: 85%;
+  padding-right: 16px;
+}
+
+/* Copy Button - positioned using transform for better responsiveness */
+.ai-copy-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--color-background-primary);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  z-index: 5;
+  /* Use transform to position the button half outside the bubble */
+  transform: translate(50%, -50%);
+  padding: 0;
+  box-shadow: 0 1px 3px var(--color-shadow-light);
+}
+
+.ai-message:hover .ai-copy-button {
+  opacity: 1;
+}
+
+.ai-copy-button:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+  transform: translate(50%, -50%) translateY(-2px); /* Keep the 50% positioning when hovering */
+  box-shadow: 0 3px 6px var(--color-shadow);
+}
+
+.ai-copy-button:active {
+  transform: translate(50%, -50%); /* Keep the 50% positioning when active */
+}
+
+.ai-copy-button.copied {
+  background-color: var(--color-success);
+  color: var(--color-text-light);
+  opacity: 1;
+  border-color: var(--color-success-dark);
+}
+
+/* Loading Container - adjust alignment */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--color-text-secondary);
+  align-self: flex-start; /* Align with AI message on the left */
+  margin-left: 0;
+  width: 100%;
+}
+
+/* Error Container - adjust alignment */
+.error-container {
+  padding: 16px;
+  background-color: var(--color-error-light);
+  border-radius: 8px;
+  border-left: 3px solid var(--color-error);
+  margin: 0 0 16px;
+  align-self: flex-start;
+}
+
+.error-message {
+  margin: 0;
+  color: var(--color-error-dark);
+  font-size: 0.9rem;
+}
+
+/* Clean up some redundant styles that were duplicated */
+.ai-loading-state,
+.ai-error-state {
+  display: none; /* Hide old loading states that might be conflicting */
+}
+
+/* Typography styling for the AI content */
+.ai-content h1,
+.ai-content h2,
+.ai-content h3,
+.ai-content h4 {
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.ai-content h1 {
+  font-size: 1.3rem;
+  margin-top: 0;
+}
+
+.ai-content h2 {
+  font-size: 1.2rem;
+}
+
+.ai-content h3 {
+  font-size: 1.1rem;
+}
+
+.ai-content h4 {
+  font-size: 1rem;
+}
+
+.ai-content p {
+  margin-bottom: 1em;
+}
+
+.ai-content ul,
+.ai-content ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.ai-content li {
+  margin-bottom: 0.4em;
+}
+
+.ai-content code {
+  background-color: var(--color-code-bg);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.ai-content pre {
+  background-color: var(--color-pre-bg);
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  margin: 1em 0;
+  border: 1px solid var(--color-pre-border);
 }
