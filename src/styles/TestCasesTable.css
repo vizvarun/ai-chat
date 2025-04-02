@@ -900,18 +900,3 @@ td.sticky-column {
   margin-bottom: 1.5rem;
   color: var(--color-text-secondary);
 }
-
-.ai-error .retry-button {
-  background-color: var(--color-primary);
-  color: var(--color-text-light);
-  border: none;
-  padding: 0.6rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.ai-error .retry-button:hover {
-  background-color: var(--color-primary-dark);
-}

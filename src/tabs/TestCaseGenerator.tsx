@@ -54,13 +54,11 @@ const TestCaseGenerator = () => {
     );
   };
 
-  // Generate test cases using API call
   const generateTestCases = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Add a timeout to cancel the request if it takes too long
       const timeoutId = setTimeout(() => {
         setLoading(false);
         setError("Request timed out. Please try again later.");
@@ -70,11 +68,8 @@ const TestCaseGenerator = () => {
         title,
         description
       );
-
-      // Clear timeout as request succeeded
       clearTimeout(timeoutId);
 
-      // Check if we got any useful data
       if (
         (!response.testCases || response.testCases.length === 0) &&
         (!response.testPlans || response.testPlans.length === 0) &&
@@ -85,14 +80,11 @@ const TestCaseGenerator = () => {
         );
       } else {
         setGeneratedData(response);
-        setInputCollapsed(true); // Auto-collapse input section when results are ready
-
-        // Store current values as last submitted and mark form as not dirty
+        setInputCollapsed(true);
         setLastSubmitted({ title, description });
         setFormDirty(false);
       }
     } catch (err: any) {
-      // Enhanced error handling with more specific messages
       if (err.response) {
         if (err.response.status === 429) {
           setError("Too many requests. Please wait a moment and try again.");
@@ -116,14 +108,12 @@ const TestCaseGenerator = () => {
     }
   };
 
-  // Reset form to last submitted state or empty if never submitted
   const resetForm = () => {
     setTitle("");
     setDescription("");
     setFormDirty(false);
   };
 
-  // Change to test cases tab if there are test cases but no test plans
   useEffect(() => {
     if (generatedData) {
       const hasTestPlans =
@@ -138,19 +128,16 @@ const TestCaseGenerator = () => {
     }
   }, [generatedData]);
 
-  // Determine if test plans tab should be enabled
   const hasTestPlansContent =
     generatedData &&
     ((generatedData.testPlans && generatedData.testPlans.length > 0) ||
       !!generatedData.testExecutionPlan);
 
-  // Determine if test cases tab should be enabled
   const hasTestCasesContent =
     generatedData &&
     generatedData.testCases &&
     generatedData.testCases.length > 0;
 
-  // Render empty state when no test cases or plans are available
   const renderEmptyState = () => (
     <div className="empty-results">
       <p>
@@ -293,9 +280,7 @@ const TestCaseGenerator = () => {
         <div className="loading">
           <div className="loader-with-text">
             <Loader size="medium" />
-            <p className="loading-text">
-              Generating test cases, please wait...
-            </p>
+            <p className="loading-text">Processing, please wait...</p>
           </div>
         </div>
       )}

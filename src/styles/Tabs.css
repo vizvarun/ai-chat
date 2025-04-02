@@ -33,12 +33,10 @@
   border: 1px solid #eaeaea; /* Lighter border */
   overflow-y: auto; /* Changed from hidden to auto to enable scrolling */
   position: relative; /* Ensure positioned context for children */
-  max-height: calc(100% - 28px); /* Added to account for smaller breadcrumbs */
 }
 
 .content-area.scrollable {
   overflow-y: auto; /* Keep this as auto */
-  max-height: calc(100vh - 180px); /* Leave room for header and footer */
 }
 
 .placeholder-content {

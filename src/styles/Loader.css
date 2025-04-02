@@ -27,6 +27,12 @@
   gap: 0.5rem; /* Small gap between loader and text */
 }
 
+.text-msg {
+  font: 1em sans-serif;
+  font-weight: 500;
+  color: #000;
+}
+
 .animated-loader {
   display: flex;
   align-items: center;

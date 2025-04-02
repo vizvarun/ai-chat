@@ -229,20 +229,6 @@
 .copy-button-icon {
   display: none;
 }
-
-/* Remove unused CSS */
-.message-container,
-.message-wrapper,
-.bot-message-wrapper,
-.message,
-.bot-message,
-.copy-button-container,
-.copy-button,
-.message-actions,
-.action-button {
-  display: none;
-}
-
 /* Response Content */
 .ai-response-container {
   position: relative;
@@ -463,14 +449,17 @@
   }
 }
 
-/* Add these styles to your existing CSS file */
-
-.ai-loading-state {
+/* Loading Container */
+.loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 24px;
+  color: var(--color-text-secondary);
+  align-self: flex-start;
+  margin-left: 0;
+  width: 100%;
 }
 
 .loading-text {
@@ -480,125 +469,12 @@
   font-weight: 500;
 }
 
-/* Chat container */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-}
-
-/* Chat message common styles */
-.chat-message {
-  display: flex;
-  gap: 12px;
-  max-width: 100%;
-}
-
-.message-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.user-avatar {
-  background-color: var(--color-primary);
-  color: white;
-}
-
-.ai-avatar {
-  background-color: var(--color-background-quaternary);
-  color: var(--color-text-primary);
-}
-
-.message-content {
-  display: flex;
-  flex-direction: column;
-  max-width: calc(100% - 48px);
-  position: relative;
-}
-
-.message-bubble {
-  padding: 12px 16px;
-  border-radius: 12px;
-  position: relative;
-  word-break: break-word;
-}
-
-.user-bubble {
-  background-color: var(--color-primary);
-  color: white;
-  border-top-right-radius: 4px;
-}
-
-.ai-bubble {
-  background-color: var(--color-background-secondary);
-  border: 1px solid var(--color-border-light);
-  border-top-left-radius: 4px;
-  padding: 0;
-}
-
-.message-info {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  margin-top: 4px;
-  margin-left: 4px;
-}
-
-/* AI response content inside chat bubble */
-.ai-bubble .ai-response-content {
-  background-color: transparent;
-  padding: 16px;
-  margin: 0;
-}
-
-/* Copy button positioning inside message bubble */
-.ai-bubble .response-copy-button {
-  top: 8px;
-  right: 8px;
-}
-
-/* Hide the old selected step content since we've replaced it */
-.selected-step-label,
-.selected-step-content,
-.ai-response-divider {
-  display: none;
-}
-
-/* Loading state inside chat */
-.ai-loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  margin-left: 48px; /* Align with AI message */
-}
-
-/* Error state inside chat */
-.ai-error-state {
-  padding: 16px;
-  margin-left: 48px; /* Align with AI message */
-  background-color: rgba(244, 67, 54, 0.1);
-  border-radius: 8px;
-}
-
-.ai-response-container {
-  position: relative;
-  width: 100%;
-}
-
 /* Chat Container */
 .chat-container {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
 }
 
 /* Message Groups */
@@ -650,7 +526,7 @@
   margin-bottom: 12px;
 }
 
-/* User Message - now positioned on the right */
+/* User Message - positioned on the right */
 .user-message {
   background-color: var(--color-primary-light);
   color: var(--color-text-primary);
@@ -678,7 +554,7 @@
   padding-right: 16px;
 }
 
-/* Copy Button - positioned using transform for better responsiveness */
+/* Copy Button */
 .ai-copy-button {
   position: absolute;
   top: 0;
@@ -696,7 +572,6 @@
   opacity: 0;
   transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
   z-index: 5;
-  /* Use transform to position the button half outside the bubble */
   transform: translate(50%, -50%);
   padding: 0;
   box-shadow: 0 1px 3px var(--color-shadow-light);
@@ -715,12 +590,12 @@
 .ai-copy-button:hover {
   background-color: var(--color-background-tertiary);
   color: var(--color-primary);
-  transform: translate(50%, -50%) translateY(-2px); /* Keep the 50% positioning when hovering */
+  transform: translate(50%, -50%) translateY(-2px);
   box-shadow: 0 3px 6px var(--color-shadow);
 }
 
 .ai-copy-button:active {
-  transform: translate(50%, -50%); /* Keep the 50% positioning when active */
+  transform: translate(50%, -50%);
 }
 
 .ai-copy-button.copied {
@@ -730,20 +605,7 @@
   border-color: var(--color-success-dark);
 }
 
-/* Loading Container - adjust alignment */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  color: var(--color-text-secondary);
-  align-self: flex-start; /* Align with AI message on the left */
-  margin-left: 0;
-  width: 100%;
-}
-
-/* Error Container - adjust alignment */
+/* Error Container */
 .error-container {
   padding: 8px;
   background-color: var(--color-error-light);
@@ -758,12 +620,6 @@
   color: var(--color-error-dark);
   font-size: 0.9rem;
   padding: 8px;
-}
-
-/* Clean up some redundant styles that were duplicated */
-.ai-loading-state,
-.ai-error-state {
-  display: none; /* Hide old loading states that might be conflicting */
 }
 
 /* Typography styling for the AI content */

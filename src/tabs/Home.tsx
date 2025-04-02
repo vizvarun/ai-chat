@@ -68,8 +68,8 @@ const Home = () => {
               </div>
               <div
                 className="tool-card"
-                onClick={() => navigate("/chat-with-maggi")}
-                aria-label="Chat with Maggi"
+                onClick={() => navigate("/resume-screener")}
+                aria-label="Resume Screener"
               >
                 <div className="tool-icon">
                   <svg
@@ -80,13 +80,17 @@ const Home = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <line x1="10" y1="9" x2="8" y2="9"></line>
                   </svg>
                 </div>
-                <h2 className="tool-title">Chat with Maggi</h2>
+                <h2 className="tool-title">Resume Screener</h2>
                 <p className="tool-description">
-                  Get interactive help with testing scenarios and real-time
-                  guidance from our AI assistant
+                  Analyze resumes efficiently with AI to identify top candidates
+                  based on skills, experience, and job requirements
                 </p>
                 <div className="tool-action">
                   Get started
@@ -138,13 +142,37 @@ const Home = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <line x1="10" y1="9" x2="8" y2="9"></line>
+                  </svg>
+                </div>
+                <h3 className="feature-title">Resume Analysis</h3>
+                <p className="feature-description">
+                  Quickly evaluate candidate profiles with AI-powered screening
+                  to match job requirements
+                </p>
+              </div>
+
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                   </svg>
                 </div>
-                <h3 className="feature-title">Interactive Chat</h3>
+                <h3 className="feature-title">Interactive AI Chat</h3>
                 <p className="feature-description">
-                  Get real-time guidance and answers from our intelligent
-                  testing assistant
+                  Get instant help and guidance with our interactive AI-based
+                  chat assistant at any point in your workflow
                 </p>
               </div>
 
@@ -170,7 +198,7 @@ const Home = () => {
                 </p>
               </div>
 
-              <div className="feature-item">
+              {/* <div className="feature-item">
                 <div className="feature-icon">
                   <svg
                     viewBox="0 0 24 24"
@@ -188,7 +216,7 @@ const Home = () => {
                   Hands-free operation with voice recognition for efficient
                   workflow
                 </p>
-              </div>
+              </div> */}
             </div>
           </section>
         </div>

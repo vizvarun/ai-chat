@@ -53,7 +53,7 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
             {loading ? (
               <div className="loading-container">
                 <Loader size="medium" />
-                <p className="loading-text">Analyzing step...</p>
+                <p className="loading-text">Processing, please wait...</p>
               </div>
             ) : error ? (
               <div className="error-wrapper-ai-assistant">

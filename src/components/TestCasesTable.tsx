@@ -16,16 +16,13 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   >({});
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // Use only the test cases provided through props
   const testCasesData = useMemo(() => {
     return Array.isArray(testCases) ? testCases : [];
   }, [testCases]);
 
-  // Extract dynamic column headers from data
   const columnHeaders = useMemo(() => {
     if (!Array.isArray(testCasesData) || testCasesData.length === 0) {
       return [];
@@ -33,23 +30,17 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
 
     return Object.keys(testCasesData[0]);
   }, [testCasesData]);
-
-  // Check for data validity
   useEffect(() => {
     try {
-      // Validate if testCasesData is an array
       if (!Array.isArray(testCasesData)) {
         setHasError(true);
         return;
       }
-
-      // Check if we have any test cases
       if (testCasesData.length === 0) {
-        setHasError(false); // Not an error, just empty
+        setHasError(false);
         return;
       }
 
-      // Check if each test case has some minimal structure
       const isValid = testCasesData.every(
         (testCase) => testCase && typeof testCase === "object"
       );
@@ -61,7 +52,6 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     }
   }, [testCasesData]);
 
-  // Generate all possible section IDs on initial load and set them to collapsed
   useEffect(() => {
     const initialExpandedState: Record<string, boolean> = {};
 
@@ -69,14 +59,13 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
       testCasesData.forEach((testCase, rowIndex) => {
         const testCaseId = `row-${rowIndex}`;
 
-        // Check all properties of the test case for arrays
         Object.entries(testCase).forEach(([key, value]) => {
           if (
             Array.isArray(value) &&
             value.length > 0 &&
             typeof value[0] === "object"
           ) {
-            initialExpandedState[`${testCaseId}-${key}`] = false; // Default to collapsed
+            initialExpandedState[`${testCaseId}-${key}`] = false;
           }
         });
       });
@@ -85,9 +74,7 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     setExpandedSections(initialExpandedState);
   }, [testCasesData]);
 
-  // Toggle expanded state for nested sections - simplified to ensure single click works
   const toggleExpandSection = (id: string, e: React.MouseEvent) => {
-    // Prevent event bubbling
     e.stopPropagation();
 
     setExpandedSections((prev) => ({
@@ -96,7 +83,6 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     }));
   };
 
-  // If there's an error, show error message
   if (hasError) {
     return (
       <div className="test-cases-error-container">
@@ -150,7 +136,6 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     );
   }
 
-  // Check if test cases array is empty
   if (!Array.isArray(testCasesData) || testCasesData.length === 0) {
     return (
       <div className="test-cases-error-container">
@@ -208,15 +193,14 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
 
     const aiApiUrl = import.meta.env.VITE_AI_API_URL;
 
-    // Define the request payload
     const requestData = {
-      userId: "user123", // This could be made dynamic in the future
+      userId: "user123",
       userType: "msp",
       chatId: chatId,
       messages: [
         {
           role: "user",
-          content: stepDescription, // Providing context to the AI
+          content: stepDescription,
         },
       ],
       tools: [
@@ -501,7 +485,6 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
                                 </button>
                               </div>
                             ) : item[header] !== undefined ? (
-                              // Recursively handle nested objects and arrays
                               typeof item[header] === "object" ? (
                                 renderCellContent(
                                   header,

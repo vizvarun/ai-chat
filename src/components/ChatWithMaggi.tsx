@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import "../styles/ChatWithMaggi.css";
 import { MessageType, SpeakingStateRecord } from "../types/chatTypes";
+import axiosInstance from "../services/api/axios";
+import { API_CONFIG } from "../config/env";
 
-// Define a type for SpeechRecognition event
 interface SpeechRecognitionEvent {
   results: {
     [index: number]: {
@@ -14,8 +15,20 @@ interface SpeechRecognitionEvent {
   error?: string;
 }
 
-const ChatWithMaggi = () => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+interface ChatWithMaggiProps {
+  apiEndpoint: string;
+  createApiBody: (message: string) => any;
+  onError?: (error: any) => void;
+  initialMessages?: MessageType[];
+}
+
+const ChatWithMaggi: React.FC<ChatWithMaggiProps> = ({
+  apiEndpoint,
+  createApiBody,
+  onError,
+  initialMessages = [],
+}) => {
+  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState<SpeakingStateRecord>({});
@@ -24,7 +37,6 @@ const ChatWithMaggi = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null); // Use any temporarily
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -34,7 +46,6 @@ const ChatWithMaggi = () => {
     inputRef.current?.focus();
   }, []);
 
-  // Initialize and clean up speech recognition
   useEffect(() => {
     // Check if browser supports speech recognition
     if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
@@ -57,19 +68,16 @@ const ChatWithMaggi = () => {
         setInputMessage(transcript);
       };
 
-      // Handle end of speech
       recognition.onend = () => {
         setIsListening(false);
       };
 
-      // Handle errors
       recognition.onerror = (event: { error?: string }) => {
         console.error("Speech recognition error", event.error);
         setIsListening(false);
       };
     }
 
-    // Clean up
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.abort();
@@ -77,14 +85,12 @@ const ChatWithMaggi = () => {
     };
   }, []);
 
-  // Focus the input field after getting a response
   useEffect(() => {
     if (!isLoading && messages.length > 0) {
       inputRef.current?.focus();
     }
   }, [isLoading, messages.length]);
 
-  // Toggle speech recognition
   const toggleListening = () => {
     if (!recognitionRef.current) {
       alert("Speech recognition is not supported in your browser.");
@@ -123,29 +129,54 @@ const ChatWithMaggi = () => {
     setMessages((prev) => [...prev, newUserMessage, loadingBotMessage]);
     setInputMessage("");
     setIsLoading(true);
+    const requestBody = createApiBody(newUserMessage.text);
+    axiosInstance
+      .post(apiEndpoint, requestBody, {
+        timeout: API_CONFIG.TIMEOUT,
+      })
+      .then((response) => {
+        const responseText =
+          response?.data?.choices?.[0]?.message?.content ||
+          "Sorry, I couldn't process your request.";
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === botMessageId
+              ? {
+                  id: botMessageId,
+                  text: responseText,
+                  sender: "bot",
+                  loading: false,
+                }
+              : msg
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error getting chat response:", error);
+        if (onError) {
+          onError(error);
+        }
+        const errorMessage =
+          error.code === "ECONNABORTED"
+            ? "The request timed out. Please try again later."
+            : "Sorry, there was an error processing your request. Please try again.";
 
-    // Mock API call with timeout
-    setTimeout(() => {
-      // Replace loading message with actual response
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === botMessageId
-            ? {
-                id: botMessageId,
-                text:
-                  "Here's a response to your question about " +
-                  inputMessage +
-                  ". I can provide more details if needed. This is a simulated response that would typically come from an API call to a real backend service.",
-                sender: "bot",
-                loading: false,
-              }
-            : msg
-        )
-      );
-      setIsLoading(false);
-
-      // Textarea will get focus automatically thanks to the useEffect above
-    }, 2000);
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === botMessageId
+              ? {
+                  id: botMessageId,
+                  text: errorMessage,
+                  sender: "bot",
+                  loading: false,
+                }
+              : msg
+          )
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -159,7 +190,6 @@ const ChatWithMaggi = () => {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        // Show temporary notification (you could add a toast notification here)
         console.log("Copied to clipboard!");
       })
       .catch((err) => {
@@ -168,35 +198,27 @@ const ChatWithMaggi = () => {
   };
 
   const handleFeedback = (type: "good" | "bad", messageId: string) => {
-    // This would send feedback to the server in a real implementation
     console.log(`User gave ${type} feedback for message ${messageId}`);
-    // You could implement visual feedback here (like changing the button color)
   };
 
   const handleTextToSpeech = (text: string, messageId: string) => {
     if ("speechSynthesis" in window) {
-      // If already speaking this message, stop it
       if (isSpeaking[messageId]) {
         window.speechSynthesis.cancel();
         setIsSpeaking((prev) => ({ ...prev, [messageId]: false }));
         return;
       }
-
-      // Cancel any other ongoing speech
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
 
-      // Set as speaking
       setIsSpeaking((prev) => ({ ...prev, [messageId]: true }));
 
-      // When speech ends
       utterance.onend = () => {
         setIsSpeaking((prev) => ({ ...prev, [messageId]: false }));
       };
 
-      // If there's an error
       utterance.onerror = () => {
         setIsSpeaking((prev) => ({ ...prev, [messageId]: false }));
         console.error("Speech synthesis error");
@@ -208,15 +230,24 @@ const ChatWithMaggi = () => {
     }
   };
 
+  console.log("messages", messages);
+
   return (
     <div className="chat-content">
-      <div className="chat-messages-container">
+      <div className="ai-chat-messages-container">
         {messages.length === 0 ? (
-          <div className="empty-chat-state">
-            <div className="empty-chat-prompt">
-              <h3>What can I help you with?</h3>
-              <p>Ask me anything about your test cases or requirements</p>
+          <div className="assistant-welcome">
+            <div className="assistant-welcome-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2C8.14 2 5 5.14 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.14 15.86 2 12 2ZM9 21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V20H9V21ZM12 4C14.76 4 17 6.24 17 9C17 11.76 14.76 14 12 14C9.24 14 7 11.76 7 9C7 6.24 9.24 4 12 4ZM11 9.5H10V10.5H11V9.5ZM14 9.5H13V10.5H14V9.5Z" />
+              </svg>
             </div>
+            <h4>Hello! I'm your AI Assistant</h4>
+            <p>Ask me anything about your test cases or requirements</p>
           </div>
         ) : (
           <div className="chat-messages">
@@ -225,14 +256,16 @@ const ChatWithMaggi = () => {
                 key={message.id}
                 className={`message-wrapper ${
                   message.sender === "user"
-                    ? "user-message-wrapper"
-                    : "bot-message-wrapper"
+                    ? "ai-user-message-wrapper"
+                    : "ai-bot-message-wrapper"
                 }`}
               >
                 <div className="message-container">
                   <div
                     className={`message ${
-                      message.sender === "user" ? "user-message" : "bot-message"
+                      message?.sender === "user"
+                        ? "ai-user-message"
+                        : "ai-bot-message"
                     }`}
                   >
                     {message.loading ? (
@@ -363,7 +396,7 @@ const ChatWithMaggi = () => {
         <textarea
           ref={inputRef}
           className="chat-input"
-          placeholder="Type your message here..."
+          placeholder="Type here..."
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={handleKeyDown}

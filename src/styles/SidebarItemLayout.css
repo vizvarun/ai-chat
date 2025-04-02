@@ -1,49 +1,301 @@
-/* Update styles to match tab-container approach */
+/* Base layout styles */
+.layout-container {
+  display: flex;
+  width: 100%;
+  height: calc(100% - 40px); /* Account for Breadcrumbs height */
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.content-area {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+  background-color: var(--color-background-primary, white);
+  transition: width 0.3s ease;
+  position: relative; /* Added to position the toggle button relative to content */
+}
+
+.content-area.scrollable {
+  overflow: auto;
+}
+
 .sidebar-item-main-content {
   flex: 1;
   overflow: auto;
-  margin-bottom: 1rem;
 }
 
-.sidebar-item-chat-section {
+/* VS Code style assistant panel */
+.assistant-panel {
+  width: 320px;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  overflow-y: auto; /* Changed from hidden to auto to enable scrolling */
+  position: relative; /* Ensure positioned context for children */
+  transition: width 0.3s ease;
+  margin-left: 12px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Lighter shadow */
 }
 
-.toggle-chat-button {
-  padding: 0.5rem 1rem;
-  background-color: var(--color-primary);
+/* Remove transition when closing the panel */
+.assistant-panel.no-animation {
+  transition: none;
+}
+
+/* Assistant header styling - enhanced with icon */
+.assistant-header {
+  padding: 10px 16px;
+  background-color: var(--color-primary, #4a86e8);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.assistant-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assistant-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.assistant-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.assistant-close-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.assistant-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* AI Assistant toggle button - repositioned to middle right */
+.assistant-toggle-btn {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary, #4a86e8);
+  color: white;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 100;
+  transition: background-color 0.2s;
+  padding: 4px 6px 4px 8px;
+}
+
+.assistant-toggle-btn:hover {
+  background-color: var(--color-primary-dark, #3a76d8);
+}
+
+.assistant-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Assistant content area - enhanced design */
+.assistant-content {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* Welcome message styling */
+.assistant-welcome {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: var(--color-background-secondary);
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.assistant-welcome-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-light, #e6effd);
+  color: var(--color-primary, #4a86e8);
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
+
+.assistant-welcome-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.assistant-welcome h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-primary, #333);
+}
+
+.assistant-welcome p {
+  margin: 0 0 16px 0;
+  color: var(--color-text-secondary, #666);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.assistant-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.assistant-suggestion-btn {
+  padding: 8px 12px;
+  background-color: var(--color-background-secondary, #f5f5f5);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.assistant-suggestion-btn:hover {
+  background-color: var(--color-background-hover, #efefef);
+}
+
+/* ChatWithMaggi wrapper */
+.chat-with-maggi-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Chat messages styling */
+.chat-message {
+  padding: 10px 16px;
+  margin: 8px 12px;
+  border-radius: 8px;
+  max-width: 85%;
+  word-break: break-word;
+}
+
+.chat-message-user {
+  align-self: flex-end;
+  background-color: var(--color-primary, #4a86e8);
+  color: white;
+  margin-left: auto;
+  margin-right: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message-assistant {
+  align-self: flex-start;
+  background-color: white;
+  color: var(--color-text-primary, #333);
+  margin-right: auto;
+  margin-left: 12px;
+  border: 1px solid var(--color-border, #e0e0e0);
+}
+
+/* Chat messages container */
+.chat-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+/* Chat input area */
+.chat-input-container {
+  padding: 12px;
+  background-color: white;
+  border-top: 1px solid var(--color-border, #e0e0e0);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-input {
+  flex: 1;
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: inherit;
+  resize: none;
+  min-height: 40px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.chat-send-btn {
+  background-color: var(--color-primary, #4a86e8);
   color: white;
   border: none;
   border-radius: 4px;
+  padding: 8px 12px;
   cursor: pointer;
-  align-self: flex-end;
-  margin-bottom: 1rem;
-  font-weight: 500;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  height: 40px;
 }
 
-.toggle-chat-button:hover {
-  background-color: var(--color-primary-dark);
-  transform: translateY(-2px);
+.chat-send-btn:hover {
+  background-color: var(--color-primary-dark, #3a76d8);
 }
 
-.toggle-chat-button:active {
-  transform: translateY(0);
-}
-
-.sidebar-chat-container {
-  height: 500px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: var(--color-background-primary);
-  box-shadow: 0 2px 8px var(--color-shadow);
-}
-
-/* Media query for smaller screens */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .sidebar-chat-container {
-    height: 400px;
+  .assistant-panel {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout-container.with-assistant {
+    display: block;
+  }
+
+  .assistant-panel {
+    position: fixed;
+    top: 40px; /* Account for Breadcrumbs */
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 100;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   }
 }

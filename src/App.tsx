@@ -6,7 +6,7 @@ import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Home from "./tabs/Home";
 import TestCaseGenerator from "./tabs/TestCaseGenerator";
-import ResumeScreening from "./tabs/ResumeScreening";
+import ResumeScreener from "./tabs/ResumeScreener";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -52,7 +52,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/test-case-generator" element={<TestCaseGenerator />} />
-          <Route path="/resume-screening" element={<ResumeScreening />} />
+          <Route path="/resume-screener" element={<ResumeScreener />} />
           {/* Removed ChatWithMaggi route as it's now a component */}
         </Routes>
       </main>

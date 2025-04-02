@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SidebarItemLayout from "../components/SidebarItemLayout";
-import "../styles/ResumeScreening.css";
+import "../styles/ResumeScreener.css";
 
 const ResumeScreening = () => {
   const [showChat, setShowChat] = useState(false);

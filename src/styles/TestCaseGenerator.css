@@ -244,6 +244,8 @@
 
 .loading-text {
   font-style: italic;
+  margin-top: -12px !important;
+  margin-bottom: 12px !important;
 }
 
 @keyframes spin {
