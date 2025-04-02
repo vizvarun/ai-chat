@@ -210,6 +210,7 @@ const TestCaseGenerator = () => {
               value={title}
               onChange={handleTitleChange}
               placeholder="e.g., User Authentication Feature"
+              className="color-primary"
             />
           </div>
           <div className="input-field">
@@ -219,6 +220,7 @@ const TestCaseGenerator = () => {
               value={description}
               onChange={handleDescriptionChange}
               placeholder="Provide a detailed description of the story..."
+              className="color-primary"
             />
           </div>
 

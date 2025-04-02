@@ -66,6 +66,11 @@
   margin-bottom: 0; /* Ensure no extra margin */
 }
 
+/* Make the story title label use primary color */
+.input-field label {
+  color: var(--color-primary);
+}
+
 .input-field input,
 .input-field textarea {
   padding: 0.6rem; /* Reduced padding */
@@ -74,6 +79,19 @@
   font-family: "Work Sans", sans-serif;
   font-size: 0.95rem;
   width: 100%;
+}
+
+/* Add styling for color-primary class */
+.input-field input.color-primary,
+.input-field textarea.color-primary {
+  border-color: var(--color-primary-light);
+}
+
+.input-field input.color-primary:focus,
+.input-field textarea.color-primary:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-lighter);
+  outline: none;
 }
 
 .input-field textarea {
