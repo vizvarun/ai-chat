@@ -1,0 +1,49 @@
+/* Update styles to match tab-container approach */
+.sidebar-item-main-content {
+  flex: 1;
+  overflow: auto;
+  margin-bottom: 1rem;
+}
+
+.sidebar-item-chat-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-chat-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-end;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.toggle-chat-button:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.toggle-chat-button:active {
+  transform: translateY(0);
+}
+
+.sidebar-chat-container {
+  height: 500px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--color-background-primary);
+  box-shadow: 0 2px 8px var(--color-shadow);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .sidebar-chat-container {
+    height: 400px;
+  }
+}

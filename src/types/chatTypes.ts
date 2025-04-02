@@ -7,9 +7,7 @@ export interface MessageType {
 }
 
 // Record type for tracking which messages are being spoken
-export interface SpeakingStateRecord {
-  [key: string]: boolean;
-}
+export type SpeakingStateRecord = Record<string, boolean>;
 
 // Add Web Speech API type declarations for TypeScript
 declare global {
