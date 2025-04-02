@@ -63,29 +63,29 @@ export function markdownToHtml(markdown: string): string {
     }
   );
 
-  const processRows = (rows: string[][]): string[][] => {
-    return rows.map((row: string[]) => {
-      return row
-        .map((cell: string) => {
-          return cell.trim();
-        })
-        .filter((cell: string) => cell.length > 0);
-    });
-  };
+  // const processRows = (rows: string[][]): string[][] => {
+  //   return rows.map((row: string[]) => {
+  //     return row
+  //       .map((cell: string) => {
+  //         return cell.trim();
+  //       })
+  //       .filter((cell: string) => cell.length > 0);
+  //   });
+  // };
 
-  const processTable = (rows: string[][]): string[][] => {
-    return rows
-      .filter((row: string[]) => {
-        return row.length > 0;
-      })
-      .map((row: string[]) => {
-        return row
-          .map((cell: string) => {
-            return cell.trim();
-          })
-          .filter((cell: string) => cell.length > 0);
-      });
-  };
+  // const processTable = (rows: string[][]): string[][] => {
+  //   return rows
+  //     .filter((row: string[]) => {
+  //       return row.length > 0;
+  //     })
+  //     .map((row: string[]) => {
+  //       return row
+  //         .map((cell: string) => {
+  //           return cell.trim();
+  //         })
+  //         .filter((cell: string) => cell.length > 0);
+  //     });
+  // };
 
   // Convert headers: # Header -> <h1>Header</h1>
   html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
