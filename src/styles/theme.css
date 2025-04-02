@@ -27,6 +27,9 @@
   --color-error-light: rgba(244, 67, 54, 0.08);
   --color-error-dark: #d32f2f;
 
+  /* Button Colors */
+  --color-button-disabled: #cccccc;
+
   /* Link Colors */
   --color-link: #2a3c97;
   --color-link-hover: #22305d;
