@@ -1,8 +1,8 @@
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import "../styles/SidebarItemLayout.css";
 import { generateChatId } from "../utils/idGenerator";
 import Breadcrumbs from "./Breadcrumbs";
-import ChatWithMaggi from "./ChatWithMaggi";
+import ChatWithAI from "./ChatWithAI";
 
 interface SidebarItemLayoutProps {
   children: ReactNode;
@@ -137,8 +137,8 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
                   <button onClick={() => setApiError(null)}>Dismiss</button>
                 </div>
               )}
-              <div className="chat-with-maggi-wrapper">
-                <ChatWithMaggi
+              <div className="chat-with-ai-wrapper">
+                <ChatWithAI
                   apiEndpoint={aiApiUrl}
                   createApiBody={createChatApiBody}
                   onError={handleApiError}

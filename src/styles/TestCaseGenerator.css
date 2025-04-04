@@ -296,3 +296,25 @@
   color: var(--color-text-secondary);
   transform: none;
 }
+
+.disclaimer-container {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.disclaimer-message {
+  display: inline-block;
+  background-color: rgba(240, 240, 240, 0.7);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.disclaimer-message small {
+  color: #666;
+  font-size: 0.7rem;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}

@@ -207,6 +207,12 @@ const TestCaseGenerator = () => {
           />
         </div>
 
+        <div className="disclaimer-container">
+          <div className="disclaimer-message">
+            Disclaimer: AI-generated content. Use with discretion.
+          </div>
+        </div>
+
         <div className="button-container">
           <button
             className="generate-button"
@@ -237,7 +243,7 @@ const TestCaseGenerator = () => {
               </>
             ) : (
               <>
-                <svg viewBox="0 0 24 24" width="16" height="16">
+                <svg viewBox="0 24 24" width="16" height="16">
                   <path
                     fill="currentColor"
                     d="M19.5 5.5h-15v2h15v-2zm0 6h-15v2h15v-2zm-15 8h7v-2h-7v2z"

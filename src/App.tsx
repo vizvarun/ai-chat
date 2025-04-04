@@ -53,7 +53,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/test-case-generator" element={<TestCaseGenerator />} />
           <Route path="/resume-screener" element={<ResumeScreener />} />
-          {/* Removed ChatWithMaggi route as it's now a component */}
         </Routes>
       </main>
       <Footer />

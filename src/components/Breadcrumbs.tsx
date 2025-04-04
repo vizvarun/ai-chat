@@ -12,10 +12,6 @@ const Breadcrumbs = () => {
 
   // Create more compact path names
   const formatPathname = (name: string): string => {
-    if (name === "test-case-generator") return "Test Case Generator";
-    if (name === "chat-with-maggi") return "Chat With Maggi";
-
-    // Default formatting for other routes
     return name
       .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

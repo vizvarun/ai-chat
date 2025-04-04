@@ -196,8 +196,7 @@
   background-color: var(--color-background-hover, #efefef);
 }
 
-/* ChatWithMaggi wrapper */
-.chat-with-maggi-wrapper {
+.chat-with-ai-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import "../styles/ChatWithMaggi.css";
+import "../styles/ChatWithAI.css";
 import { MessageType, SpeakingStateRecord } from "../types/chatTypes";
 import axiosInstance from "../services/api/axios";
 import { API_CONFIG } from "../config/env";
@@ -15,14 +15,14 @@ interface SpeechRecognitionEvent {
   error?: string;
 }
 
-interface ChatWithMaggiProps {
+interface ChatWithAIProps {
   apiEndpoint: string;
   createApiBody: (message: string) => any;
   onError?: (error: any) => void;
   initialMessages?: MessageType[];
 }
 
-const ChatWithMaggi: React.FC<ChatWithMaggiProps> = ({
+const ChatWithAI: React.FC<ChatWithAIProps> = ({
   apiEndpoint,
   createApiBody,
   onError,
@@ -450,4 +450,4 @@ const ChatWithMaggi: React.FC<ChatWithMaggiProps> = ({
   );
 };
 
-export default ChatWithMaggi;
+export default ChatWithAI;
