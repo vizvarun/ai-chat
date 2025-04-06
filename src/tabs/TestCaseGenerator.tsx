@@ -186,7 +186,7 @@ const TestCaseGenerator = () => {
 
       <div className={`input-section ${inputCollapsed ? "collapsed" : ""}`}>
         <div className="input-field">
-          <label htmlFor="story-title">Enter Story Title</label>
+          <label htmlFor="story-title">Story Title</label>
           <input
             type="text"
             id="story-title"
@@ -197,7 +197,7 @@ const TestCaseGenerator = () => {
           />
         </div>
         <div className="input-field">
-          <label htmlFor="story-description">Enter Story Description</label>
+          <label htmlFor="story-description">Story Description</label>
           <textarea
             id="story-description"
             value={description}

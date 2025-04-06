@@ -13,26 +13,235 @@
   margin-bottom: 1.5rem;
 }
 
-.upload-area {
-  border: 2px dashed var(--color-border);
-  border-radius: 8px;
-  padding: 2rem;
-  text-align: center;
-  margin: 1.5rem 0;
+/* Modern, clean upload box styling */
+.upload-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  background-color: var(--color-background-primary);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 100px; /* Match min-height with textarea */
+  gap: 12px;
+  height: 100%; /* Match height with textarea container */
 }
 
-.upload-area:hover {
+.upload-box:hover {
   border-color: var(--color-primary);
-  background-color: rgba(42, 60, 151, 0.05);
+  background-color: var(--color-background-secondary);
 }
 
-.upload-area svg {
-  width: 48px;
-  height: 48px;
+.upload-box.has-file,
+.upload-box.has-files {
+  border-color: var(--color-primary-light);
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.03);
+}
+
+.upload-box .upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-box .upload-icon svg {
+  width: 22px;
+  height: 22px;
+  color: var(--color-text-tertiary);
+}
+
+.upload-box .upload-prompt {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.upload-box .upload-text {
   color: var(--color-text-secondary);
-  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.upload-box .upload-hint {
+  color: var(--color-text-tertiary);
+  font-size: 0.7rem;
+}
+
+/* Highlight for important instructions */
+.upload-hint .highlight {
+  color: var(--color-primary);
+  font-weight: 500;
+  position: relative;
+}
+
+.upload-hint .highlight::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-primary-light);
+  opacity: 0.6;
+}
+
+.upload-box.has-file .file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.upload-box.has-file .file-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.upload-box.has-file .file-name {
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-box .change-file-btn {
+  background-color: transparent;
+  border: 1px solid var(--color-primary-light);
+  border-radius: 4px;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-box .change-file-btn:hover {
+  background-color: var(--color-primary-lighter);
+}
+
+.upload-box .clear-file-btn {
+  background-color: transparent;
+  border: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.upload-box .clear-file-btn:hover {
+  color: var(--color-danger);
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+/* Layout for JD section */
+.upload-options-container {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 12px;
+  width: 100%;
+  align-items: stretch; /* Make all children the same height */
+}
+
+/* Resume upload styling - updated to match JD upload height */
+.upload-box.resume-upload {
+  min-height: 100px; /* Match the JD upload height */
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure consistent upload content display */
+.upload-box .upload-content {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Files preview styling */
+.files-preview {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.file-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-light);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.file-preview-item:hover {
+  background-color: var(--color-background-tertiary);
+}
+
+.file-preview-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.file-preview-name {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.file-preview-remove {
+  background: transparent;
+  border: none;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.file-preview-remove:hover {
+  color: var(--color-danger);
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+/* Remove old upload area styles */
+.upload-area,
+.job-description-upload,
+.resumes-upload,
+.file-uploaded,
+.files-uploaded,
+.selected-files,
+.files-list,
+.file-item,
+.remove-file-btn {
+  /* These styles are being replaced with the new cleaner ones */
 }
 
 .primary-button {
@@ -59,6 +268,11 @@
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 2px 4px var(--color-shadow-light);
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: margin 0.3s ease;
 }
 
 .results-section h3 {
@@ -66,6 +280,412 @@
   color: var(--color-text-primary);
   font-size: 1.2rem;
   margin-bottom: 1rem;
+}
+
+.input-section.collapsed + .loading + .results-section,
+.input-section.collapsed + .results-section {
+  margin-top: 0.5rem;
+}
+
+.resume-results {
+  width: 100%;
+}
+
+.candidates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.candidate-card {
+  background-color: var(--color-background-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.candidate-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.candidate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.candidate-name {
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--color-primary);
+}
+
+.match-score {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.candidate-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.candidate-summary {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.candidate-highlights,
+.missing-skills {
+  background-color: var(--color-background-tertiary);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.candidate-highlights h5,
+.missing-skills h5 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.candidate-highlights ul,
+.missing-skills ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.candidate-highlights li {
+  color: var(--color-success);
+}
+
+.missing-skills li {
+  color: var(--color-danger);
+}
+
+.empty-results {
+  background-color: var(--color-background-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 2rem;
+  margin: 1rem 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 1.5s linear infinite;
+  margin-right: 8px;
+}
+
+/* Base styles similar to TestCaseGenerator.css */
+.input-section {
+  margin-bottom: 1rem;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+  max-height: 900px; /* Increased for more fields */
+  overflow: hidden;
+  opacity: 1;
+  position: relative;
+  padding-bottom: 80px;
+}
+
+.input-section.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Input collapse control */
+.input-collapse-control {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.collapse-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  background-color: var(--color-primary-lighter);
+  border: 1px solid var(--color-primary-light);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none !important;
+}
+
+.collapse-toggle-btn:hover {
+  background-color: var(--color-primary-light);
+}
+
+.collapse-arrow {
+  transition: transform 0.3s ease;
+}
+
+.collapse-arrow.collapsed {
+  transform: rotate(180deg);
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.input-field label {
+  font-weight: 500;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
+.input-field textarea {
+  padding: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.input-field input.color-primary,
+.input-field textarea.color-primary {
+  border-color: var(--color-primary-light);
+}
+
+.input-field input.color-primary:focus,
+.input-field textarea.color-primary:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-lighter);
+  outline: none;
+}
+
+.input-field textarea {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Special layout for job description section */
+.upload-options-container {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 1rem;
+  width: 100%;
+  align-items: stretch; /* Make all children the same height */
+}
+
+.job-description-upload {
+  height: 100%;
+  min-height: 120px;
+}
+
+.resumes-upload {
+  margin-top: 0.5rem;
+  min-height: 120px;
+}
+
+/* Button container */
+.button-container {
+  display: flex;
+  gap: 12px;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: 44px;
+}
+
+.generate-button {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px var(--color-shadow);
+  position: static;
+  height: 100%;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.generate-button:hover {
+  background-color: var(--color-primary-dark);
+  border: none;
+  box-shadow: 0 4px 8px var(--color-shadow);
+}
+
+.generate-button:disabled {
+  background-color: var(--color-button-disabled);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.generate-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.reset-button {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px var(--color-shadow-light);
+  height: 100%;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.reset-button:hover {
+  background-color: var(--color-background-quaternary);
+  border-color: var(--color-border-light);
+}
+
+.reset-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Disclaimer and loading states */
+.disclaimer-container {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.disclaimer-message {
+  display: inline-block;
+  background-color: rgba(240, 240, 240, 0.7);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.disclaimer-message small {
+  color: #666;
+  font-size: 0.7rem;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.loading-text {
+  font-style: italic;
+  margin-top: -12px !important;
+  margin-bottom: 12px !important;
+}
+
+.loader-with-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Error message styling */
+.error-message {
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #d32f2f;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Duplicate file error message styling - more minimal */
+.file-error-message {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: 4px;
+  color: #e65100;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeOut 4s forwards;
+  transition: opacity 0.3s ease;
+}
+
+/* Replace emoji with cleaner SVG */
+.file-error-message::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e65100' width='16px' height='16px'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Responsive adjustments */
@@ -78,4 +698,91 @@
     width: 36px;
     height: 36px;
   }
+}
+
+/* Improved textarea with file styling */
+.textarea-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.textarea-container textarea {
+  flex-grow: 1;
+  min-height: 100px;
+  height: 100%; /* Make the textarea take the full height */
+}
+
+textarea.has-file {
+  background-color: var(--color-background-secondary);
+  cursor: not-allowed;
+  padding-bottom: 32px; /* Make room for the file indicator */
+}
+
+.textarea-file-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  border: 1px solid var(--color-border-light);
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.file-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  overflow: hidden;
+  max-width: calc(100% - 30px); /* Leave space for the button */
+}
+
+.file-badge span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.textarea-file-indicator .clear-file-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  font-size: 0.75rem;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.textarea-file-indicator .clear-file-btn:hover {
+  background-color: rgba(var(--color-danger-rgb, 244, 67, 54), 0.1);
+  color: var(--color-danger);
+}
+
+/* Remove the old overlay styling */
+.textarea-overlay {
+  display: none;
+}
+
+/* File actions container */
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
