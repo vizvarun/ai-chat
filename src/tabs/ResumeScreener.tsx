@@ -4,9 +4,14 @@ import Loader from "../components/Loader";
 import JDUploader from "../components/JDUploader";
 import ResumeUploader from "../components/ResumeUploader";
 import ResumeResults from "../components/ResumeResults";
+import ResumeResultsTable from "../components/ResumeResultsTable";
 import "../styles/ResumeScreener.css";
 import { resumeScreenerService } from "../services/api/resumeScreenerService";
-import { RankedCandidatesResponse } from "../types/resumeTypes";
+import {
+  RankedCandidatesResponse,
+  ResumeResultRow,
+  ResumeProcessingResponse,
+} from "../types/resumeTypes";
 import { UI_CONFIG } from "../config/env";
 
 const ResumeScreener = () => {
@@ -27,6 +32,17 @@ const ResumeScreener = () => {
   const [results, setResults] = useState<RankedCandidatesResponse | null>(null);
   const [inputCollapsed, setInputCollapsed] = useState(false);
   const [formDirty, setFormDirty] = useState(true);
+
+  // New states for the enhanced workflow
+  const [jobDescriptionId, setJobDescriptionId] = useState<string | null>(null);
+  const [processingResumes, setProcessingResumes] = useState(false);
+  const [tableResults, setTableResults] = useState<ResumeResultRow[]>([]);
+  const [resumeIds, setResumeIds] = useState<string[]>([]);
+  const [finalRankingDone, setFinalRankingDone] = useState(false);
+
+  // New state for modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedResume, setSelectedResume] = useState<string | null>(null);
 
   // Handle job description text input
   const handleJobDescriptionChange = (
@@ -86,6 +102,7 @@ const ResumeScreener = () => {
   // Remove a resume from the list
   const removeResume = (index: number) => {
     setResumes((prev) => prev.filter((_, i) => i !== index));
+    setFormDirty(true);
   };
 
   // Reset the form
@@ -95,6 +112,13 @@ const ResumeScreener = () => {
     setCriteria("");
     setResumes([]);
     setFormDirty(false);
+    setJobDescriptionId(null);
+    setTableResults([]);
+    setProcessingResumes(false);
+    setResumeIds([]);
+    setFinalRankingDone(false);
+    setResults(null);
+    setInputCollapsed(false);
   };
 
   // Toggle input section visibility
@@ -102,58 +126,161 @@ const ResumeScreener = () => {
     setInputCollapsed(!inputCollapsed);
   };
 
-  // Handle form submission
-  const rankResumes = async () => {
-    setLoading(true);
-    setError(null);
-
+  // Process a single resume
+  const processResumeFile = async (file: File, index: number) => {
     try {
-      // Set timeout for long requests
-      const timeoutId = setTimeout(() => {
-        setLoading(false);
-        setError("Request timed out. Please try again later.");
-      }, UI_CONFIG.REQUEST_TIMEOUT);
-
-      // Make API call
-      const response = await resumeScreenerService.rankResumes(
-        jobDescription,
-        criteria,
-        jobDescriptionFile,
-        resumes
+      // Update status to processing
+      setTableResults((prev) =>
+        prev.map((row, i) =>
+          i === index ? { ...row, status: "processing" } : row
+        )
       );
 
-      clearTimeout(timeoutId);
+      console.log(`Processing resume ${index}: ${file.name}`);
 
-      // Process response
-      if (response) {
-        setResults(response);
-        setInputCollapsed(true);
-        setFormDirty(false);
-      } else {
-        setError("No results returned. Please try again.");
-      }
-    } catch (err: any) {
-      if (err.response) {
-        if (err.response.status === 429) {
-          setError("Too many requests. Please wait a moment and try again.");
-        } else if (err.response.status >= 500) {
-          setError("Server error. Our team has been notified.");
-        } else {
-          setError(
-            `Request failed: ${err.response.data?.message || "Unknown error"}`
-          );
-        }
-      } else if (err.request) {
-        setError(
-          "No response from server. Please check your internet connection."
-        );
-      } else {
-        setError("Failed to rank resumes. Please try again later.");
-      }
-      console.error("Error ranking resumes:", err);
-    } finally {
-      setLoading(false);
+      const response = await resumeScreenerService.processResume(file, index);
+
+      setResumeIds((prev) => [...prev, response.resumeId]);
+
+      console.log(
+        `Resume ${index} processed successfully: ${response.candidateName}, Score: ${response.matchScore}%`
+      );
+
+      // Update table with results
+      setTableResults((prev) =>
+        prev.map((row, i) =>
+          i === index
+            ? {
+                ...row,
+                resumeId: response.resumeId,
+                candidateId: response.candidateId,
+                candidateName: response.candidateName,
+                matchScore: response.matchScore,
+                rank: response.rank,
+                overallScore: response.overallScore,
+                resumeSummary: response.resumeSummary,
+                parsedResume: response.parsedResume,
+                status: "completed",
+              }
+            : row
+        )
+      );
+    } catch (error) {
+      console.error(`Error processing resume ${index}:`, error);
+      setTableResults((prev) =>
+        prev.map((row, i) =>
+          i === index
+            ? {
+                ...row,
+                status: "error",
+                error: "Failed to process resume",
+              }
+            : row
+        )
+      );
     }
+  };
+
+  // Handle showing parsed resume in modal
+  const showParsedResume = (resume: string) => {
+    setSelectedResume(resume);
+    setModalOpen(true);
+  };
+
+  // Handle form submission - updated workflow
+  const rankResumes = async () => {
+    // First clear everything and reset states
+    setTableResults([]);
+    setResumeIds([]);
+    setFinalRankingDone(false);
+    
+    // Force a render cycle completion by using setTimeout
+    setTimeout(() => {
+      setLoading(true);
+      setError(null);
+      setProcessingResumes(true);
+
+      console.log("Starting resume ranking process");
+      console.log(
+        `Input: Job Description (${jobDescription.length} chars), Criteria: ${criteria}, ${resumes.length} resumes`
+      );
+
+      // Step 1: Initialize the table with resume files and show immediately
+      const initialTableData: ResumeResultRow[] = resumes.map((file, index) => ({
+        serialNumber: index + 1,
+        fileName: file.name,
+        status: "pending",
+      }));
+
+      setTableResults(initialTableData);
+      setInputCollapsed(true);
+
+      // Use an async IIFE to handle the rest of the process
+      (async () => {
+        try {
+          // Step 2: Submit job description and get job description ID in the background
+          console.log("Submitting job description in background");
+          const jdPromise = resumeScreenerService.submitJobDescription(
+            jobDescription,
+            criteria,
+            jobDescriptionFile
+          );
+
+          // Start processing resumes immediately - don't wait for JD
+          console.log("Starting to process resumes");
+          const processPromises = resumes.map((file, index) =>
+            processResumeFile(file, index)
+          );
+
+          // Await JD submission in background
+          const jdResponse = await jdPromise;
+          console.log(
+            "Job Description processed with ID:",
+            jdResponse.jobDescriptionId
+          );
+          setJobDescriptionId(jdResponse.jobDescriptionId);
+
+          // Wait for all resume processing to complete
+          console.log("Waiting for all resumes to be processed");
+          await Promise.all(processPromises);
+          console.log(`All ${resumes.length} resumes processed successfully`);
+
+          // Final ranking once both JD and resumes are processed
+          if (jdResponse.jobDescriptionId && resumeIds.length > 0) {
+            console.log("Starting final ranking of all resumes");
+            const finalRankingResponse =
+              await resumeScreenerService.getFinalRanking(
+                jdResponse.jobDescriptionId,
+                resumeIds
+              );
+
+            if (finalRankingResponse.success) {
+              console.log("Final ranking completed successfully");
+              // Update ranks based on match scores
+              const sortedResults = [...tableResults].sort(
+                (a, b) => (b.matchScore || 0) - (a.matchScore || 0)
+              );
+
+              const updatedResults = sortedResults.map((row, index) => ({
+                ...row,
+                rank: index + 1,
+              }));
+
+              setTableResults(updatedResults);
+              setFinalRankingDone(true);
+              setFormDirty(false);
+            }
+          }
+        } catch (err: any) {
+          console.error("Error during resume processing:", err);
+          setError(err.message || "An error occurred during resume processing");
+        } finally {
+          setLoading(false);
+          setProcessingResumes(false);
+          console.log("Resume ranking process complete");
+        }
+      })();
+    }, 10); // Short timeout to ensure state updates have completed
   };
 
   // Check if form is valid for submission
@@ -165,9 +292,9 @@ const ResumeScreener = () => {
       showChatOption={true}
       showChat={showChat}
       onToggleChat={() => setShowChat(!showChat)}
-      isScrollable={!inputCollapsed && results ? true : false}
+      isScrollable={!inputCollapsed || tableResults.length > 0}
     >
-      {results && (
+      {(tableResults.length > 0 || inputCollapsed) && (
         <div className="input-collapse-control">
           <button
             className="collapse-toggle-btn"
@@ -368,20 +495,50 @@ const ResumeScreener = () => {
         </div>
       )}
 
-      {loading && (
+      {tableResults.length > 0 && (
+        <div className="results-section">
+          <ResumeResultsTable
+            results={tableResults}
+            isProcessing={processingResumes}
+            onViewParsedResume={showParsedResume}
+          />
+        </div>
+      )}
+
+      {loading && !tableResults.length && (
         <div className="loading">
           <div className="loader-with-text">
             <Loader size="medium" />
-            <p className="loading-text">Processing resumes, please wait...</p>
+            <p className="loading-text">
+              Processing job description, please wait...
+            </p>
           </div>
         </div>
       )}
 
-      {!loading && results && (
-        <div className="results-section">
-          <h3>Ranked Results</h3>
-          <div className="resume-results">
-            <ResumeResults candidates={results.rankedCandidates} />
+      {/* Modal for parsed resume - improved UI */}
+      {modalOpen && selectedResume && (
+        <div className="modal-backdrop" onClick={() => setModalOpen(false)}>
+          <div
+            className="modal-content parsed-resume-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h3>Parsed Resume</h3>
+            </div>
+            <div className="modal-body resume-modal-body">
+              <div className="resume-content-container">
+                <pre className="parsed-resume-content">{selectedResume}</pre>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="candidate-action secondary"
+                onClick={() => setModalOpen(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

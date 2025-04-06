@@ -1,0 +1,208 @@
+.candidate-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.candidate-info {
+  flex: 1;
+}
+
+/* Subtle professional metrics */
+.candidate-metrics {
+  display: flex;
+  gap: 20px;
+}
+
+.metric-card {
+  width: 100px;
+  padding: 10px 12px;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.15s ease-out;
+}
+
+.metric-card:hover {
+  border-color: var(--color-border);
+  background-color: var(--color-background-primary);
+}
+
+.metric-title {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 2px;
+}
+
+/* Match score bar - subtle design */
+.metric-bar {
+  height: 3px;
+  width: 100%;
+  background-color: var(--color-background-tertiary);
+  border-radius: 1.5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.metric-progress {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 1.5px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.metric-category {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* Rank styling - subtle design */
+.rank-value {
+  color: var(--color-primary);
+  margin-bottom: 0;
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+/* New professional stat cards */
+.candidate-stat-cards {
+  display: flex;
+  gap: 16px;
+}
+
+.stat-card {
+  width: 120px;
+  background-color: var(--color-background-primary);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.stat-card-header {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 6px 0;
+  text-align: center;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.stat-card-body {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Match score skill meter styles */
+.skill-meter-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-level-track {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.skill-level {
+  width: 14px;
+  height: 4px;
+  background-color: var(--color-background-tertiary);
+  border-radius: 2px;
+  transition: all 0.4s ease;
+}
+
+.skill-level.active:nth-child(1) {
+  background-color: #fca5a5;
+  transition-delay: 0.1s;
+}
+.skill-level.active:nth-child(2) {
+  background-color: #fdba74;
+  transition-delay: 0.2s;
+}
+.skill-level.active:nth-child(3) {
+  background-color: #fcd34d;
+  transition-delay: 0.3s;
+}
+.skill-level.active:nth-child(4) {
+  background-color: #bef264;
+  transition-delay: 0.4s;
+}
+.skill-level.active:nth-child(5) {
+  background-color: #86efac;
+  transition-delay: 0.5s;
+}
+
+.match-percentage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.match-percentage > span {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.match-category {
+  font-size: 9px;
+  color: var(--color-text-tertiary);
+  margin-top: -2px;
+}
+
+/* Rank badge styles */
+.rank-badge-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.rank-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary);
+  position: relative;
+  z-index: 2;
+}
+
+.rank-decoration {
+  margin-top: -5px;
+}
+
+.rank-text {
+  font-weight: 600;
+  font-size: large;
+}

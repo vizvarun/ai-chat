@@ -4,6 +4,7 @@ import "../styles/TestCasesTable.css";
 import AIAssistModal from "./AIAssistModal";
 import { generateChatId } from "../utils/idGenerator";
 import axiosInstance from "../services/api/axios"; // Import axios instance
+import TablePagination from "./TablePagination";
 
 const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,7 +18,7 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [apiError, setApiError] = useState<string | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const testCasesData = useMemo(() => {
     return Array.isArray(testCases) ? testCases : [];
@@ -237,160 +238,32 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     setModalContent("");
   };
 
-  // Calculate pagination
+  // Calculate pagination values
   const totalItems = testCasesData.length;
-  const totalPages = Math.ceil(totalItems / pageSize);
+  const totalPages = Math.ceil(totalItems / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const currentItems = testCasesData.slice(startIndex, endIndex);
 
-  // Get current page items
-  const currentItems = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return testCasesData.slice(startIndex, startIndex + pageSize);
-  }, [testCasesData, currentPage, pageSize]);
-
-  // Handle page change
+  // Pagination handlers
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    // Close any expanded sections when changing pages
+    setExpandedSections({});
   };
 
-  // Handle page size change
-  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSize = parseInt(e.target.value, 10);
-    setPageSize(newSize);
-    setCurrentPage(1); // Reset to first page when changing page size
+  const handleRowsPerPageChange = (rows: number) => {
+    setRowsPerPage(rows);
+    setCurrentPage(1);
+    // Close any expanded sections when changing rows per page
+    setExpandedSections({});
   };
 
-  // Generate page buttons
-  const renderPaginationButtons = () => {
-    const buttons = [];
-
-    // Previous button
-    buttons.push(
-      <button
-        key="prev"
-        className="pagination-button"
-        disabled={currentPage === 1}
-        onClick={() => handlePageChange(currentPage - 1)}
-        aria-label="Previous page"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="16"
-          height="16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </button>
-    );
-
-    // First page
-    buttons.push(
-      <button
-        key={1}
-        className={`pagination-button ${currentPage === 1 ? "active" : ""}`}
-        onClick={() => handlePageChange(1)}
-      >
-        1
-      </button>
-    );
-
-    // Ellipsis or pages
-    if (totalPages > 7) {
-      if (currentPage > 3) {
-        buttons.push(
-          <span key="ellipsis-1" className="pagination-ellipsis">
-            ...
-          </span>
-        );
-      }
-
-      // Pages around current page
-      const startPage = Math.max(2, currentPage - 1);
-      const endPage = Math.min(totalPages - 1, currentPage + 1);
-
-      for (let i = startPage; i <= endPage; i++) {
-        if (i !== 1 && i !== totalPages) {
-          buttons.push(
-            <button
-              key={i}
-              className={`pagination-button ${
-                currentPage === i ? "active" : ""
-              }`}
-              onClick={() => handlePageChange(i)}
-            >
-              {i}
-            </button>
-          );
-        }
-      }
-
-      if (currentPage < totalPages - 2) {
-        buttons.push(
-          <span key="ellipsis-2" className="pagination-ellipsis">
-            ...
-          </span>
-        );
-      }
-    } else {
-      // Show all pages if total pages <= 7
-      for (let i = 2; i < totalPages; i++) {
-        buttons.push(
-          <button
-            key={i}
-            className={`pagination-button ${currentPage === i ? "active" : ""}`}
-            onClick={() => handlePageChange(i)}
-          >
-            {i}
-          </button>
-        );
-      }
-    }
-
-    // Last page (if more than 1 page)
-    if (totalPages > 1) {
-      buttons.push(
-        <button
-          key={totalPages}
-          className={`pagination-button ${
-            currentPage === totalPages ? "active" : ""
-          }`}
-          onClick={() => handlePageChange(totalPages)}
-        >
-          {totalPages}
-        </button>
-      );
-    }
-
-    // Next button
-    buttons.push(
-      <button
-        key="next"
-        className="pagination-button"
-        disabled={currentPage === totalPages}
-        onClick={() => handlePageChange(currentPage + 1)}
-        aria-label="Next page"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="16"
-          height="16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
-    );
-
-    return buttons;
-  };
+  // Reset to first page when test cases data changes
+  useEffect(() => {
+    setCurrentPage(1);
+    setExpandedSections({});
+  }, [testCasesData.length]);
 
   // Check if a value is an array
   const isArrayValue = (value: any) => Array.isArray(value);
@@ -587,7 +460,7 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
                       {renderCellContent(
                         header,
                         testCase[header],
-                        `row-${rowIndex}`
+                        `row-${startIndex + rowIndex}`
                       )}
                     </td>
                   ))}
@@ -595,30 +468,19 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
 
-      {/* Pagination UI */}
-      <div className="pagination-container">
-        <div className="pagination-info">
-          Showing {(currentPage - 1) * pageSize + 1} to{" "}
-          {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
-          <div className="page-size-selector">
-            <label htmlFor="page-size">Show:</label>
-            <select
-              id="page-size"
-              value={pageSize}
-              onChange={handlePageSizeChange}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-            </select>
-          </div>
+          {/* Add pagination component */}
+          {totalItems > 0 && (
+            <TablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              rowsPerPage={rowsPerPage}
+              totalItems={totalItems}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+            />
+          )}
         </div>
-
-        <div className="pagination-controls">{renderPaginationButtons()}</div>
       </div>
 
       {/* AIAssistModal */}
