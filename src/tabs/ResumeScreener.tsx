@@ -193,7 +193,7 @@ const ResumeScreener = () => {
     setTableResults([]);
     setResumeIds([]);
     setFinalRankingDone(false);
-    
+
     // Force a render cycle completion by using setTimeout
     setTimeout(() => {
       setLoading(true);
@@ -206,11 +206,13 @@ const ResumeScreener = () => {
       );
 
       // Step 1: Initialize the table with resume files and show immediately
-      const initialTableData: ResumeResultRow[] = resumes.map((file, index) => ({
-        serialNumber: index + 1,
-        fileName: file.name,
-        status: "pending",
-      }));
+      const initialTableData: ResumeResultRow[] = resumes.map(
+        (file, index) => ({
+          serialNumber: index + 1,
+          fileName: file.name,
+          status: "pending",
+        })
+      );
 
       setTableResults(initialTableData);
       setInputCollapsed(true);
