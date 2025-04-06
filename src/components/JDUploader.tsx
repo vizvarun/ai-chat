@@ -19,7 +19,7 @@ const JDUploader: React.FC<JDUploaderProps> = ({
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       onFileChange(selectedFile);
-      
+
       // Reset the input field to allow selecting the same file again
       if (jobDescriptionFileRef.current) {
         jobDescriptionFileRef.current.value = "";
