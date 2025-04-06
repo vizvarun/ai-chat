@@ -35,7 +35,7 @@ const ResumeUploader: React.FC<ResumeUploaderProps> = ({
       setDuplicateError(
         `Duplicate ${isMultiple ? "files" : "file"} skipped: ${duplicateNames}`
       );
-      
+
       // Clear the error after 4 seconds
       setTimeout(() => setDuplicateError(null), 4000);
     }
