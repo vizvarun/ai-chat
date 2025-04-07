@@ -5,6 +5,7 @@ export const API_CONFIG = {
 
 export const API_ENDPOINTS = {
   GENERATE_TEST_CASES: import.meta.env.VITE_API_GENERATE_TEST_CASES,
+  RANK_RESUMES: import.meta.env.VITE_API_RANK_RESUMES,
 };
 
 export const UI_CONFIG = {
