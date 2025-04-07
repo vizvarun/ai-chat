@@ -1,18 +1,15 @@
-import { useState, useEffect } from "react";
-import SidebarItemLayout from "../components/SidebarItemLayout";
-import Loader from "../components/Loader";
+import { useState } from "react";
 import JDUploader from "../components/JDUploader";
-import ResumeUploader from "../components/ResumeUploader";
-import ResumeResults from "../components/ResumeResults";
+import Loader from "../components/Loader";
 import ResumeResultsTable from "../components/ResumeResultsTable";
-import "../styles/ResumeScreener.css";
+import ResumeUploader from "../components/ResumeUploader";
+import SidebarItemLayout from "../components/SidebarItemLayout";
 import { resumeScreenerService } from "../services/api/resumeScreenerService";
+import "../styles/ResumeScreener.css";
 import {
   RankedCandidatesResponse,
   ResumeResultRow,
-  ResumeProcessingResponse,
 } from "../types/resumeTypes";
-import { UI_CONFIG } from "../config/env";
 
 const ResumeScreener = () => {
   // State for chat toggle

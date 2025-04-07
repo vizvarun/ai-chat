@@ -809,9 +809,16 @@ textarea.has-file {
 
 .table-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+}
+
+.resume-table-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin: 0;
 }
 
 .table-actions {
@@ -1034,45 +1041,56 @@ textarea.has-file {
   line-height: 1.4;
 }
 
-/* Modal styling */
-.modal-backdrop {
+/* Modal styling - consolidated version */
+.modal-backdrop,
+.candidate-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
   z-index: 1000;
-  animation: fadeIn 0.2s ease;
+  animation: modalFadeIn 0.2s ease;
 }
 
-.modal-content {
+.modal-content,
+.candidate-modal-container {
   background-color: var(--color-background-primary);
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  width: 90%;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  width: 100%;
   max-width: 800px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  animation: scaleIn 0.25s ease;
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
-.candidate-modal {
-  max-width: 600px;
-  background-color: var(--color-background-primary);
+.candidate-modal-container {
+  max-width: 650px;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s ease;
 }
 
-.modal-close-button {
+.candidate-modal-container.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.modal-close-button,
+.close-modal-btn,
+.candidate-modal-close {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: transparent;
+  background-color: transparent;
   border: none;
   width: 32px;
   height: 32px;
@@ -1080,24 +1098,113 @@ textarea.has-file {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-tertiary);
   cursor: pointer;
   z-index: 10;
   transition: all 0.2s ease;
 }
 
-.modal-close-button:hover {
+.modal-close-button,
+.close-modal-btn {
+  color: var(--color-text-tertiary);
+}
+
+.candidate-modal-close {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-close-button:hover,
+.close-modal-btn:hover {
   background-color: rgba(0, 0, 0, 0.05);
   color: var(--color-text-secondary);
 }
 
-.candidate-modal-body {
-  padding: 28px;
-  overflow-y: auto;
-  max-height: calc(90vh - 120px); /* Account for action buttons */
+.candidate-modal-close:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  transform: scale(1.1);
 }
 
-/* Candidate profile section */
+.modal-header,
+.candidate-modal-header {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.modal-header {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: var(--color-background-secondary);
+}
+
+.candidate-modal-header {
+  padding: 24px;
+  background-color: var(--color-primary);
+  color: white;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.modal-body,
+.candidate-modal-body,
+.resume-modal-body,
+.candidate-modal-content {
+  overflow-y: auto;
+}
+
+.resume-modal-body {
+  padding: 0;
+  overflow: hidden;
+  flex: 1;
+}
+
+.candidate-modal-body,
+.candidate-modal-content {
+  padding: 28px;
+  max-height: calc(90vh - 190px); /* Account for header and footer */
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.resume-content-container {
+  padding: 16px 24px;
+  overflow-y: auto;
+  max-height: calc(85vh - 130px); /* Account for header and footer */
+}
+
+.modal-footer,
+.candidate-modal-footer,
+.candidate-actions {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: var(--color-background-secondary);
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Specific candidate modal styles - keep these as they have distinct styling */
 .candidate-profile {
   display: flex;
   justify-content: space-between;
@@ -2413,4 +2520,17 @@ textarea.has-file {
     font-size: 0.8rem;
     padding: 12px;
   }
+}
+
+/* Top rank styling - Golden badge for rank 1 */
+.top-rank-badge {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trophy-icon {
+  margin-right: 2px;
 }

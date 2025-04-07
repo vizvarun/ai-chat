@@ -244,7 +244,7 @@
 }
 
 /* Individual action buttons */
-.action-button {
+.chat-action-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -260,13 +260,13 @@
   position: relative;
 }
 
-.action-button:hover {
+.chat-action-button:hover {
   background-color: var(--color-background-quaternary);
   color: var(--color-primary);
   transform: translateY(-2px);
 }
 
-.action-button svg {
+.chat-action-button svg {
   width: 14px;
   height: 14px;
 }
@@ -289,7 +289,7 @@
   z-index: 10;
 }
 
-.action-button:hover .tooltip {
+.chat-action-button:hover .tooltip {
   opacity: 1;
   visibility: visible;
 }

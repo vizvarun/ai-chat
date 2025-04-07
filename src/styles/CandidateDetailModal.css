@@ -142,23 +142,23 @@
 }
 
 .skill-level.active:nth-child(1) {
-  background-color: #fca5a5;
+  background-color: #dc2626; /* Bold red instead of light red */
   transition-delay: 0.1s;
 }
 .skill-level.active:nth-child(2) {
-  background-color: #fdba74;
+  background-color: #ea580c; /* Bold orange instead of light orange */
   transition-delay: 0.2s;
 }
 .skill-level.active:nth-child(3) {
-  background-color: #fcd34d;
+  background-color: #eab308; /* Bold yellow instead of light yellow */
   transition-delay: 0.3s;
 }
 .skill-level.active:nth-child(4) {
-  background-color: #bef264;
+  background-color: #65a30d; /* Bold light green instead of pale green */
   transition-delay: 0.4s;
 }
 .skill-level.active:nth-child(5) {
-  background-color: #86efac;
+  background-color: #16a34a; /* Bold green instead of light mint green */
   transition-delay: 0.5s;
 }
 
@@ -205,4 +205,49 @@
 .rank-text {
   font-weight: 600;
   font-size: large;
+}
+
+.modal-top-rank-badge {
+  background-color: var(--color-primary-lighter);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-primary);
+}
+
+.modal-trophy-icon {
+  margin-right: 4px;
+}
+
+.modal-score-badge {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary);
+}
+
+.modal-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Filename truncation */
+.candidate-file {
+  display: flex;
+  align-items: center;
+  max-width: 250px; /* Limit the maximum width */
+}
+
+.candidate-file svg {
+  flex-shrink: 0; /* Prevent the icon from shrinking */
+  margin-right: 4px;
+}
+
+.candidate-file span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
 }

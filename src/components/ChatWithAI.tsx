@@ -284,7 +284,7 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
                   {!message.loading && message.sender === "bot" && (
                     <div className="message-actions">
                       <button
-                        className="action-button copy-button"
+                        className="chat-action-button copy-button"
                         onClick={() => copyToClipboard(message.text)}
                         title="Copy response"
                       >
@@ -311,7 +311,7 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
                       </button>
 
                       <button
-                        className={`action-button speaker-button ${
+                        className={`chat-action-button speaker-button ${
                           isSpeaking[message.id] ? "speaking" : ""
                         }`}
                         onClick={() =>
@@ -345,7 +345,7 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
                       </button>
 
                       <button
-                        className="action-button thumbs-up-button"
+                        className="chat-action-button thumbs-up-button"
                         onClick={() => handleFeedback("good", message.id)}
                       >
                         <svg
@@ -363,7 +363,7 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
                       </button>
 
                       <button
-                        className="action-button thumbs-down-button"
+                        className="chat-action-button thumbs-down-button"
                         onClick={() => handleFeedback("bad", message.id)}
                       >
                         <svg
