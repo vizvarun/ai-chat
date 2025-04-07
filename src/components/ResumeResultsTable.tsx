@@ -83,14 +83,18 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
       <div className="table-header">
         <div className="table-title">
           <p className="resume-table-title">
-            Screened Resumes ({results.length})
+            Screened {results.length === 1 ? "Resume" : "Resumes"} (
+            {results.length})
           </p>
         </div>
         <div className="table-actions">
           {isProcessing ? (
             <div className="processing-pill">
               <span className="pulse-dot"></span>
-              <span>Processing {processingCount} resumes</span>
+              <span>
+                Processing {processingCount}{" "}
+                {processingCount === 1 ? "resume" : "resumes"}
+              </span>
             </div>
           ) : (
             <div className="sort-controls">

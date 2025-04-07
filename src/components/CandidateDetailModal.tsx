@@ -60,11 +60,12 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
         className={`candidate-modal-container ${showContent ? "visible" : ""}`}
         onClick={handleModalContentClick}
       >
-        {/* Header section with candidate info and match score */}
         <div className="candidate-modal-header">
           {/* Candidate info on the left */}
           <div className="candidate-info">
-            <div className="candidate-avatar">{initials()}</div>
+            <div className="candidate-avatar">
+              {initials(candidate.candidateName)}
+            </div>
             <div className="candidate-header-details">
               <h2 className="candidate-title">
                 {candidate.candidateName || "Unknown Candidate"}
@@ -90,9 +91,7 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Metrics section with mixed design */}
           <div className="candidate-metrics">
-            {/* Match score - skill meter with subtle design */}
             <div className="metric-card">
               <div className="metric-title">Match</div>
               <div className="skill-level-track">
@@ -109,7 +108,6 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
               <div className="metric-category">{getMatchQuality()}</div>
             </div>
 
-            {/* Rank - current subtle design */}
             <div className="metric-card">
               <div className="metric-title">Rank</div>
               <span
@@ -144,8 +142,6 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
             </div>
           </div>
         </div>
-
-        {/* Content section */}
         <div className="candidate-modal-content">
           <div className="candidate-content-section">
             <div className="section-header">
@@ -157,7 +153,6 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
           </div>
         </div>
 
-        {/* Footer with actions */}
         <div className="candidate-modal-footer">
           <button className="candidate-action secondary" onClick={onClose}>
             Close
