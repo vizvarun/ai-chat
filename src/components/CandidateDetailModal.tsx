@@ -13,12 +13,10 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
   onClose,
   onViewParsedResume,
 }) => {
-  // Animation states
   const [showContent, setShowContent] = useState(false);
   const [animateScore, setAnimateScore] = useState(false);
 
-  // Get initials from candidate name for the avatar
-  const getInitials = (name: string = ""): string => {
+  const initials = (name: string = ""): string => {
     return name
       .split(" ")
       .filter((word) => word.length > 0)
@@ -27,54 +25,22 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
       .join("");
   };
 
-  // Calculate match score percentage and circle parameters
   const matchScore = candidate.matchScore || 0;
-  const radius = 36;
-  const circumference = 2 * Math.PI * radius;
-  const dashArray = animateScore ? (matchScore / 100) * circumference : 0;
-  const initials = getInitials(candidate.candidateName || "");
 
-  // Get rank with fallback to ensure it's never 0 or undefined
   const candidateRank =
     candidate.rank && candidate.rank > 0 ? candidate.rank : 1;
 
-  // Get color for match score based on value - with better visibility
-  const getMatchScoreColor = () => {
-    if (matchScore >= 80) return "var(--color-success)";
-    if (matchScore >= 60) return "#f59e0b"; // Brighter amber for visibility
-    return "#ef4444"; // Brighter red for visibility
-  };
-
-  // Get match score quality assessment
   const getMatchQuality = () => {
     if (matchScore >= 85) return "Excellent";
-    if (matchScore >= 70) return "Strong";
-    if (matchScore >= 55) return "Good";
-    if (matchScore >= 40) return "Fair";
-    return "Basic";
-  };
-
-  // Get color class based on match score
-  const getMatchColorClass = () => {
-    if (matchScore >= 85) return "excellent-match";
-    if (matchScore >= 70) return "strong-match";
-    if (matchScore >= 55) return "good-match";
-    if (matchScore >= 40) return "fair-match";
-    return "basic-match";
-  };
-
-  // Get match score category - simpler classifications
-  const getMatchCategory = () => {
-    if (matchScore >= 80) return "Strong";
+    if (matchScore >= 75) return "Strong";
     if (matchScore >= 60) return "Good";
+    if (matchScore >= 50) return "Fair";
+    if (matchScore >= 40) return "Bad";
     return "Basic";
   };
 
-  // Trigger animations after component mount
   useEffect(() => {
-    // Slight delay before showing content for smoother animation
     const contentTimer = setTimeout(() => setShowContent(true), 50);
-    // Delay before animating score circle
     const scoreTimer = setTimeout(() => setAnimateScore(true), 300);
 
     return () => {
@@ -98,7 +64,7 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
         <div className="candidate-modal-header">
           {/* Candidate info on the left */}
           <div className="candidate-info">
-            <div className="candidate-avatar">{initials}</div>
+            <div className="candidate-avatar">{initials()}</div>
             <div className="candidate-header-details">
               <h2 className="candidate-title">
                 {candidate.candidateName || "Unknown Candidate"}
@@ -130,17 +96,17 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
             <div className="metric-card">
               <div className="metric-title">Match</div>
               <div className="skill-level-track">
-                {[1, 2, 3, 4, 5].map((level) => (
+                {[4, 5, 6, 7.5, 8.5].map((level) => (
                   <div
                     key={level}
                     className={`skill-level ${
-                      animateScore && matchScore >= level * 20 ? "active" : ""
+                      animateScore && matchScore >= level * 10 ? "active" : ""
                     }`}
                   />
                 ))}
               </div>
               <div className="metric-value">{matchScore}%</div>
-              <div className="metric-category">{getMatchCategory()}</div>
+              <div className="metric-category">{getMatchQuality()}</div>
             </div>
 
             {/* Rank - current subtle design */}

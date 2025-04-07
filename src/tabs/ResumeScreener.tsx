@@ -6,10 +6,7 @@ import ResumeUploader from "../components/ResumeUploader";
 import SidebarItemLayout from "../components/SidebarItemLayout";
 import { resumeScreenerService } from "../services/api/resumeScreenerService";
 import "../styles/ResumeScreener.css";
-import {
-  RankedCandidatesResponse,
-  ResumeResultRow,
-} from "../types/resumeTypes";
+import { ResumeResultRow } from "../types/resumeTypes";
 
 const ResumeScreener = () => {
   // State for chat toggle
@@ -26,16 +23,13 @@ const ResumeScreener = () => {
   // UI states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [results, setResults] = useState<RankedCandidatesResponse | null>(null);
   const [inputCollapsed, setInputCollapsed] = useState(false);
   const [formDirty, setFormDirty] = useState(true);
 
   // New states for the enhanced workflow
-  const [jobDescriptionId, setJobDescriptionId] = useState<string | null>(null);
   const [processingResumes, setProcessingResumes] = useState(false);
   const [tableResults, setTableResults] = useState<ResumeResultRow[]>([]);
   const [resumeIds, setResumeIds] = useState<string[]>([]);
-  const [finalRankingDone, setFinalRankingDone] = useState(false);
 
   // New state for modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -109,12 +103,9 @@ const ResumeScreener = () => {
     setCriteria("");
     setResumes([]);
     setFormDirty(false);
-    setJobDescriptionId(null);
     setTableResults([]);
     setProcessingResumes(false);
     setResumeIds([]);
-    setFinalRankingDone(false);
-    setResults(null);
     setInputCollapsed(false);
   };
 
@@ -189,7 +180,6 @@ const ResumeScreener = () => {
     // First clear everything and reset states
     setTableResults([]);
     setResumeIds([]);
-    setFinalRankingDone(false);
 
     // Force a render cycle completion by using setTimeout
     setTimeout(() => {
@@ -237,7 +227,6 @@ const ResumeScreener = () => {
             "Job Description processed with ID:",
             jdResponse.jobDescriptionId
           );
-          setJobDescriptionId(jdResponse.jobDescriptionId);
 
           // Wait for all resume processing to complete
           console.log("Waiting for all resumes to be processed");
@@ -266,7 +255,6 @@ const ResumeScreener = () => {
               }));
 
               setTableResults(updatedResults);
-              setFinalRankingDone(true);
               setFormDirty(false);
             }
           }
