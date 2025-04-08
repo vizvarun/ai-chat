@@ -22,17 +22,20 @@ export const resumeScreenerService = {
     resumeFiles: File[]
   ): Promise<RankedCandidatesResponse> => {
     try {
-      console.log("API: rankResumes called", {
-        jobDescription,
-        criteria,
-        resumeFiles: resumeFiles.length,
+      console.log("API REQUEST: rankResumes", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        jobDescriptionLength: jobDescription.length,
+        criteriaLength: criteria.length,
+        hasJobDescFile: !!jobDescriptionFile,
+        resumeCount: resumeFiles.length,
+        resumeNames: resumeFiles.map((f) => f.name),
       });
 
       // Create form data for file upload
       const formData = new FormData();
       formData.append("jobDescription", jobDescription);
       if (jobDescriptionFile) {
-        formData.append("jobDescriptionFile", jobDescriptionFile);
+        formData.append("file", jobDescriptionFile);
       }
       formData.append("criteria", criteria);
 
@@ -42,6 +45,7 @@ export const resumeScreenerService = {
       });
 
       // Make API call
+      console.log(`API CALLING: ${API_ENDPOINTS.RANK_RESUMES}`);
       const response = await axiosInstance.post<RankedCandidatesResponse>(
         API_ENDPOINTS.RANK_RESUMES,
         formData,
@@ -52,9 +56,21 @@ export const resumeScreenerService = {
         }
       );
 
+      console.log("API RESPONSE: rankResumes", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        status: response.status,
+        success: response.data.success,
+        candidatesCount: response.data.rankedCandidates?.length || 0,
+      });
+
       return response.data;
-    } catch (error) {
-      console.error("API Error: rankResumes", error);
+    } catch (error: any) {
+      console.error("API ERROR: rankResumes", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        error: error.message,
+        status: error.response?.status,
+        details: error.response?.data,
+      });
       throw error;
     }
   },
@@ -66,26 +82,52 @@ export const resumeScreenerService = {
     jobDescriptionFile: File | null
   ): Promise<JobDescriptionResponse> => {
     try {
-      console.log("API: submitJobDescription called", {
+      console.log("API REQUEST: submitJobDescription", {
+        endpoint: API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
         jobDescriptionLength: jobDescription.length,
         criteriaLength: criteria.length,
         hasFile: !!jobDescriptionFile,
+        fileName: jobDescriptionFile?.name,
       });
 
-      // Simulate API call with delay
-      await randomDelay(1000, 2000);
+      // Create form data for job description submission
+      const formData = new FormData();
+      if (jobDescriptionFile) {
+        formData.append("jobDescriptionFile", jobDescriptionFile);
+      } else {
+        // If no file is provided, submit the text as description
+        formData.append("description", jobDescription);
+      }
+      formData.append("criteria", criteria);
 
-      // Mock response
-      const response = {
-        success: true,
-        jobDescriptionId: "jd-" + Math.floor(Math.random() * 10000).toString(),
-        message: "Job description processed successfully",
-      };
+      // Make actual API call instead of mock
+      console.log(`API CALLING: ${API_ENDPOINTS.PARSE_JOB_DESCRIPTION}`);
+      const response = await axiosInstance.post<JobDescriptionResponse>(
+        API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      console.log("API: submitJobDescription response", response);
-      return response;
-    } catch (error) {
-      console.error("API Error: submitJobDescription", error);
+      console.log("API RESPONSE: submitJobDescription", {
+        endpoint: API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
+        status: response.status,
+        success: response.data.success,
+        jobDescriptionId: response.data.jobDescriptionId,
+        message: response.data.message,
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error("API ERROR: submitJobDescription", {
+        endpoint: API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
+        error: error.message,
+        status: error.response?.status,
+        details: error.response?.data,
+      });
       throw error;
     }
   },
@@ -96,44 +138,70 @@ export const resumeScreenerService = {
     index: number
   ): Promise<ResumeProcessingResponse> => {
     try {
-      console.log(`API: processResume called for index ${index}`, {
+      console.log("API REQUEST: processResume", {
+        endpoint: API_ENDPOINTS.PARSE_RESUME,
         fileName: resumeFile.name,
+        fileSize: resumeFile.size,
+        fileType: resumeFile.type,
+        index: index,
       });
 
-      // Simulate API call with variable delay to make responses realistic
-      await randomDelay(2000, 5000);
+      // Create form data for resume submission
+      const formData = new FormData();
+      formData.append("file", resumeFile);
+      // formData.append("index", index.toString());
 
-      // Generate random score between 50-95
-      const matchScore = Math.floor(Math.random() * 45) + 50;
+      // Make actual API call instead of mock
+      console.log(`API CALLING: ${API_ENDPOINTS.PARSE_RESUME}`);
+      const response = await axiosInstance.post<ResumeProcessingResponse>(
+        API_ENDPOINTS.PARSE_RESUME,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      // Generate dummy response data
-      const response = {
-        success: true,
-        resumeId: `resume-${index}-${Math.floor(Math.random() * 10000)}`,
-        fileName: resumeFile.name,
-        candidateId: `cand-${Math.floor(Math.random() * 10000)}`,
-        candidateName: `Candidate ${index + 1}`,
-        matchScore: matchScore,
-        rank: index + 1, // Ensure rank is at least 1, never 0
-        overallScore: matchScore * 0.9 + Math.floor(Math.random() * 10),
-        resumeSummary: `This candidate has ${
-          Math.floor(Math.random() * 10) + 1
-        } years of experience in relevant field with expertise in various technologies.`,
-        parsedResume: `Full resume content would appear here...
-Skills: JavaScript, React, TypeScript, Node.js
-Experience: ${Math.floor(Math.random() * 10) + 1} years
-Education: Bachelor's in Computer Science`,
-      };
-
-      console.log(`API: processResume response for index ${index}`, {
-        resumeId: response.resumeId,
-        matchScore: response.matchScore,
+      console.log("API RESPONSE: processResume", {
+        endpoint: API_ENDPOINTS.PARSE_RESUME,
+        status: response.status,
+        success: response.data.success,
+        resumeId: response.data.resumeId,
+        candidateId: response.data.candidateId,
+        candidateName: response.data.candidateName,
+        matchScore: response.data.matchScore,
+        index: index,
       });
 
-      return response;
-    } catch (error) {
-      console.error(`API Error: processResume for index ${index}`, error);
-      throw error;
+      return response.data;
+    } catch (error: any) {
+      console.error("API ERROR: processResume", {
+        endpoint: API_ENDPOINTS.PARSE_RESUME,
+        fileName: resumeFile.name,
+        index: index,
+        error: error.message,
+        status: error.response?.status,
+        details: error.response?.data,
+      });
+
+      // Create a more user-friendly error with additional context
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "An error occurred processing this resume";
+      const enhancedError: any = new Error(errorMessage);
+
+      // Add properties that will be helpful for the UI
+      enhancedError.resumeFileName = resumeFile.name;
+      enhancedError.resumeIndex = index;
+      enhancedError.status = error.response?.status || 500;
+      enhancedError.isResumeProcessingError = true; // Flag to identify this specific type of error
+
+      // Add a UI-friendly error message
+      enhancedError.displayMessage = `Failed to process "${resumeFile.name}": ${errorMessage}`;
+
+      throw enhancedError;
     }
   },
 
@@ -143,25 +211,44 @@ Education: Bachelor's in Computer Science`,
     resumeIds: string[]
   ): Promise<FinalRankingResponse> => {
     try {
-      console.log("API: getFinalRanking called", {
-        jobDescriptionId,
+      console.log("API REQUEST: getFinalRanking", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        jobDescriptionId: jobDescriptionId,
         resumeCount: resumeIds.length,
+        resumeIds: resumeIds,
       });
 
-      // Simulate API call
-      await randomDelay(1500, 2500);
-
-      // Return a success response
-      const response = {
-        success: true,
-        message: "Resumes ranked successfully",
-        rankingCompleted: true,
+      // Create request data for final ranking
+      const requestData = {
+        jobDescriptionId,
+        resumeIds,
       };
 
-      console.log("API: getFinalRanking response", response);
-      return response;
-    } catch (error) {
-      console.error("API Error: getFinalRanking", error);
+      // Make actual API call instead of mock
+      console.log(`API CALLING: ${API_ENDPOINTS.RANK_RESUMES}`);
+      const response = await axiosInstance.post<FinalRankingResponse>(
+        API_ENDPOINTS.RANK_RESUMES,
+        requestData
+      );
+
+      console.log("API RESPONSE: getFinalRanking", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        status: response.status,
+        success: response.data.success,
+        message: response.data.message,
+        rankingCompleted: response.data.rankingCompleted,
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error("API ERROR: getFinalRanking", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        jobDescriptionId: jobDescriptionId,
+        resumeCount: resumeIds.length,
+        error: error.message,
+        status: error.response?.status,
+        details: error.response?.data,
+      });
       throw error;
     }
   },

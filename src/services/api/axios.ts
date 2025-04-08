@@ -8,11 +8,11 @@ import { API_CONFIG } from "../../config/env";
 
 // Create axios instance
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: API_CONFIG.BASE_URL,
+  // Remove baseURL as it's now included in each API endpoint
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: API_CONFIG.TIMEOUT, // Use environment variable for timeout
+  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || "180000"),
 });
 
 // Request interceptor

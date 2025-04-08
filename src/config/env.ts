@@ -3,9 +3,27 @@ export const API_CONFIG = {
   TIMEOUT: Number(import.meta.env.VITE_API_TIMEOUT || 30000),
 };
 
+// Define base URLs for different services
+const TCG_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}:${
+  import.meta.env.VITE_API_TCG_PORT_NUMBER
+}`;
+const RES_SCREENER_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}:${
+  import.meta.env.VITE_API_RES_SCREENER_PORT_NUMBER
+}`;
+
 export const API_ENDPOINTS = {
-  GENERATE_TEST_CASES: import.meta.env.VITE_API_GENERATE_TEST_CASES,
-  RANK_RESUMES: import.meta.env.VITE_API_RANK_RESUMES,
+  GENERATE_TEST_CASES: `${TCG_BASE_URL}${
+    import.meta.env.VITE_API_GENERATE_TEST_CASES
+  }`,
+  PARSE_RESUME: `${RES_SCREENER_BASE_URL}${
+    import.meta.env.VITE_API_PARSE_RESUME
+  }`,
+  PARSE_JOB_DESCRIPTION: `${RES_SCREENER_BASE_URL}${
+    import.meta.env.VITE_API_PARSE_JOB_DESCRIPTION
+  }`,
+  RANK_RESUMES: `${RES_SCREENER_BASE_URL}${
+    import.meta.env.VITE_API_RANK_RESUMES
+  }`,
 };
 
 export const UI_CONFIG = {

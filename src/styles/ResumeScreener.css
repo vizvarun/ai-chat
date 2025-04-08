@@ -636,16 +636,69 @@
 
 /* Error message styling */
 .error-message {
-  background-color: rgba(244, 67, 54, 0.1);
+  background-color: rgba(244, 67, 54, 0.05);
   border: 1px solid rgba(244, 67, 54, 0.3);
+  border-left: 4px solid #d32f2f;
   color: #d32f2f;
-  padding: 1rem;
+  padding: 1rem 1rem 1rem 1.5rem;
   border-radius: 6px;
   margin: 1rem 0;
   font-size: 0.95rem;
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.error-content {
+  display: flex;
+  align-items: flex-start;
+}
+
+.error-icon {
+  margin-right: 12px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.error-text {
+  flex-grow: 1;
+}
+
+.error-heading {
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.error-text p {
+  margin: 0 0 0.5rem 0;
+}
+
+.error-text p:last-child {
+  margin-bottom: 0;
+}
+
+.error-help {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.resume-error-message {
+  display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  background-color: rgba(244, 67, 54, 0.05);
+  border-left: 3px solid #d32f2f;
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  color: #d32f2f;
+  max-width: 250px;
+  white-space: normal;
+  line-height: 1.4;
 }
 
 /* Duplicate file error message styling - more minimal */
@@ -2533,4 +2586,81 @@ textarea.has-file {
 
 .trophy-icon {
   margin-right: 2px;
+}
+
+/* Error handling styles */
+.error-badge {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #d32f2f;
+}
+
+.resume-error-message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(244, 67, 54, 0.05);
+  border-left: 3px solid #d32f2f;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  color: #d32f2f;
+  max-width: 250px;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.dismiss-error-btn,
+.dismiss-global-error-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dismiss-error-btn:hover,
+.dismiss-global-error-btn:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #d32f2f;
+}
+
+.dismiss-global-error-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+}
+
+.error-message {
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #d32f2f;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.error-message p {
+  margin: 0;
+  padding-right: 24px;
+}
+
+.cell-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

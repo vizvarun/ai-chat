@@ -8,12 +8,14 @@ interface ResumeResultsTableProps {
   results: ResumeResultRow[];
   isProcessing: boolean;
   onViewParsedResume: (resume: string) => void;
+  onDismissError?: (index: number) => void;
 }
 
 const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
   results,
   isProcessing,
   onViewParsedResume,
+  onDismissError,
 }) => {
   const [sortBy, setSortBy] = useState<"rank" | "name">("rank");
   const [selectedCandidate, setSelectedCandidate] =
@@ -166,6 +168,10 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                 <td className="cell-with-loader">
                   {row.status === "completed" ? (
                     <span className="emphasis">{row.candidateId}</span>
+                  ) : row.status === "error" ? (
+                    <div className="cell-error">
+                      <span className="error-badge">Error</span>
+                    </div>
                   ) : (
                     <div className="cell-loader-container">
                       <Loader size="small" />
@@ -182,6 +188,31 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                     >
                       {row.candidateName}
                     </span>
+                  ) : row.status === "error" ? (
+                    <div className="resume-error-message">
+                      <span>{row.error || "Unknown error"}</span>
+                      {onDismissError && (
+                        <button
+                          className="dismiss-error-btn"
+                          onClick={() => onDismissError(row.serialNumber - 1)}
+                          title="Dismiss error"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="14"
+                            height="14"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   ) : (
                     <div className="cell-loader-container">
                       <Loader size="small" />
@@ -191,6 +222,8 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                 <td className="centered cell-with-loader">
                   {row.status === "completed" ? (
                     <span className="badge score-badge">{row.matchScore}%</span>
+                  ) : row.status === "error" ? (
+                    <span className="badge error-badge">Failed</span>
                   ) : (
                     <div className="cell-loader-container">
                       <Loader size="small" />
@@ -226,6 +259,8 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                       )}
                       {row.rank}
                     </span>
+                  ) : row.status === "error" ? (
+                    <span>-</span>
                   ) : (
                     <div className="cell-loader-container">
                       <Loader size="small" />
@@ -235,6 +270,8 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                 <td className="resume-summary-cell cell-with-loader">
                   {row.status === "completed" ? (
                     <div className="summary-text">{row.resumeSummary}</div>
+                  ) : row.status === "error" ? (
+                    <span>-</span>
                   ) : (
                     <div className="cell-loader-container">
                       <Loader size="small" />
@@ -263,6 +300,8 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                         <circle cx="12" cy="12" r="3"></circle>
                       </svg>
                     </button>
+                  ) : row.status === "error" ? (
+                    <span>-</span>
                   ) : (
                     <div className="cell-loader-container">
                       <Loader size="small" />
