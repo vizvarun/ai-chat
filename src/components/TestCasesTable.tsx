@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { TestCasesTableProps } from "../types/testTypes";
-import "../styles/TestCasesTable.css";
-import AIAssistModal from "./AIAssistModal";
-import { generateChatId } from "../utils/idGenerator";
+import React, { useEffect, useMemo, useState } from "react";
+import { API_ENDPOINTS } from "../config/env";
 import axiosInstance from "../services/api/axios"; // Import axios instance
+import "../styles/TestCasesTable.css";
+import { TestCasesTableProps } from "../types/testTypes";
+import AIAssistModal from "./AIAssistModal";
 import TablePagination from "./TablePagination";
 
 const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
@@ -190,45 +190,35 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     setLoadingAI(true);
     setApiError(null);
 
-    const chatId = generateChatId();
-
-    const aiApiUrl = import.meta.env.VITE_AI_API_URL;
-
-    const requestData = {
-      userId: "user123",
-      userType: "msp",
-      chatId: chatId,
-      messages: [
-        {
-          role: "user",
-          content: stepDescription,
-        },
-      ],
-      tools: [
-        { function: { name: "scheduleInterview" } },
-        { function: { name: "knowledge" } },
-      ],
-      stream: false,
-    };
+    // Use query parameter approach
+    const params = new URLSearchParams();
+    params.append("content", stepDescription);
+    const url = `${API_ENDPOINTS.CHAT_AI}?${params.toString()}`;
 
     axiosInstance
-      .post(aiApiUrl, requestData)
+      .post(url, {})
       .then((response) => {
         if (response) {
-          setModalContent(response?.data?.choices[0]?.message?.content);
+          // Extract content from nested structure
+          const aiResponse = response?.data?.choices?.[0]?.message?.content;
+          if (aiResponse) {
+            setModalContent(aiResponse);
+          } else {
+            setApiError("No response content received from the AI Assistant.");
+          }
         } else {
-          throw new Error("Invalid response format from API");
+          setApiError("No response received from the AI Assistant.");
         }
-        setLoadingAI(false);
       })
       .catch((error) => {
-        console.error("Error fetching AI analysis:", error);
-        setApiError(
+        console.error("Error communicating with AI Assistant:", error);
+        const errorMessage =
           error.response?.data?.message ||
-            error.message ||
-            "Failed to get AI analysis. Please try again."
-        );
-        setModalContent("");
+          error.message ||
+          "An unknown error occurred";
+        setApiError(errorMessage);
+      })
+      .finally(() => {
         setLoadingAI(false);
       });
   };

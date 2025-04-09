@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react";
+import { API_ENDPOINTS } from "../config/env";
 import "../styles/SidebarItemLayout.css";
-import { generateChatId } from "../utils/idGenerator";
 import Breadcrumbs from "./Breadcrumbs";
 import ChatWithAI from "./ChatWithAI";
 
@@ -22,7 +22,6 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
 }) => {
   const [apiError, setApiError] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
-  const aiApiUrl = import.meta.env.VITE_AI_API_URL;
 
   // Reset isClosing state when showChat changes
   useEffect(() => {
@@ -37,27 +36,6 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
       setIsClosing(true);
       onToggleChat();
     }
-  };
-
-  // Create API request body for chat
-  const createChatApiBody = (message: string) => {
-    const chatId = generateChatId();
-    return {
-      userId: "user123",
-      userType: "msp",
-      chatId: chatId,
-      messages: [
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-      tools: [
-        { function: { name: "scheduleInterview" } },
-        { function: { name: "knowledge" } },
-      ],
-      stream: false,
-    };
   };
 
   // Handle API errors
@@ -139,8 +117,8 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
               )}
               <div className="chat-with-ai-wrapper">
                 <ChatWithAI
-                  apiEndpoint={aiApiUrl}
-                  createApiBody={createChatApiBody}
+                  apiEndpoint={API_ENDPOINTS.CHAT_AI}
+                  useQueryParam={true}
                   onError={handleApiError}
                 />
               </div>

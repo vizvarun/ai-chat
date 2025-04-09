@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import "../styles/ChatWithAI.css";
 import { MessageType, SpeakingStateRecord } from "../types/chatTypes";
 import axiosInstance from "../services/api/axios";
-import { API_CONFIG } from "../config/env";
+import { API_CONFIG, API_ENDPOINTS } from "../config/env";
+import { markdownToHtml } from "../utils/textProcessing";
 
 interface SpeechRecognitionEvent {
   results: {
@@ -16,15 +17,15 @@ interface SpeechRecognitionEvent {
 }
 
 interface ChatWithAIProps {
-  apiEndpoint: string;
-  createApiBody: (message: string) => any;
+  apiEndpoint?: string;
+  useQueryParam?: boolean;
   onError?: (error: any) => void;
   initialMessages?: MessageType[];
 }
 
 const ChatWithAI: React.FC<ChatWithAIProps> = ({
-  apiEndpoint,
-  createApiBody,
+  apiEndpoint = API_ENDPOINTS.CHAT_AI,
+  useQueryParam = true,
   onError,
   initialMessages = [],
 }) => {
@@ -35,31 +36,27 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
   const [isListening, setIsListening] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<any>(null); // Use any temporarily
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Focus input on mount
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    // Check if browser supports speech recognition
     if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
       const SpeechRecognition: any =
         window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
 
-      // Configure speech recognition
       const recognition = recognitionRef.current;
       recognition.continuous = false;
       recognition.interimResults = true;
       recognition.lang = "en-US";
 
-      // Handle the results of speech recognition
       recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = Array.from(Object.values(event.results))
           .map((result) => result[0]?.transcript || "")
@@ -109,7 +106,6 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
 
-    // Add user message
     const userMessageId = `msg-${Date.now()}-user`;
     const newUserMessage: MessageType = {
       id: userMessageId,
@@ -117,11 +113,10 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
       sender: "user",
     };
 
-    // Add temporary bot message with loading state
     const botMessageId = `msg-${Date.now()}-bot`;
     const loadingBotMessage: MessageType = {
       id: botMessageId,
-      text: "", // Empty text since we'll use the animated loader
+      text: "",
       sender: "bot",
       loading: true,
     };
@@ -129,54 +124,115 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
     setMessages((prev) => [...prev, newUserMessage, loadingBotMessage]);
     setInputMessage("");
     setIsLoading(true);
-    const requestBody = createApiBody(newUserMessage.text);
-    axiosInstance
-      .post(apiEndpoint, requestBody, {
-        timeout: API_CONFIG.TIMEOUT,
-      })
-      .then((response) => {
-        const responseText =
-          response?.data?.choices?.[0]?.message?.content ||
-          "Sorry, I couldn't process your request.";
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === botMessageId
-              ? {
-                  id: botMessageId,
-                  text: responseText,
-                  sender: "bot",
-                  loading: false,
-                }
-              : msg
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error getting chat response:", error);
-        if (onError) {
-          onError(error);
-        }
-        const errorMessage =
-          error.code === "ECONNABORTED"
-            ? "The request timed out. Please try again later."
-            : "Sorry, there was an error processing your request. Please try again.";
 
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === botMessageId
-              ? {
-                  id: botMessageId,
-                  text: errorMessage,
-                  sender: "bot",
-                  loading: false,
-                }
-              : msg
-          )
-        );
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    let url = apiEndpoint;
+    const params = new URLSearchParams();
+
+    if (useQueryParam) {
+      params.append("content", newUserMessage.text);
+      url = `${apiEndpoint}?${params.toString()}`;
+
+      axiosInstance
+        .post(
+          url,
+          {},
+          {
+            timeout: API_CONFIG.TIMEOUT,
+          }
+        )
+        .then((response) => {
+          const responseText =
+            response?.data?.choices?.[0]?.message?.content ||
+            "Sorry, I couldn't process your request.";
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === botMessageId
+                ? {
+                    id: botMessageId,
+                    text: responseText,
+                    sender: "bot",
+                    loading: false,
+                  }
+                : msg
+            )
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting chat response:", error);
+          if (onError) {
+            onError(error);
+          }
+          const errorMessage =
+            error.code === "ECONNABORTED"
+              ? "The request timed out. Please try again later."
+              : "Sorry, there was an error processing your request. Please try again.";
+
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === botMessageId
+                ? {
+                    id: botMessageId,
+                    text: errorMessage,
+                    sender: "bot",
+                    loading: false,
+                  }
+                : msg
+            )
+          );
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      const requestBody = { content: newUserMessage.text };
+      axiosInstance
+        .post(apiEndpoint, requestBody, {
+          timeout: API_CONFIG.TIMEOUT,
+        })
+        .then((response) => {
+          const responseText =
+            response?.data?.choices?.[0]?.message?.content ||
+            "Sorry, I couldn't process your request.";
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === botMessageId
+                ? {
+                    id: botMessageId,
+                    text: markdownToHtml(responseText),
+                    sender: "bot",
+                    loading: false,
+                  }
+                : msg
+            )
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting chat response:", error);
+          if (onError) {
+            onError(error);
+          }
+          const errorMessage =
+            error.code === "ECONNABORTED"
+              ? "The request timed out. Please try again later."
+              : "Sorry, there was an error processing your request. Please try again.";
+
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === botMessageId
+                ? {
+                    id: botMessageId,
+                    text: errorMessage,
+                    sender: "bot",
+                    loading: false,
+                  }
+                : msg
+            )
+          );
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

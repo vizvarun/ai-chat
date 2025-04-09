@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
   EXPLAIN_RESUME: `${RES_SCREENER_BASE_URL}${
     import.meta.env.VITE_API_EXPLAIN_RESUME
   }`,
+  CHAT_AI: `${RES_SCREENER_BASE_URL}${import.meta.env.VITE_API_CHAT_AI}`,
 };
 
 export const UI_CONFIG = {
