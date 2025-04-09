@@ -3,6 +3,7 @@ import { ResumeResultRow } from "../types/resumeTypes";
 import CandidateDetailModal from "./CandidateDetailModal";
 import Loader from "./Loader";
 import TablePagination from "./TablePagination";
+import { resumeScreenerService } from "../services/api/resumeScreenerService";
 
 interface ResumeResultsTableProps {
   results: ResumeResultRow[];
@@ -11,6 +12,7 @@ interface ResumeResultsTableProps {
   onViewParsedResume: (resume: string) => void;
   onDismissError?: (index: number) => void;
   scoresReceived?: boolean;
+  jdResponse?: any; // Changed from jobDescription and jobDescriptionId to full response
 }
 
 const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
@@ -20,10 +22,14 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
   onViewParsedResume,
   onDismissError,
   scoresReceived = false,
+  jdResponse = null, // Changed from separate params to full response object
 }) => {
   const [sortBy, setSortBy] = useState<"rank" | "name">("rank");
   const [selectedCandidate, setSelectedCandidate] =
     useState<ResumeResultRow | null>(null);
+  const [explanationData, setExplanationData] = useState<any>(null);
+  const [loadingExplanation, setLoadingExplanation] = useState(false);
+  const [explanationError, setExplanationError] = useState<string | null>(null);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -68,14 +74,59 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
     (row) => row.status === "processing" || row.status === "pending"
   ).length;
 
-  const handleCandidateClick = (candidate: ResumeResultRow) => {
+  const handleCandidateClick = async (candidate: ResumeResultRow) => {
     if (candidate.status === "completed" && !isProcessing) {
-      setSelectedCandidate(candidate);
+      setLoadingExplanation(true);
+      setExplanationError(null);
+      setExplanationData(null);
+
+      try {
+        // First set the candidate to show the modal with loading state
+        setSelectedCandidate(candidate);
+
+        if (!jdResponse) {
+          throw new Error("Job description data not available");
+        }
+
+        // Extract the parsed resume data from the candidate
+        let parsedResumeData;
+        try {
+          // Try to parse the JSON string if it's stored as a string
+          parsedResumeData =
+            typeof candidate.parsedResume === "string"
+              ? JSON.parse(candidate.parsedResume)
+              : candidate.parsedResume;
+        } catch (parseError) {
+          console.error("Failed to parse resume data:", parseError);
+          throw new Error("Invalid resume data format");
+        }
+
+        // Get the candidate's match score (defaulting to 0 if undefined)
+        const matchScore = candidate.matchScore || 0;
+
+        // Make the API call to get explanation with correct parameters
+        const explanation = await resumeScreenerService.explainCandidateMatch(
+          jdResponse, // Pass the full JD response
+          parsedResumeData, // Pass the parsed resume data
+          matchScore // Pass the candidate's match score
+        );
+
+        setExplanationData(explanation);
+      } catch (error) {
+        console.error("Failed to get candidate explanation:", error);
+        setExplanationError(
+          "Failed to get detailed candidate explanation. Showing basic information."
+        );
+      } finally {
+        setLoadingExplanation(false);
+      }
     }
   };
 
   const handleCloseModal = () => {
     setSelectedCandidate(null);
+    setExplanationData(null);
+    setExplanationError(null);
   };
 
   // Pagination handlers
@@ -370,6 +421,9 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
           candidate={selectedCandidate}
           onClose={handleCloseModal}
           onViewParsedResume={onViewParsedResume}
+          explanationData={explanationData}
+          isLoading={loadingExplanation}
+          error={explanationError}
         />
       )}
     </div>

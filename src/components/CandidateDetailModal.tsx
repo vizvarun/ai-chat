@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { ResumeResultRow } from "../types/resumeTypes";
-import "../styles/CandidateDetailModal.css"; // Import your CSS file for styling
+import "../styles/CandidateDetailModal.css";
+import Loader from "./Loader";
+import { markdownToHtml } from "../utils/textProcessing";
 
 interface CandidateDetailModalProps {
   candidate: ResumeResultRow;
   onClose: () => void;
   onViewParsedResume: (resume: string) => void;
+  explanationData?: any;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
   candidate,
   onClose,
   onViewParsedResume,
+  explanationData,
+  isLoading = false,
+  error = null,
 }) => {
   const [showContent, setShowContent] = useState(false);
   const [animateScore, setAnimateScore] = useState(false);
@@ -34,8 +42,8 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     if (matchScore >= 85) return "Excellent";
     if (matchScore >= 75) return "Strong";
     if (matchScore >= 60) return "Good";
-    if (matchScore >= 50) return "Fair";
-    if (matchScore >= 40) return "Bad";
+    if (matchScore >= 40) return "Fair";
+    if (matchScore >= 1) return "Bad";
     return "Basic";
   };
 
@@ -49,9 +57,61 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     };
   }, []);
 
-  // Stop propagation on modal content click to prevent closing
+  // Handle content click to prevent closing
   const handleModalContentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  // Parse explanation text into sections and convert markdown to HTML
+  const renderExplanation = (explanationText: string) => {
+    if (!explanationText) return <p>No explanation available</p>;
+
+    // Split by sections denoted by ###
+    const sections = explanationText.split(/(?=###\s+)/);
+
+    return (
+      <>
+        {sections.map((section, index) => {
+          // For the first section (intro paragraph), just render it as is
+          if (index === 0 && !section.startsWith("###")) {
+            const htmlContent = markdownToHtml(section.trim());
+            return (
+              <div
+                key={index}
+                className="explanation-intro"
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+              />
+            );
+          }
+
+          // For other sections, extract the heading and content
+          const headingMatch = section.match(/###\s+([^:]+):/);
+          if (!headingMatch) {
+            const htmlContent = markdownToHtml(section.trim());
+            return (
+              <div
+                key={index}
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+              />
+            );
+          }
+
+          const heading = headingMatch[1];
+          const content = section.replace(/###\s+[^:]+:/, "").trim();
+          const htmlContent = markdownToHtml(content);
+
+          return (
+            <div key={index} className="explanation-section">
+              <h4 className="explanation-heading">{heading}</h4>
+              <div
+                className="explanation-content"
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+              />
+            </div>
+          );
+        })}
+      </>
+    );
   };
 
   return (
@@ -95,7 +155,7 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
             <div className="metric-card">
               <div className="metric-title">Match</div>
               <div className="skill-level-track">
-                {[4, 5, 6, 7.5, 8.5].map((level) => (
+                {[0.1, 4, 6, 7.5, 8.5].map((level) => (
                   <div
                     key={level}
                     className={`skill-level ${
@@ -142,15 +202,40 @@ const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
             </div>
           </div>
         </div>
+
         <div className="candidate-modal-content">
-          <div className="candidate-content-section">
-            <div className="section-header">
-              <h3>Resume Summary</h3>
+          {isLoading ? (
+            <div className="loading-container">
+              <div className="loader-with-text">
+                <Loader size="medium" />
+                <p className="loading-text">Loading detailed analysis...</p>
+              </div>
             </div>
-            <div className="section-content">
-              <p>{candidate.resumeSummary || "No summary available"}</p>
+          ) : error ? (
+            <div className="error-message">
+              <p>{error}</p>
             </div>
-          </div>
+          ) : explanationData && explanationData.explanation ? (
+            /* Display the explanation from API */
+            <div className="candidate-content-section">
+              <div className="section-header">
+                <h3>Match Analysis</h3>
+              </div>
+              <div className="section-content explanation-container">
+                {renderExplanation(explanationData.explanation)}
+              </div>
+            </div>
+          ) : (
+            /* Fallback to basic summary if no explanation data */
+            <div className="candidate-content-section">
+              <div className="section-header">
+                <h3>Resume Summary</h3>
+              </div>
+              <div className="section-content">
+                <p>{candidate.resumeSummary || "No summary available"}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="candidate-modal-footer">

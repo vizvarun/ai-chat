@@ -295,4 +295,43 @@ export const resumeScreenerService = {
       throw error;
     }
   },
+
+  // New function to explain candidate match with job description
+  explainCandidateMatch: async (
+    jdResponse: any, // The complete job description response object
+    parsedResumeData: any, // The parsed resume data
+    score: number // Added score parameter
+  ): Promise<any> => {
+    try {
+      console.log("API REQUEST: explainCandidateMatch", {
+        endpoint: API_ENDPOINTS.EXPLAIN_RESUME,
+        jobDescriptionId: jdResponse.jobDescriptionId,
+        resumeId: parsedResumeData.resumeId || parsedResumeData.id,
+        score: score,
+      });
+
+      const response = await axiosInstance.post(API_ENDPOINTS.EXPLAIN_RESUME, {
+        request: jdResponse, // JD response object
+        resume: parsedResumeData, // Parsed resume data
+        score: score, // Score of that row
+        question:
+          "Explain the match category for the candidate from experience, skills, and education.", // Hardcoded question
+      });
+
+      console.log("API RESPONSE: explainCandidateMatch", {
+        endpoint: API_ENDPOINTS.EXPLAIN_RESUME,
+        status: response.status,
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error("API ERROR: explainCandidateMatch", {
+        endpoint: API_ENDPOINTS.EXPLAIN_RESUME,
+        error: error.message,
+        status: error.response?.status,
+        details: error.response?.data,
+      });
+      throw error;
+    }
+  },
 };

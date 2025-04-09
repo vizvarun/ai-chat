@@ -1195,7 +1195,7 @@ textarea.has-file {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 800px;
-  max-height: 90vh;
+  max-height: 85% !important;
   display: flex;
   flex-direction: column;
   overflow: hidden;

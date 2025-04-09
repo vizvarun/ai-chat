@@ -697,6 +697,7 @@ const ResumeScreener = () => {
             isRanking={rankingInProgress}
             onViewParsedResume={showParsedResume}
             scoresReceived={scoresReceived}
+            jdResponse={jdResponse} // Pass the full jdResponse object
           />
         </div>
       )}

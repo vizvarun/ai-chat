@@ -24,6 +24,9 @@ export const API_ENDPOINTS = {
   RANK_RESUMES: `${RES_SCREENER_BASE_URL}${
     import.meta.env.VITE_API_RANK_RESUMES
   }`,
+  EXPLAIN_RESUME: `${RES_SCREENER_BASE_URL}${
+    import.meta.env.VITE_API_EXPLAIN_RESUME
+  }`,
 };
 
 export const UI_CONFIG = {

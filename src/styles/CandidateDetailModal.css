@@ -251,3 +251,177 @@
   text-overflow: ellipsis;
   display: inline-block;
 }
+
+/* Loading container in modal */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  width: 100%;
+}
+
+.loader-with-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.loading-text {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* Error message styling */
+.error-message {
+  background-color: rgba(244, 67, 54, 0.05);
+  border: 1px solid rgba(244, 67, 54, 0.2);
+  border-radius: 8px;
+  padding: 16px 20px;
+  color: #d32f2f;
+  margin-bottom: 20px;
+}
+
+/* Skills match list */
+.skills-match-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-match-item {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: 16px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.skill-name {
+  color: var(--color-text-secondary);
+}
+
+.skill-score {
+  color: var(--color-primary);
+  font-weight: 500;
+  background-color: var(--color-primary-lighter);
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 11px;
+}
+
+/* Explanation text formatting styles */
+.explanation-container {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.explanation-intro {
+  color: var(--color-text-primary);
+  margin-bottom: 16px; /* Slightly reduced */
+  font-size: 14.5px;
+  border-left: 3px solid var(--color-primary-lighter);
+  padding-left: 12px;
+  background-color: rgba(var(--color-primary-rgb, 42, 60, 151), 0.03);
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+}
+
+.explanation-section {
+  margin-bottom: 16px; /* Slightly reduced */
+  padding-bottom: 12px;
+}
+
+.explanation-section:not(:last-child) {
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.explanation-heading {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.explanation-content {
+  color: var(--color-text-secondary);
+  padding-left: 4px;
+}
+
+.explanation-content p {
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.explanation-content p:last-child {
+  margin-bottom: 0;
+}
+
+.explanation-content ul,
+.explanation-content ol {
+  margin-top: 6px;
+  margin-bottom: 12px;
+  padding-left: 24px;
+}
+
+.explanation-content li {
+  margin-bottom: 4px;
+}
+
+.explanation-content strong {
+  color: var(--color-text-primary);
+}
+
+.explanation-content code {
+  background-color: var(--color-background-secondary);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 13px;
+}
+
+.explanation-content blockquote {
+  border-left: 3px solid var(--color-border);
+  margin-left: 0;
+  padding-left: 12px;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+/* Adjust modal container height */
+.candidate-modal-container {
+  max-width: 650px; /* Keep reasonable width */
+  max-height: 80vh; /* Reduce from 90vh to 80vh for more compact appearance */
+}
+
+/* Adjust the content area height and improve scrolling */
+.candidate-modal-content {
+  max-height: calc(
+    80vh - 180px
+  ); /* Reduced from 90vh to properly fit in 80vh container */
+  overflow-y: auto;
+  padding: 20px 24px; /* Slightly reduced vertical padding */
+}
+
+/* Match section styling to be more compact */
+.section-header {
+  margin-bottom: 10px; /* Reduced from 12px */
+}
+
+.section-header h3 {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Modal footer - make it more compact */
+.candidate-modal-footer {
+  padding: 14px 24px; /* Reduced from 16px vertical padding */
+}
