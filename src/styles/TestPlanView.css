@@ -5,10 +5,27 @@
   padding: 1.5rem;
   box-shadow: 0 2px 6px var(--color-shadow);
   margin-bottom: 1.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-/* Add minimal class to reduce visual weight */
+/* Add enhanced class for our improved styling */
+.test-plans.enhanced {
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.test-plans.enhanced:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.test-plans.enhanced.collapsed {
+  padding-bottom: 0.5rem;
+}
+
+/* Style for minimal version (legacy support) */
 .test-plans.minimal {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   border-radius: 6px;
@@ -22,35 +39,65 @@
 
 .test-plan-header {
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.test-plans.minimal .test-plan-header {
-  margin-bottom: 0.8rem;
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-primary-lighter);
+  border-radius: 8px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.title-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .test-plan-title {
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-primary);
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border-light);
+  margin: 0;
+  line-height: 1.2;
 }
 
-.test-plans.minimal {
-  font-size: 1.2rem;
+.test-plans.enhanced .test-plan-title {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  color: var(--color-primary);
+}
+
+.test-plans.minimal .test-plan-title {
+  font-size: 0.95rem;
   font-weight: 500;
   color: var(--color-text-primary);
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid var(--color-border-light);
   margin-bottom: 0.4rem;
 }
 
 .test-plan-description {
   color: var(--color-text-secondary);
-  margin-bottom: 1.25rem;
+  margin: 0;
   line-height: 1.6;
-  font-size: 1rem;
+  font-size: 0.9rem;
+}
+
+.test-plans.enhanced .test-plan-description {
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
 .test-plans.minimal .test-plan-description {
@@ -59,11 +106,42 @@
   opacity: 0.85;
 }
 
+.toggle-button {
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-button:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-primary);
+}
+
 .test-plan-steps {
   background-color: var(--color-background-tertiary);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.test-plans.enhanced .test-plan-steps {
+  background: linear-gradient(
+    to bottom,
+    var(--color-background-secondary),
+    var(--color-background-tertiary)
+  );
   padding: 1rem 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .test-plans.minimal .test-plan-steps {
@@ -79,6 +157,15 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.test-plans.enhanced .steps-header {
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .test-plans.minimal .steps-header {
@@ -102,6 +189,10 @@
   list-style-type: none;
 }
 
+.test-plans.enhanced .steps-list {
+  margin-top: 0.5rem;
+}
+
 .step-item {
   padding: 0.5rem 0;
   margin-bottom: 0.5rem;
@@ -110,6 +201,22 @@
   display: flex;
   align-items: flex-start;
   line-height: 1.5;
+}
+
+.test-plans.enhanced .step-item {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.035);
+  margin-bottom: 0;
+  transition: background-color 0.15s ease;
+  border-radius: 6px;
+}
+
+.test-plans.enhanced .step-item:hover {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+.test-plans.enhanced .step-item:last-child {
+  border-bottom: none;
 }
 
 .test-plans.minimal .step-item {
@@ -125,14 +232,34 @@
   border-bottom: none;
 }
 
+.step-number {
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-right: 8px;
+  display: inline-block;
+  width: 24px;
+  text-align: right;
+}
+
+.step-text {
+  flex: 1;
+}
+
 /* Add styles for execution plan display */
 .test-plan-execution {
   background-color: var(--color-background-tertiary);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 1.25rem 2.5rem !important;
-  margin-bottom: 1rem;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 0.5rem;
   overflow: auto;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.test-plans.enhanced .test-plan-execution {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+  background-color: var(--color-background-secondary);
 }
 
 .test-plans.minimal .test-plan-execution {
@@ -149,23 +276,30 @@
   margin: 0;
 }
 
+.test-plans.enhanced .execution-plan-content {
+  font-size: 0.95rem;
+  padding: 0.5rem;
+}
+
 .test-plans.minimal .execution-plan-content {
   font-size: 0.85rem;
   color: var(--color-text-secondary);
 }
 
-/* Style HTML headings for execution plan */
+/* Enhanced styling for execution plan headings */
 .execution-plan-content h1,
 .execution-plan-content h2,
 .execution-plan-content h3 {
   margin-top: 0.8em;
   margin-bottom: 0.5em;
   color: var(--color-primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .execution-plan-content h1 {
   font-size: 1.3rem;
+  border-bottom: 1px solid var(--color-primary-lighter);
+  padding-bottom: 0.3rem;
 }
 
 .execution-plan-content h2 {
@@ -190,13 +324,27 @@
   margin-bottom: 0.25rem;
 }
 
+/* Empty state styling */
 .empty-test-plan {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 200px;
   color: var(--color-text-secondary);
   font-style: italic;
+}
+
+.test-plans.enhanced.empty-test-plan {
+  padding: 3rem 2rem;
+  text-align: center;
+  background-color: var(--color-background-secondary);
+}
+
+.empty-state-icon {
+  margin-bottom: 16px;
+  color: var(--color-text-tertiary);
+  opacity: 0.5;
 }
 
 .empty-test-plan.minimal {
