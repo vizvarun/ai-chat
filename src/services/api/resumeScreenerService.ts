@@ -59,7 +59,7 @@ export const resumeScreenerService = {
       console.log("API RESPONSE: rankResumes", {
         endpoint: API_ENDPOINTS.RANK_RESUMES,
         status: response.status,
-        success: response.data.success,
+        success: response.data?.success,
         candidatesCount: response.data.rankedCandidates?.length || 0,
       });
 
@@ -93,7 +93,7 @@ export const resumeScreenerService = {
       // Create form data for job description submission
       const formData = new FormData();
       if (jobDescriptionFile) {
-        formData.append("jobDescriptionFile", jobDescriptionFile);
+        formData.append("file", jobDescriptionFile);
       } else {
         // If no file is provided, submit the text as description
         formData.append("description", jobDescription);
@@ -245,6 +245,49 @@ export const resumeScreenerService = {
         endpoint: API_ENDPOINTS.RANK_RESUMES,
         jobDescriptionId: jobDescriptionId,
         resumeCount: resumeIds.length,
+        error: error.message,
+        status: error.response?.status,
+        details: error.response?.data,
+      });
+      throw error;
+    }
+  },
+
+  // Add new method for final ranking with responses
+  rankResumesWithResponses: async (payload: {
+    request: any; // Complete response from parse-job-maggi
+    resumes: any[]; // Array of responses from parse-resume-maggi
+  }): Promise<RankedCandidatesResponse> => {
+    try {
+      console.log("API REQUEST: rankResumesWithResponses", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        jobDescriptionId: payload.request?.jobDescriptionId,
+        resumeCount: payload.resumes?.length || 0,
+      });
+
+      // Make API call with the new payload structure
+      console.log(`API CALLING: ${API_ENDPOINTS.RANK_RESUMES}`);
+      const response = await axiosInstance.post<RankedCandidatesResponse>(
+        API_ENDPOINTS.RANK_RESUMES,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("API RESPONSE: rankResumesWithResponses", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
+        status: response.status,
+        success: response.data?.success,
+        candidatesCount: response.data.rankedCandidates?.length || 0,
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error("API ERROR: rankResumesWithResponses", {
+        endpoint: API_ENDPOINTS.RANK_RESUMES,
         error: error.message,
         status: error.response?.status,
         details: error.response?.data,

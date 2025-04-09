@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import JDUploader from "../components/JDUploader";
 import Loader from "../components/Loader";
 import ResumeResultsTable from "../components/ResumeResultsTable";
@@ -23,17 +23,28 @@ const ResumeScreener = () => {
   // UI states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorTimeoutId, setErrorTimeoutId] = useState<NodeJS.Timeout | null>(
+    null
+  );
   const [inputCollapsed, setInputCollapsed] = useState(false);
   const [formDirty, setFormDirty] = useState(true);
 
   // New states for the enhanced workflow
   const [processingResumes, setProcessingResumes] = useState(false);
+  const [rankingInProgress, setRankingInProgress] = useState(false);
   const [tableResults, setTableResults] = useState<ResumeResultRow[]>([]);
   const [resumeIds, setResumeIds] = useState<string[]>([]);
 
   // New state for modal
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedResume, setSelectedResume] = useState<string | null>(null);
+
+  // New states for final ranking
+  const [jdResponse, setJdResponse] = useState<any>(null);
+  const [resumeResponses, setResumeResponses] = useState<any[]>([]);
+
+  // Add new state to track if scores have been received
+  const [scoresReceived, setScoresReceived] = useState(false);
 
   // Handle job description text input
   const handleJobDescriptionChange = (
@@ -106,7 +117,10 @@ const ResumeScreener = () => {
     setTableResults([]);
     setProcessingResumes(false);
     setResumeIds([]);
+    setResumeResponses([]);
+    setJdResponse(null);
     setInputCollapsed(false);
+    setScoresReceived(false);
   };
 
   // Toggle input section visibility
@@ -128,31 +142,46 @@ const ResumeScreener = () => {
 
       const response = await resumeScreenerService.processResume(file, index);
 
-      setResumeIds((prev) => [...prev, response.resumeId]);
+      // Store the complete response for later use in final ranking
+      setResumeResponses((prev) => [...prev, response]);
+
+      // Extract data from nested response structure
+      const parsedData = response?.parsed_data;
+      const candidateName =
+        response.custom_data?.candidateName ||
+        parsedData?.custom_data?.candidateName ||
+        "Unknown";
+
+      const resumeId = parsedData?.resumeId || `temp-${index}`;
+      const overview = parsedData?.overview || "";
+
+      // Add resume ID to the list of processed resumes
+      setResumeIds((prev) => [...prev, resumeId]);
+
+      console.log("parsed", parsedData);
 
       console.log(
-        `Resume ${index} processed successfully: ${response.candidateName}, Score: ${response.matchScore}%`
+        `Resume ${index} processed successfully: ${candidateName}, Resume ID: ${resumeId}`
       );
 
-      // Update table with results
+      // Update table with results - match score and rank will come later
       setTableResults((prev) =>
         prev.map((row, i) =>
           i === index
             ? {
                 ...row,
-                resumeId: response.resumeId,
-                candidateId: response.candidateId,
-                candidateName: response.candidateName,
-                matchScore: response.matchScore,
-                rank: response.rank,
-                overallScore: response.overallScore,
-                resumeSummary: response.resumeSummary,
-                parsedResume: response.parsedResume,
+                resumeId: resumeId,
+                candidateId: resumeId,
+                candidateName: candidateName,
+                resumeSummary: overview,
+                parsedResume: JSON.stringify(parsedData, null, 2),
                 status: "completed",
+                hasFinalRanking: false, // Mark that we don't have final ranking yet
               }
             : row
         )
       );
+      return response; // Return the response directly
     } catch (error) {
       console.error(`Error processing resume ${index}:`, error);
       setTableResults((prev) =>
@@ -162,10 +191,12 @@ const ResumeScreener = () => {
                 ...row,
                 status: "error",
                 error: "Failed to process resume",
+                hasFinalRanking: false,
               }
             : row
         )
       );
+      throw error; // Re-throw to be caught by Promise.all
     }
   };
 
@@ -175,17 +206,62 @@ const ResumeScreener = () => {
     setModalOpen(true);
   };
 
+  // Function to set error with auto-dismiss
+  const setErrorWithTimeout = (errorMessage: string) => {
+    // Clear any existing timeout
+    if (errorTimeoutId) {
+      clearTimeout(errorTimeoutId);
+    }
+
+    // Set the error
+    setError(errorMessage);
+
+    // Set a timeout to clear the error after 12 seconds
+    const timeoutId = setTimeout(() => {
+      setError(null);
+    }, 12000);
+
+    setErrorTimeoutId(timeoutId);
+  };
+
+  // Function to dismiss an error manually
+  const dismissError = () => {
+    if (errorTimeoutId) {
+      clearTimeout(errorTimeoutId);
+      setErrorTimeoutId(null);
+    }
+    setError(null);
+  };
+
+  // Clean up timeout when component unmounts
+  useEffect(() => {
+    return () => {
+      if (errorTimeoutId) {
+        clearTimeout(errorTimeoutId);
+      }
+    };
+  }, [errorTimeoutId]);
+
   // Handle form submission - updated workflow
   const rankResumes = async () => {
     // First clear everything and reset states
     setTableResults([]);
     setResumeIds([]);
+    setResumeResponses([]); // Clear previous resume responses
+    setJdResponse(null); // Clear previous job description response
+    setScoresReceived(false); // Reset scores received state
 
     // Force a render cycle completion by using setTimeout
     setTimeout(() => {
       setLoading(true);
+      // Use our new function instead of directly setting error to null
+      if (errorTimeoutId) {
+        clearTimeout(errorTimeoutId);
+        setErrorTimeoutId(null);
+      }
       setError(null);
       setProcessingResumes(true);
+      setRankingInProgress(false);
 
       console.log("Starting resume ranking process");
       console.log(
@@ -198,6 +274,7 @@ const ResumeScreener = () => {
           serialNumber: index + 1,
           fileName: file.name,
           status: "pending",
+          hasFinalRanking: false, // Add flag to track if final ranking is available
         })
       );
 
@@ -222,48 +299,157 @@ const ResumeScreener = () => {
           );
 
           // Await JD submission in background
-          const jdResponse = await jdPromise;
+          const jdResponseData = await jdPromise;
+          setJdResponse(jdResponseData);
           console.log(
             "Job Description processed with ID:",
-            jdResponse.jobDescriptionId
+            jdResponseData.jobDescriptionId
           );
 
-          // Wait for all resume processing to complete
+          // Wait for all resume processing to complete and collect the responses directly
           console.log("Waiting for all resumes to be processed");
-          await Promise.all(processPromises);
-          console.log(`All ${resumes.length} resumes processed successfully`);
 
-          // Final ranking once both JD and resumes are processed
-          if (jdResponse.jobDescriptionId && resumeIds.length > 0) {
-            console.log("Starting final ranking of all resumes");
-            const finalRankingResponse =
-              await resumeScreenerService.getFinalRanking(
-                jdResponse.jobDescriptionId,
-                resumeIds
+          let processedResponses;
+          try {
+            processedResponses = await Promise.all(processPromises);
+            console.log(`All ${resumes.length} resumes processed successfully`);
+          } catch (error) {
+            console.error("Some resumes failed to process:", error);
+            processedResponses = []; // Initialize with empty array on error
+          }
+
+          // Now make the final API call with all resume responses
+          console.log(
+            "Resume responses count:",
+            processedResponses.length,
+            "Expected:",
+            resumes.length
+          );
+
+          // Use the directly collected responses instead of the state variable
+          if (jdResponseData && processedResponses.length > 0) {
+            console.log("Calling final ranking with all responses");
+
+            // Set ranking in progress to update progress bar
+            setRankingInProgress(true);
+
+            // Extract just the parsed_data from each response
+            const parsedDataArray = processedResponses.map(
+              (response) => response.parsed_data
+            );
+            console.log(
+              `Extracted ${parsedDataArray.length} parsed data objects for ranking`
+            );
+
+            try {
+              const finalRankingResponse =
+                await resumeScreenerService.rankResumesWithResponses({
+                  request: jdResponseData,
+                  resumes: parsedDataArray, // Send only the parsed data objects instead of complete responses
+                });
+
+              // Ranking is complete
+              setRankingInProgress(false);
+
+              console.log(
+                "Final ranking completed successfully",
+                finalRankingResponse
               );
 
-            if (finalRankingResponse.success) {
-              console.log("Final ranking completed successfully");
-              // Update ranks based on match scores
-              const sortedResults = [...tableResults].sort(
-                (a, b) => (b.matchScore || 0) - (a.matchScore || 0)
+              // Update the scores based on the response - adjusted for the actual API response format
+              if (
+                finalRankingResponse.resumeScores &&
+                Array.isArray(finalRankingResponse.resumeScores)
+              ) {
+                // Create a mapping of resumeId to score data
+                const scoreMap = new Map();
+                finalRankingResponse.resumeScores.forEach((scoreData) => {
+                  scoreMap.set(scoreData.resumeId, {
+                    score: scoreData.score,
+                    rank: scoreData.rank,
+                    scoreCategory: scoreData.score_category,
+                    relevantSkills: scoreData.relevantSkills || [],
+                    relevantExperience: scoreData.relevantExperience || [],
+                    strengths: scoreData.strengths || [],
+                    weaknesses: scoreData.weaknesses || [],
+                  });
+                });
+
+                // Update table results with scores
+                setTableResults((prevResults) =>
+                  prevResults.map((row) => {
+                    const scoreData = scoreMap.get(row.resumeId);
+                    if (scoreData) {
+                      return {
+                        ...row,
+                        matchScore: scoreData.score,
+                        rank: scoreData.rank,
+                        scoreCategory: scoreData.scoreCategory,
+                        relevantSkills: scoreData.relevantSkills,
+                        relevantExperience: scoreData.relevantExperience,
+                        strengths: scoreData.strengths,
+                        weaknesses: scoreData.weaknesses,
+                        hasFinalRanking: true,
+                      };
+                    }
+                    return {
+                      ...row,
+                      hasFinalRanking: false,
+                    };
+                  })
+                );
+
+                // Sort results by rank after receiving scores
+                setTableResults((prev) =>
+                  [...prev].sort((a, b) => {
+                    // First by completion status
+                    if (a.status === "completed" && b.status !== "completed")
+                      return -1;
+                    if (a.status !== "completed" && b.status === "completed")
+                      return 1;
+
+                    // Then by rank for completed items
+                    if (a.status === "completed" && b.status === "completed") {
+                      if (a.hasFinalRanking && b.hasFinalRanking) {
+                        return (a.rank || 999) - (b.rank || 999);
+                      }
+                      if (a.hasFinalRanking) return -1;
+                      if (b.hasFinalRanking) return 1;
+                    }
+
+                    return 0;
+                  })
+                );
+
+                // Mark that scores have been received
+                setScoresReceived(true);
+                setFormDirty(false);
+              }
+            } catch (rankingError) {
+              console.error("Error during final ranking:", rankingError);
+              setErrorWithTimeout(
+                "Error during final ranking. Resume data is available but scores may not be accurate."
               );
-
-              const updatedResults = sortedResults.map((row, index) => ({
-                ...row,
-                rank: index + 1,
-              }));
-
-              setTableResults(updatedResults);
-              setFormDirty(false);
             }
+          } else {
+            console.error(
+              "Cannot proceed with final ranking: not all resumes were processed successfully",
+              {
+                resumesUploaded: resumes.length,
+                resumesProcessed: processedResponses.length,
+              }
+            );
           }
         } catch (err: any) {
           console.error("Error during resume processing:", err);
-          setError(err.message || "An error occurred during resume processing");
+          setErrorWithTimeout(
+            err.message || "An error occurred during resume processing"
+          );
+          setRankingInProgress(false);
         } finally {
           setLoading(false);
           setProcessingResumes(false);
+          setRankingInProgress(false);
           console.log("Resume ranking process complete");
         }
       })();
@@ -477,8 +663,29 @@ const ResumeScreener = () => {
       </div>
 
       {error && (
-        <div className="error-message">
-          <p>{error}</p>
+        <div className="error-toast">
+          <div className="error-toast-content">
+            <p>{error}</p>
+            <button
+              className="dismiss-error-btn"
+              onClick={dismissError}
+              aria-label="Dismiss error"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
       )}
 
@@ -487,7 +694,9 @@ const ResumeScreener = () => {
           <ResumeResultsTable
             results={tableResults}
             isProcessing={processingResumes}
+            isRanking={rankingInProgress}
             onViewParsedResume={showParsedResume}
+            scoresReceived={scoresReceived}
           />
         </div>
       )}

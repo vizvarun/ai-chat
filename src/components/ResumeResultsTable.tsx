@@ -7,15 +7,19 @@ import TablePagination from "./TablePagination";
 interface ResumeResultsTableProps {
   results: ResumeResultRow[];
   isProcessing: boolean;
+  isRanking?: boolean;
   onViewParsedResume: (resume: string) => void;
   onDismissError?: (index: number) => void;
+  scoresReceived?: boolean;
 }
 
 const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
   results,
   isProcessing,
+  isRanking = false,
   onViewParsedResume,
   onDismissError,
+  scoresReceived = false,
 }) => {
   const [sortBy, setSortBy] = useState<"rank" | "name">("rank");
   const [selectedCandidate, setSelectedCandidate] =
@@ -26,24 +30,28 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const sortedResults = [...results].sort((a, b) => {
-    // Always put completed items first
     if (a.status === "completed" && b.status !== "completed") return -1;
     if (a.status !== "completed" && b.status === "completed") return 1;
-
-    // Sort by selected criteria for completed items
     if (a.status === "completed" && b.status === "completed") {
-      if (sortBy === "rank") {
-        return (a.rank || 999) - (b.rank || 999);
+      if (sortBy === "rank" && scoresReceived) {
+        if (a.hasFinalRanking && b.hasFinalRanking) {
+          // Only sort by rank if both have final ranking
+          return (a.rank || 999) - (b.rank || 999);
+        } else if (a.hasFinalRanking) {
+          // Prioritize those with final ranking
+          return -1;
+        } else if (b.hasFinalRanking) {
+          return 1;
+        }
+        // If neither has ranking, keep their original order
+        return 0;
       } else {
         return (a.candidateName || "").localeCompare(b.candidateName || "");
       }
     }
-
-    // For non-completed items, maintain original order
     return 0;
   });
 
-  // Calculate pagination values
   const totalPages = Math.ceil(sortedResults.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -80,6 +88,17 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
     setCurrentPage(1); // Reset to first page when changing rows per page
   };
 
+  // Helper to determine if a cell should show a loader
+  const shouldShowLoader = (
+    row: ResumeResultRow,
+    field: "matchScore" | "rank"
+  ) => {
+    return (
+      row.status === "completed" &&
+      (!scoresReceived || !row.hasFinalRanking || row[field] === undefined)
+    );
+  };
+
   return (
     <div className="table-wrapper">
       <div className="table-header">
@@ -90,12 +109,20 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
           </p>
         </div>
         <div className="table-actions">
-          {isProcessing ? (
+          {isProcessing || isRanking ? (
             <div className="processing-pill">
               <span className="pulse-dot"></span>
               <span>
-                Processing {processingCount}{" "}
-                {processingCount === 1 ? "resume" : "resumes"}
+                {processingCount > 0 ? (
+                  <>
+                    Processing {processingCount}{" "}
+                    {processingCount === 1 ? "resume" : "resumes"}
+                  </>
+                ) : isRanking ? (
+                  <>Ranking resumes</>
+                ) : (
+                  <>Processing</>
+                )}
               </span>
             </div>
           ) : (
@@ -106,6 +133,7 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                   className={`sort-button ${sortBy === "rank" ? "active" : ""}`}
                   onClick={() => handleSort("rank")}
                   title="Sort by rank"
+                  disabled={!scoresReceived}
                 >
                   <svg
                     width="12"
@@ -151,21 +179,20 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
           <thead>
             <tr>
               <th className="centered">#</th>
-              <th>File Name</th>
-              <th>Candidate ID</th>
-              <th>Candidate Name</th>
+              <th className="centered">File Name</th>
+              <th className="centered">Resume ID</th>
+              <th className="centered">Candidate Name</th>
               <th className="centered">Match Score</th>
               <th className="centered">Rank</th>
-              <th>Resume Summary</th>
-              <th className="centered">Parsed Resume</th>
+              <th className="centered">Resume Summary</th>
             </tr>
           </thead>
           <tbody>
             {currentPageData.map((row, index) => (
               <tr key={`row-${startIndex + index}`} className={row.status}>
                 <td className="centered">{row.serialNumber}</td>
-                <td className="text-cell">{row.fileName}</td>
-                <td className="cell-with-loader">
+                <td className="text-cell centered">{row.fileName}</td>
+                <td className="cell-with-loader centered">
                   {row.status === "completed" ? (
                     <span className="emphasis">{row.candidateId}</span>
                   ) : row.status === "error" ? (
@@ -178,11 +205,11 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                     </div>
                   )}
                 </td>
-                <td className="cell-with-loader">
+                <td className="cell-with-loader centered">
                   {row.status === "completed" ? (
                     <span
                       className={`candidate-name-link ${
-                        isProcessing ? "disabled" : ""
+                        isProcessing || isRanking ? "disabled" : ""
                       }`}
                       onClick={() => handleCandidateClick(row)}
                     >
@@ -221,7 +248,21 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                 </td>
                 <td className="centered cell-with-loader">
                   {row.status === "completed" ? (
-                    <span className="badge score-badge">{row.matchScore}%</span>
+                    shouldShowLoader(row, "matchScore") ? (
+                      <div className="cell-loader-container">
+                        <Loader size="small" />
+                      </div>
+                    ) : (
+                      <span
+                        className={`badge score-badge ${
+                          row.scoreCategory
+                            ? row.scoreCategory.toLowerCase()
+                            : ""
+                        }`}
+                      >
+                        {row.matchScore}%
+                      </span>
+                    )
                   ) : row.status === "error" ? (
                     <span className="badge error-badge">Failed</span>
                   ) : (
@@ -232,33 +273,39 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                 </td>
                 <td className="centered cell-with-loader">
                   {row.status === "completed" ? (
-                    <span
-                      className={`badge ${
-                        row.rank === 1 ? "top-rank-badge" : "score-badge"
-                      }`}
-                    >
-                      {row.rank === 1 && (
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="trophy-icon"
-                        >
-                          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-                          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-                          <path d="M4 22h16"></path>
-                          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
-                          <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
-                          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
-                        </svg>
-                      )}
-                      {row.rank}
-                    </span>
+                    shouldShowLoader(row, "rank") ? (
+                      <div className="cell-loader-container">
+                        <Loader size="small" />
+                      </div>
+                    ) : (
+                      <span
+                        className={`badge ${
+                          row.rank === 1 ? "top-rank-badge" : "score-badge"
+                        }`}
+                      >
+                        {row.rank === 1 && (
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="trophy-icon"
+                          >
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                            <path d="M4 22h16"></path>
+                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                          </svg>
+                        )}
+                        {row.rank}
+                      </span>
+                    )
                   ) : row.status === "error" ? (
                     <span>-</span>
                   ) : (
@@ -267,39 +314,9 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                     </div>
                   )}
                 </td>
-                <td className="resume-summary-cell cell-with-loader">
+                <td className="resume-summary-cell cell-with-loader centered">
                   {row.status === "completed" ? (
                     <div className="summary-text">{row.resumeSummary}</div>
-                  ) : row.status === "error" ? (
-                    <span>-</span>
-                  ) : (
-                    <div className="cell-loader-container">
-                      <Loader size="small" />
-                    </div>
-                  )}
-                </td>
-                <td className="centered cell-with-loader">
-                  {row.status === "completed" && row.parsedResume ? (
-                    <button
-                      className="icon-button"
-                      onClick={() => onViewParsedResume(row.parsedResume || "")}
-                      title="View parsed resume"
-                      disabled={isProcessing}
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                    </button>
                   ) : row.status === "error" ? (
                     <span>-</span>
                   ) : (
@@ -333,13 +350,15 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
         />
       )}
 
-      {isProcessing && (
+      {(isProcessing || isRanking) && (
         <div className="progress-container">
           <div
             className="progress-bar"
             style={{
               width: `${
-                ((results.length - processingCount) / results.length) * 100
+                isRanking
+                  ? 60 + 40 * (Math.random() * 0.4 + 0.6)
+                  : ((results.length - processingCount) / results.length) * 60
               }%`,
             }}
           ></div>
