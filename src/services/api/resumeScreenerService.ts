@@ -7,12 +7,6 @@ import {
   FinalRankingResponse,
 } from "../../types/resumeTypes";
 
-// Helper for random delay to simulate API call
-const randomDelay = (min = 800, max = 3000) => {
-  const delay = Math.floor(Math.random() * (max - min + 1)) + min;
-  return new Promise((resolve) => setTimeout(resolve, delay));
-};
-
 export const resumeScreenerService = {
   // Original function kept for compatibility
   rankResumes: async (
@@ -75,7 +69,7 @@ export const resumeScreenerService = {
     }
   },
 
-  // New function to submit job description and get jobDescriptionId
+  // Updated function to submit job description and get jobDescriptionId
   submitJobDescription: async (
     jobDescription: string,
     criteria: string,
@@ -90,27 +84,43 @@ export const resumeScreenerService = {
         fileName: jobDescriptionFile?.name,
       });
 
-      // Create form data for job description submission
-      const formData = new FormData();
-      if (jobDescriptionFile) {
-        formData.append("file", jobDescriptionFile);
-      } else {
-        // If no file is provided, submit the text as description
-        formData.append("description", jobDescription);
-      }
-      formData.append("criteria", criteria);
+      let response;
 
-      // Make actual API call instead of mock
-      console.log(`API CALLING: ${API_ENDPOINTS.PARSE_JOB_DESCRIPTION}`);
-      const response = await axiosInstance.post<JobDescriptionResponse>(
-        API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      if (jobDescriptionFile) {
+        // File exists - use FormData
+        const formData = new FormData();
+        formData.append("file", jobDescriptionFile);
+        formData.append("criteria", criteria);
+
+        // Make API call with FormData
+        console.log(
+          `API CALLING: ${API_ENDPOINTS.PARSE_JOB_DESCRIPTION} with FormData`
+        );
+        response = await axiosInstance.post<JobDescriptionResponse>(
+          API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        // No file - send as JSON with description key
+        const requestData = {
+          description: jobDescription,
+          criteria: criteria,
+        };
+
+        // Make API call with JSON
+        console.log(
+          `API CALLING: ${API_ENDPOINTS.PARSE_JOB_DESCRIPTION} with JSON`
+        );
+        response = await axiosInstance.post<JobDescriptionResponse>(
+          API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
+          requestData
+        );
+      }
 
       console.log("API RESPONSE: submitJobDescription", {
         endpoint: API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
