@@ -18,7 +18,7 @@ const Home = () => {
               alt="MockingBird Logo"
               className="hero-logo"
             />
-            <h1 className="hero-title">MockingBird</h1>
+            <h1 className="hero-title">Magnit AI Tools</h1>
           </div>
           <p className="hero-subtitle">
             Intelligent AI-powered testing assistant that streamlines your test

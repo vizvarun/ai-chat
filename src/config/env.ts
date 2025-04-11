@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   GENERATE_TEST_CASES: `${TCG_BASE_URL}${
     import.meta.env.VITE_API_GENERATE_TEST_CASES
   }`,
+  DOWNLOAD_EXCEL: `${TCG_BASE_URL}${import.meta.env.VITE_API_DOWNLOAD_EXCEL}`,
   PARSE_RESUME: `${RES_SCREENER_BASE_URL}${
     import.meta.env.VITE_API_PARSE_RESUME
   }`,

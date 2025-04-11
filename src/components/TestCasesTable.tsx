@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { API_ENDPOINTS } from "../config/env";
-import axiosInstance from "../services/api/axios"; // Import axios instance
+import axiosInstance from "../services/api/axios";
 import "../styles/TestCasesTable.css";
 import { TestCasesTableProps } from "../types/testTypes";
 import AIAssistModal from "./AIAssistModal";
 import TablePagination from "./TablePagination";
+import { testCasesService } from "../services/api/testCasesService"; // Add this import
 
 const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,6 +17,8 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
     Record<string, boolean>
   >({});
   const [apiError, setApiError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -31,6 +34,7 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
 
     return Object.keys(testCasesData[0]);
   }, [testCasesData]);
+
   useEffect(() => {
     try {
       if (!Array.isArray(testCasesData)) {
@@ -82,6 +86,39 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
       ...prev,
       [id]: !prev[id],
     }));
+  };
+
+  const handleExportExcel = async () => {
+    if (!testCasesData.length) return;
+
+    setIsDownloading(true);
+    setDownloadError(null);
+
+    try {
+      // Use the service method instead of direct API call
+      const blob = await testCasesService.exportTestCasesToExcel(testCasesData);
+
+      // Create a link element to trigger the download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Generate filename with date
+      const date = new Date();
+      const formattedDate = date.toISOString().split("T")[0];
+      link.download = `test-cases-${formattedDate}.xlsx`;
+
+      // Append to body, click, and clean up
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      setDownloadError("Failed to download Excel file. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   if (hasError) {
@@ -420,6 +457,76 @@ const TestCasesTable: React.FC<TestCasesTableProps> = ({ testCases }) => {
 
   return (
     <div className="test-cases-container">
+      <div className="table-header-actions">
+        <h2 className="table-title">Test Cases</h2>
+        <button
+          className={`excel-export-button ${isDownloading ? "loading" : ""}`}
+          onClick={handleExportExcel}
+          disabled={isDownloading || !testCasesData.length}
+        >
+          {isDownloading ? (
+            <div className="button-content">
+              <svg className="spinner-icon" viewBox="0 0 24 24">
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray="31.4 31.4"
+                />
+              </svg>
+              <span>Exporting...</span>
+            </div>
+          ) : (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="excel-icon"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="12" y1="18" x2="12" y2="12" />
+                <line x1="9" y1="15" x2="15" y2="15" />
+              </svg>
+              Export to Excel
+            </>
+          )}
+        </button>
+      </div>
+
+      {downloadError && (
+        <div className="download-error-message">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="error-icon-small"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {downloadError}
+        </div>
+      )}
+
       <div className="table-scroll-wrapper">
         <div className="table-container horizontal-scroll">
           <table className="test-cases-table">

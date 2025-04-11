@@ -132,6 +132,7 @@
   padding: 1.25rem;
   margin-top: 0.5rem;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .test-plans.enhanced .test-plan-steps {
@@ -157,6 +158,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  justify-content: flex-start;
 }
 
 .test-plans.enhanced .steps-header {
@@ -351,4 +353,88 @@
   min-height: 150px;
   color: var(--color-text-tertiary);
   font-size: 0.9rem;
+}
+
+/* Copy Button Styles */
+.plan-copy-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  z-index: 5;
+  box-shadow: 0 1px 3px var(--color-shadow-light);
+}
+
+.test-plan-execution:hover .plan-copy-button,
+.test-plan-steps:hover .steps-copy-button {
+  opacity: 1;
+}
+
+.plan-copy-button:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px var(--color-shadow);
+}
+
+.plan-copy-button:active {
+  transform: translateY(0);
+}
+
+.plan-copy-button.copied {
+  background-color: var(--color-success, #4caf50);
+  color: var(--color-text-light, white);
+  opacity: 1;
+  border-color: var(--color-success-dark, #43a047);
+}
+
+/* Steps Copy Button specific positioning */
+.steps-copy-button {
+  position: static;
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+}
+
+/* Tooltip Styles - consistent with ChatWithAI */
+.plan-copy-button .tooltip {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 10;
+}
+
+.plan-copy-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Adjust tooltip position for steps copy button */
+.steps-copy-button .tooltip {
+  bottom: -24px;
+  right: 0;
+  left: auto;
+  transform: none;
 }

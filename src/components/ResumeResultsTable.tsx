@@ -229,34 +229,32 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
         <table className="data-table">
           <thead>
             <tr>
-              <th className="centered">#</th>
-              <th className="centered">File Name</th>
-              <th className="centered">Resume ID</th>
-              <th className="centered">Candidate Name</th>
-              <th className="centered">Match Score</th>
-              <th className="centered">Rank</th>
-              <th className="centered">Resume Summary</th>
+              <th className="">File Name</th>
+              <th className="">Resume ID</th>
+              <th className="">Candidate Name</th>
+              <th className="">Match Score</th>
+              <th className="">Rank</th>
+              <th className="">Resume Summary</th>
             </tr>
           </thead>
           <tbody>
             {currentPageData.map((row, index) => (
               <tr key={`row-${startIndex + index}`} className={row.status}>
-                <td className="centered">{row.serialNumber}</td>
-                <td className="text-cell centered">{row.fileName}</td>
-                <td className="cell-with-loader centered">
+                <td className="text-cell ">{row.fileName}</td>
+                <td className="cell-with-loader ">
                   {row.status === "completed" ? (
                     <span className="emphasis">{row.candidateId}</span>
                   ) : row.status === "error" ? (
-                    <div className="cell-error">
-                      <span className="error-badge">Error</span>
+                    <div className="table-cell-error">
+                      <span className="table-error-badge">Failed</span>
                     </div>
                   ) : (
-                    <div className="cell-loader-container">
+                    <div className="table-cell-loader-container">
                       <Loader size="small" />
                     </div>
                   )}
                 </td>
-                <td className="cell-with-loader centered">
+                <td className="cell-with-loader ">
                   {row.status === "completed" ? (
                     <span
                       className={`candidate-name-link ${
@@ -292,15 +290,15 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                       )}
                     </div>
                   ) : (
-                    <div className="cell-loader-container">
+                    <div className="table-cell-loader-container">
                       <Loader size="small" />
                     </div>
                   )}
                 </td>
-                <td className="centered cell-with-loader">
+                <td className=" cell-with-loader">
                   {row.status === "completed" ? (
                     shouldShowLoader(row, "matchScore") ? (
-                      <div className="cell-loader-container">
+                      <div className="table-cell-loader-container">
                         <Loader size="small" />
                       </div>
                     ) : (
@@ -317,15 +315,15 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                   ) : row.status === "error" ? (
                     <span className="badge error-badge">Failed</span>
                   ) : (
-                    <div className="cell-loader-container">
+                    <div className="table-cell-loader-container">
                       <Loader size="small" />
                     </div>
                   )}
                 </td>
-                <td className="centered cell-with-loader">
+                <td className=" cell-with-loader">
                   {row.status === "completed" ? (
                     shouldShowLoader(row, "rank") ? (
-                      <div className="cell-loader-container">
+                      <div className="table-cell-loader-container">
                         <Loader size="small" />
                       </div>
                     ) : (
@@ -360,18 +358,18 @@ const ResumeResultsTable: React.FC<ResumeResultsTableProps> = ({
                   ) : row.status === "error" ? (
                     <span>-</span>
                   ) : (
-                    <div className="cell-loader-container">
+                    <div className="table-cell-loader-container">
                       <Loader size="small" />
                     </div>
                   )}
                 </td>
-                <td className="resume-summary-cell cell-with-loader centered">
+                <td className="resume-summary-cell cell-with-loader ">
                   {row.status === "completed" ? (
                     <div className="summary-text">{row.resumeSummary}</div>
                   ) : row.status === "error" ? (
                     <span>-</span>
                   ) : (
-                    <div className="cell-loader-container">
+                    <div className="table-cell-loader-container">
                       <Loader size="small" />
                     </div>
                   )}

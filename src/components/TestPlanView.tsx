@@ -7,8 +7,26 @@ const TestPlanView: React.FC<TestPlanViewProps> = ({
   executionPlan,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [copiedState, setCopiedState] = useState({
+    executionPlan: false,
+    testSteps: false,
+  });
 
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+
+  const copyToClipboard = (text: string, type: "executionPlan" | "testSteps") => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopiedState((prev) => ({ ...prev, [type]: true }));
+        setTimeout(() => {
+          setCopiedState((prev) => ({ ...prev, [type]: false }));
+        }, 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
 
   // If we have an execution plan string, display it with proper formatting
   if (executionPlan) {
@@ -112,6 +130,51 @@ const TestPlanView: React.FC<TestPlanViewProps> = ({
               className="execution-plan-content"
               dangerouslySetInnerHTML={{ __html: executionPlan }}
             />
+            <button
+              className={`plan-copy-button ${
+                copiedState.executionPlan ? "copied" : ""
+              }`}
+              onClick={() =>
+                copyToClipboard(
+                  executionPlan.replace(/<[^>]*>/g, ""),
+                  "executionPlan"
+                )
+              }
+              aria-label={
+                copiedState.executionPlan ? "Copied" : "Copy to clipboard"
+              }
+            >
+              {copiedState.executionPlan ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+              )}
+            </button>
           </div>
         )}
       </div>
@@ -248,6 +311,48 @@ const TestPlanView: React.FC<TestPlanViewProps> = ({
               />
             </svg>
             Test Steps
+            <button
+              className={`plan-copy-button steps-copy-button ${
+                copiedState.testSteps ? "copied" : ""
+              }`}
+              onClick={() =>
+                copyToClipboard(testPlan.steps.join("\n"), "testSteps")
+              }
+              aria-label={
+                copiedState.testSteps ? "Copied" : "Copy to clipboard"
+              }
+            >
+              {copiedState.testSteps ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+              )}
+            </button>
           </div>
           <ul className="steps-list">
             {testPlan.steps.map((step, index) => (

@@ -49,6 +49,21 @@ export const testCasesService = {
       throw error;
     }
   },
+
+  exportTestCasesToExcel: async (testCases: any[]): Promise<Blob> => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.DOWNLOAD_EXCEL,
+        { data: testCases }, // Changed key from 'testCases' to 'data'
+        { responseType: 'blob' }
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+      throw error;
+    }
+  }
 };
 
 // Helper function to process API response and ensure it matches expected format
