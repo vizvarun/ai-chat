@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState, useRef } from "react";
 import { API_ENDPOINTS } from "../config/env";
 import "../styles/SidebarItemLayout.css";
 import Breadcrumbs from "./Breadcrumbs";
@@ -22,6 +22,12 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
 }) => {
   const [apiError, setApiError] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [chatWidth, setChatWidth] = useState(320);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(320);
+
+  const MIN_CHAT_WIDTH = 300;
+  const MAX_CHAT_WIDTH = 600;
 
   // Reset isClosing state when showChat changes
   useEffect(() => {
@@ -46,6 +52,27 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
       "An unknown error occurred";
     setApiError(errorMessage);
     console.error("Chat API error:", errorMessage);
+  };
+
+  // New handlers for the resizable chatbox
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    startXRef.current = e.clientX;
+    startWidthRef.current = chatWidth;
+    // Prevent text selection while resizing
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    const newWidth = startWidthRef.current + (startXRef.current - e.clientX);
+    setChatWidth(Math.min(Math.max(newWidth, MIN_CHAT_WIDTH), MAX_CHAT_WIDTH));
+  };
+
+  const handleMouseUp = (e: MouseEvent) => {
+    document.body.style.userSelect = "";
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
   };
 
   return (
@@ -75,8 +102,21 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
         {showChatOption && (
           <div
             className={`assistant-panel ${isClosing ? "no-animation" : ""}`}
-            style={{ width: showChat ? "320px" : "0" }}
+            style={{ width: showChat ? `${chatWidth}px` : "0" }}
           >
+            <div
+              className="resizer"
+              onMouseDown={handleMouseDown}
+              style={{
+                width: "5px",
+                cursor: "ew-resize",
+                position: "absolute",
+                left: 0,
+                top: 0,
+                bottom: 0,
+                zIndex: 2,
+              }}
+            />
             <div className="assistant-header">
               <div className="assistant-header-title">
                 <svg

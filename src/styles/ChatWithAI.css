@@ -67,6 +67,7 @@
   overflow-wrap: break-word;
   word-break: break-word;
   line-height: 1.5;
+  font-size: 0.9rem; /* added to decrease font size */
 }
 
 .ai-user-message {
@@ -215,7 +216,7 @@
 .copy-button-container {
   display: flex;
   justify-content: flex-start;
-  width: calc(70% - 40px);
+  width: calc(85% - 40px); /* updated from calc(90% - 40px) */
   margin-left: 40px;
 }
 
@@ -223,7 +224,7 @@
 .message-container {
   display: flex;
   flex-direction: column;
-  max-width: 70%; /* Adjusted since we're not accounting for avatar width now */
+  max-width: 85%; /* updated from 90% */
   position: relative;
 }
 
