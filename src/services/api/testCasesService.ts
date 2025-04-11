@@ -55,15 +55,15 @@ export const testCasesService = {
       const response = await axiosInstance.post(
         API_ENDPOINTS.DOWNLOAD_EXCEL,
         { data: testCases }, // Changed key from 'testCases' to 'data'
-        { responseType: 'blob' }
+        { responseType: "blob" }
       );
-      
+
       return response.data;
     } catch (error) {
       console.error("Error exporting Excel:", error);
       throw error;
     }
-  }
+  },
 };
 
 // Helper function to process API response and ensure it matches expected format

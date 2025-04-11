@@ -985,7 +985,9 @@ td.sticky-column {
   flex-shrink: 0;
   animation: spin 1.5s linear infinite;
   stroke: white; /* Explicitly set the stroke color to match text */
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2)); /* Add same shadow as text */
+  filter: drop-shadow(
+    0 1px 1px rgba(0, 0, 0, 0.2)
+  ); /* Add same shadow as text */
 }
 
 .download-error-message {
