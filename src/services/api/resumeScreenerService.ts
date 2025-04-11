@@ -1,11 +1,13 @@
-import axiosInstance from "./axios";
 import { API_ENDPOINTS } from "../../config/env";
 import {
-  RankedCandidatesResponse,
   JobDescriptionResponse,
+  RankedCandidatesResponse,
   ResumeProcessingResponse,
-  FinalRankingResponse,
 } from "../../types/resumeTypes";
+import axiosInstance from "./axios";
+
+// Updated cache to hold multiple entries
+let explanationCache: { [cacheKey: string]: any } = {};
 
 export const resumeScreenerService = {
   // Original function kept for compatibility
@@ -92,10 +94,6 @@ export const resumeScreenerService = {
         formData.append("file", jobDescriptionFile);
         formData.append("criteria", criteria);
 
-        // Make API call with FormData
-        console.log(
-          `API CALLING: ${API_ENDPOINTS.PARSE_JOB_DESCRIPTION} with FormData`
-        );
         response = await axiosInstance.post<JobDescriptionResponse>(
           API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
           formData,
@@ -106,19 +104,13 @@ export const resumeScreenerService = {
           }
         );
       } else {
-        // No file - send as JSON with description key
-        const requestData = {
-          description: jobDescription,
-          criteria: criteria,
-        };
-
-        // Make API call with JSON
-        console.log(
-          `API CALLING: ${API_ENDPOINTS.PARSE_JOB_DESCRIPTION} with JSON`
-        );
+        // No file - send plain text in body
         response = await axiosInstance.post<JobDescriptionResponse>(
-          API_ENDPOINTS.PARSE_JOB_DESCRIPTION,
-          requestData
+          API_ENDPOINTS.PARSE_JOB_DESCRIPTION_TEXT,
+          jobDescription, // send plain text directly
+          {
+            headers: { "Content-Type": "text/plain" },
+          }
         );
       }
 
@@ -159,10 +151,6 @@ export const resumeScreenerService = {
       // Create form data for resume submission
       const formData = new FormData();
       formData.append("file", resumeFile);
-      // formData.append("index", index.toString());
-
-      // Make actual API call instead of mock
-      console.log(`API CALLING: ${API_ENDPOINTS.PARSE_RESUME}`);
       const response = await axiosInstance.post<ResumeProcessingResponse>(
         API_ENDPOINTS.PARSE_RESUME,
         formData,
@@ -172,17 +160,6 @@ export const resumeScreenerService = {
           },
         }
       );
-
-      console.log("API RESPONSE: processResume", {
-        endpoint: API_ENDPOINTS.PARSE_RESUME,
-        status: response.status,
-        success: response.data.success,
-        resumeId: response.data.resumeId,
-        candidateId: response.data.candidateId,
-        candidateName: response.data.candidateName,
-        matchScore: response.data.matchScore,
-        index: index,
-      });
 
       return response.data;
     } catch (error: any) {
@@ -212,54 +189,6 @@ export const resumeScreenerService = {
       enhancedError.displayMessage = `Failed to process "${resumeFile.name}": ${errorMessage}`;
 
       throw enhancedError;
-    }
-  },
-
-  // Final ranking call to sort and update all processed resumes
-  getFinalRanking: async (
-    jobDescriptionId: string,
-    resumeIds: string[]
-  ): Promise<FinalRankingResponse> => {
-    try {
-      console.log("API REQUEST: getFinalRanking", {
-        endpoint: API_ENDPOINTS.RANK_RESUMES,
-        jobDescriptionId: jobDescriptionId,
-        resumeCount: resumeIds.length,
-        resumeIds: resumeIds,
-      });
-
-      // Create request data for final ranking
-      const requestData = {
-        jobDescriptionId,
-        resumeIds,
-      };
-
-      // Make actual API call instead of mock
-      console.log(`API CALLING: ${API_ENDPOINTS.RANK_RESUMES}`);
-      const response = await axiosInstance.post<FinalRankingResponse>(
-        API_ENDPOINTS.RANK_RESUMES,
-        requestData
-      );
-
-      console.log("API RESPONSE: getFinalRanking", {
-        endpoint: API_ENDPOINTS.RANK_RESUMES,
-        status: response.status,
-        success: response.data.success,
-        message: response.data.message,
-        rankingCompleted: response.data.rankingCompleted,
-      });
-
-      return response.data;
-    } catch (error: any) {
-      console.error("API ERROR: getFinalRanking", {
-        endpoint: API_ENDPOINTS.RANK_RESUMES,
-        jobDescriptionId: jobDescriptionId,
-        resumeCount: resumeIds.length,
-        error: error.message,
-        status: error.response?.status,
-        details: error.response?.data,
-      });
-      throw error;
     }
   },
 
@@ -306,17 +235,24 @@ export const resumeScreenerService = {
     }
   },
 
-  // New function to explain candidate match with job description
+  // New function to explain candidate match with caching
   explainCandidateMatch: async (
     jdResponse: any, // The complete job description response object
     parsedResumeData: any, // The parsed resume data
     score: number // Added score parameter
   ): Promise<any> => {
     try {
+      const resumeId = parsedResumeData.resumeId || parsedResumeData.id;
+      const cacheKey = `${jdResponse.jobDescriptionId}_${resumeId}_${score}`;
+      if (explanationCache[cacheKey]) {
+        console.log("Returning cached explanation for key:", cacheKey);
+        return explanationCache[cacheKey];
+      }
+
       console.log("API REQUEST: explainCandidateMatch", {
         endpoint: API_ENDPOINTS.EXPLAIN_RESUME,
         jobDescriptionId: jdResponse.jobDescriptionId,
-        resumeId: parsedResumeData.resumeId || parsedResumeData.id,
+        resumeId: resumeId,
         score: score,
       });
 
@@ -333,6 +269,8 @@ export const resumeScreenerService = {
         status: response.status,
       });
 
+      // Cache the response keyed by cacheKey
+      explanationCache[cacheKey] = response.data;
       return response.data;
     } catch (error: any) {
       console.error("API ERROR: explainCandidateMatch", {
@@ -343,5 +281,11 @@ export const resumeScreenerService = {
       });
       throw error;
     }
+  },
+
+  // New method to clear the explanation cache (to be called when rank resumes is hit)
+  clearExplanationCache: () => {
+    explanationCache = {};
+    console.log("Explanation cache cleared.");
   },
 };

@@ -243,14 +243,29 @@ const ChatWithAI: React.FC<ChatWithAIProps> = ({
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        console.log("Copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
-      });
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          console.log("Copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy using navigator.clipboard: ", err);
+        });
+    } else {
+      // Fallback method using temporary textarea
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        console.log("Copied to clipboard using fallback");
+      } catch (err) {
+        console.error("Fallback copy failed: ", err);
+      }
+      document.body.removeChild(textarea);
+    }
   };
 
   const handleFeedback = (type: "good" | "bad", messageId: string) => {

@@ -24,10 +24,38 @@ const AIAssistModal: React.FC<AIAssistModalProps> = ({
 
   if (!isOpen) return null;
 
+  const fallbackCopy = (text: string) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand("copy");
+      console.log("Copied using fallback method");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Fallback copy failed: ", err);
+    }
+    document.body.removeChild(textarea);
+  };
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(modalContent);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(modalContent)
+        .then(() => {
+          console.log("Copied to clipboard!");
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        })
+        .catch((err) => {
+          console.error("Failed to copy using navigator.clipboard: ", err);
+          fallbackCopy(modalContent);
+        });
+    } else {
+      fallbackCopy(modalContent);
+    }
   };
 
   return (
