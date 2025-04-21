@@ -242,6 +242,13 @@ const ResumeScreener = () => {
     };
   }, [errorTimeoutId]);
 
+  // Automatically open chat when scores are received
+  useEffect(() => {
+    if (scoresReceived) {
+      setShowChat(true); // Auto-open chat when ranking completes
+    }
+  }, [scoresReceived]);
+
   // Handle form submission - updated workflow
   const rankResumes = async () => {
     // First clear everything and reset states
@@ -462,8 +469,8 @@ const ResumeScreener = () => {
   return (
     <SidebarItemLayout
       title="Resume Screening"
-      showChatOption={true}
-      showChat={showChat}
+      showChatOption={scoresReceived} // Only show chat option after scores are received
+      showChat={showChat && scoresReceived} // Only enable chat after ranking is complete
       onToggleChat={() => setShowChat(!showChat)}
       isScrollable={!inputCollapsed || tableResults.length > 0}
     >

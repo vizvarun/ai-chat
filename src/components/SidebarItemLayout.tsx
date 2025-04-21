@@ -3,6 +3,8 @@ import { API_ENDPOINTS } from "../config/env";
 import "../styles/SidebarItemLayout.css";
 import Breadcrumbs from "./Breadcrumbs";
 import ChatWithAI from "./ChatWithAI";
+import ResumeChatWithAI from "./ResumeChatWithAI";
+import { useLocation } from "react-router-dom";
 
 interface SidebarItemLayoutProps {
   children: ReactNode;
@@ -25,6 +27,10 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
   const [chatWidth, setChatWidth] = useState(320);
   const startXRef = useRef(0);
   const startWidthRef = useRef(320);
+  const location = useLocation();
+
+  // Check if current page is Resume Screener based on URL path
+  const isResumeScreener = location.pathname.includes("resume");
 
   const MIN_CHAT_WIDTH = 300;
   const MAX_CHAT_WIDTH = 600;
@@ -156,11 +162,19 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
                 </div>
               )}
               <div className="chat-with-ai-wrapper">
-                <ChatWithAI
-                  apiEndpoint={API_ENDPOINTS.CHAT_AI}
-                  useQueryParam={true}
-                  onError={handleApiError}
-                />
+                {isResumeScreener ? (
+                  <ResumeChatWithAI
+                    apiEndpoint={API_ENDPOINTS.CHAT_AI}
+                    useQueryParam={true}
+                    onError={handleApiError}
+                  />
+                ) : (
+                  <ChatWithAI
+                    apiEndpoint={API_ENDPOINTS.CHAT_AI}
+                    useQueryParam={true}
+                    onError={handleApiError}
+                  />
+                )}
               </div>
             </div>
           </div>
