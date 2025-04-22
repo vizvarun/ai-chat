@@ -2764,3 +2764,168 @@ textarea.has-file {
   display: flex;
   align-items: center;
 }
+
+/* Resume filter pills */
+.resume-pills-container {
+  margin: 16px 0;
+  background-color: var(--color-background-secondary);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.resume-pills-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.resume-pill {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
+.resume-pill.active {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.resume-pill:hover:not(.active) {
+  background-color: var(--color-background-tertiary);
+  border-color: var(--color-primary-light);
+}
+
+.pill-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  margin-right: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.resume-pill:not(.active) .pill-rank {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary);
+}
+
+.clear-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-color: rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+
+.clear-pill:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: rgba(220, 53, 69, 0.5);
+}
+
+/* Resume Pills Collapsible Styling */
+.chat-resume-pills-container {
+  border-bottom: 1px solid var(--color-border-light);
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.chat-resume-pills-container.collapsed {
+  max-height: 50px;
+}
+
+.chat-resume-pills-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+.pills-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pills-selected-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 16px;
+}
+
+.pills-selected-all {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+}
+
+.pills-toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: transparent;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.pills-toggle-button:hover {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-text-primary);
+}
+
+.toggle-arrow {
+  transition: transform 0.3s ease;
+}
+
+.toggle-arrow.collapsed {
+  transform: rotate(180deg);
+}
+
+.chat-resume-pills-wrapper {
+  padding: 0 16px 12px;
+  transition: all 0.3s ease;
+}
+
+.chat-resume-pills-container.collapsed .chat-resume-pills-wrapper {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Keep existing pill styling */
+.chat-resume-pills-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  flex-wrap: wrap;
+}

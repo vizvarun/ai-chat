@@ -524,3 +524,100 @@
 .api-error-banner button:hover {
   background-color: rgba(244, 67, 54, 0.1);
 }
+
+/* Chat Resume Filter Pills */
+.chat-resume-pills-wrapper {
+  border-bottom: 1px solid var(--color-border);
+  padding: 8px 12px 12px;
+}
+
+.chat-resume-pills-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.chat-resume-pills-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.chat-resume-pills-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-resume-pills-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 4px;
+}
+
+.chat-resume-pill {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  border-radius: 16px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.chat-resume-pill.active {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.chat-resume-pill:hover:not(.active) {
+  background-color: var(--color-background-tertiary);
+  border-color: var(--color-primary-light);
+}
+
+.chat-pill-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  margin-right: 4px;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.chat-resume-pill:not(.active) .chat-pill-rank {
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary);
+}
+
+.chat-pill-id {
+  font-family: monospace;
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.chat-pill-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.chat-clear-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-color: rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+
+.chat-clear-pill:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: rgba(220, 53, 69, 0.5);
+}

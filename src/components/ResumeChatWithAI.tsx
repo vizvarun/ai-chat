@@ -4,6 +4,7 @@ import { MessageType, SpeakingStateRecord } from "../types/chatTypes";
 import axiosInstance from "../services/api/axios";
 import { API_CONFIG, API_ENDPOINTS } from "../config/env";
 import { markdownToHtml } from "../utils/textProcessing";
+import { ResumeResultRow } from "../types/resumeTypes";
 
 interface SpeechRecognitionEvent {
   results: {
@@ -21,19 +22,56 @@ interface ResumeChatWithAIProps {
   useQueryParam?: boolean;
   onError?: (error: any) => void;
   initialMessages?: MessageType[];
+  chatProps?: {
+    resumeResults: ResumeResultRow[];
+    selectedResumeIds: string[];
+    onResumeSelect: (resumeId: string | null) => void;
+    jobId?: string; // Add jobId to access the job description ID
+  };
 }
+
+const ToggleButton = ({
+  isCollapsed,
+  onClick,
+}: {
+  isCollapsed: boolean;
+  onClick: () => void;
+}) => (
+  <button
+    className="pills-toggle-button"
+    onClick={onClick}
+    title={isCollapsed ? "Show all resume pills" : "Collapse resume pills"}
+  >
+    <svg
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`toggle-arrow ${isCollapsed ? "collapsed" : ""}`}
+    >
+      <path d="M18 15l-6-6-6 6" />
+    </svg>
+    {isCollapsed ? "Show Resumes" : "Hide Resumes"}
+  </button>
+);
 
 const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
   apiEndpoint = API_ENDPOINTS.CHAT_AI,
   useQueryParam = true,
   onError,
   initialMessages = [],
+  chatProps,
 }) => {
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState<SpeakingStateRecord>({});
   const [isListening, setIsListening] = useState(false);
+  const [pillsCollapsed, setPillsCollapsed] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -103,6 +141,10 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
     }
   };
 
+  const togglePillsCollapsed = () => {
+    setPillsCollapsed((prev) => !prev);
+  };
+
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
 
@@ -132,14 +174,33 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
       params.append("content", newUserMessage.text);
       url = `${apiEndpoint}?${params.toString()}`;
 
+      // Convert string resume IDs to numbers
+      const resumeIdsAsNumbers =
+        chatProps?.selectedResumeIds
+          .map((id) => parseInt(id, 10))
+          .filter((id) => !isNaN(id)) || [];
+
+      // Convert job ID to number with fallback to 0 if invalid
+      let jobIdAsNumber = 0;
+      if (chatProps?.jobId) {
+        const parsed = parseInt(chatProps.jobId, 10);
+        if (!isNaN(parsed)) {
+          jobIdAsNumber = parsed;
+        }
+      }
+
+      // Create payload with numeric IDs
+      const requestBody = {
+        payload: {
+          resume_ids: resumeIdsAsNumbers,
+          job_id: jobIdAsNumber,
+        },
+      };
+
       axiosInstance
-        .post(
-          url,
-          {},
-          {
-            timeout: API_CONFIG.TIMEOUT,
-          }
-        )
+        .post(url, requestBody, {
+          timeout: API_CONFIG.TIMEOUT,
+        })
         .then((response) => {
           const responseText =
             response?.data?.choices?.[0]?.message?.content ||
@@ -184,7 +245,16 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
           setIsLoading(false);
         });
     } else {
-      const requestBody = { content: newUserMessage.text };
+      const requestBody = {
+        content: newUserMessage.text,
+        payload: {
+          resume_ids:
+            chatProps?.selectedResumeIds
+              .map((id) => parseInt(id, 10))
+              .filter((id) => !isNaN(id)) || [],
+          job_id: chatProps?.jobId ? parseInt(chatProps.jobId, 10) || 0 : 0,
+        },
+      };
       axiosInstance
         .post(apiEndpoint, requestBody, {
           timeout: API_CONFIG.TIMEOUT,
@@ -305,6 +375,96 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
 
   return (
     <div className="chat-content">
+      {/* Resume Filter Pills - updated with collapsible feature */}
+      {chatProps &&
+        chatProps.resumeResults &&
+        chatProps.resumeResults.length > 0 && (
+          <div
+            className={`chat-resume-pills-container ${
+              pillsCollapsed ? "collapsed" : ""
+            }`}
+          >
+            <div className="chat-resume-pills-header">
+              <div className="pills-summary">
+                {chatProps.selectedResumeIds.length > 0 ? (
+                  <span className="pills-selected-count">
+                    {chatProps.selectedResumeIds.length}{" "}
+                    {chatProps.selectedResumeIds.length === 1
+                      ? "resume"
+                      : "resumes"}{" "}
+                    selected
+                  </span>
+                ) : (
+                  <span className="pills-selected-all">All resumes</span>
+                )}
+              </div>
+              <ToggleButton
+                isCollapsed={pillsCollapsed}
+                onClick={togglePillsCollapsed}
+              />
+            </div>
+
+            <div className="chat-resume-pills-wrapper">
+              <div className="chat-resume-pills-scroll">
+                <button
+                  className={`chat-resume-pill ${
+                    !chatProps.selectedResumeIds.length ? "active" : ""
+                  }`}
+                  onClick={() => chatProps.onResumeSelect(null)}
+                >
+                  All
+                </button>
+
+                {chatProps.resumeResults
+                  .sort((a, b) => (a.rank || 999) - (b.rank || 999))
+                  .map((resume) => (
+                    <button
+                      key={resume.resumeId}
+                      className={`chat-resume-pill ${
+                        chatProps.selectedResumeIds.includes(resume.resumeId)
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() => chatProps.onResumeSelect(resume?.resumeId)}
+                    >
+                      {resume.rank && (
+                        <span className="chat-pill-rank">
+                          {resume.resumeId}
+                        </span>
+                      )}
+                      {" - "}
+                      <span className="chat-pill-text">
+                        {resume.candidateName}
+                      </span>
+                    </button>
+                  ))}
+
+                {chatProps.selectedResumeIds.length > 0 && (
+                  <button
+                    className="chat-resume-pill chat-clear-pill"
+                    onClick={() => chatProps.onResumeSelect(null)}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
       <div className="ai-chat-messages-container">
         {messages.length === 0 ? (
           <div className="assistant-welcome">
@@ -318,7 +478,7 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
               </svg>
             </div>
             <h4>Hello! I'm your Resume AI Assistant</h4>
-            <p>Ask me anything about your test cases or requirements</p>
+            <p>Ask me anything about your selected resumes</p>
           </div>
         ) : (
           <div className="chat-messages">

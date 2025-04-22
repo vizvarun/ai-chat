@@ -13,6 +13,8 @@ const ResumeUploader: React.FC<ResumeUploaderProps> = ({
 }) => {
   const resumesFileRef = useRef<HTMLInputElement>(null);
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
+  const [maxFilesError, setMaxFilesError] = useState<string | null>(null);
+  const MAX_FILES = 20;
 
   const checkForDuplicates = (newFiles: File[]): File[] => {
     // Find duplicates by comparing with existing files
@@ -46,6 +48,23 @@ const ResumeUploader: React.FC<ResumeUploaderProps> = ({
   const handleResumeFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
+
+      // Check if adding these files would exceed the limit
+      if (files.length + filesArray.length > MAX_FILES) {
+        setMaxFilesError(
+          `Cannot upload more than ${MAX_FILES} files. You already have ${files.length} files.`
+        );
+
+        // Clear the error after 4 seconds
+        setTimeout(() => setMaxFilesError(null), 4000);
+
+        // Reset the input field
+        if (resumesFileRef.current) {
+          resumesFileRef.current.value = "";
+        }
+        return;
+      }
+
       const validFiles = filesArray.filter(
         (file) =>
           file.type === "application/pdf" ||
@@ -73,6 +92,18 @@ const ResumeUploader: React.FC<ResumeUploaderProps> = ({
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const filesArray = Array.from(e.dataTransfer.files);
+
+      // Check if adding these files would exceed the limit
+      if (files.length + filesArray.length > MAX_FILES) {
+        setMaxFilesError(
+          `Cannot upload more than ${MAX_FILES} files. You already have ${files.length} files.`
+        );
+
+        // Clear the error after 4 seconds
+        setTimeout(() => setMaxFilesError(null), 4000);
+        return;
+      }
+
       const validFiles = filesArray.filter(
         (file) =>
           file.type === "application/pdf" ||
@@ -129,11 +160,11 @@ const ResumeUploader: React.FC<ResumeUploaderProps> = ({
               {files.length > 0
                 ? `${files.length} ${
                     files.length === 1 ? "file" : "files"
-                  } selected`
+                  } selected (max 20)`
                 : "Upload Resumes"}
             </span>
             <span className="upload-hint">
-              <span className="highlight">Select multiple</span> files:
+              <span className="highlight">Maximum 20</span> files:
               <span className="highlight">&nbsp;.pdf</span>,
               <span className="highlight">&nbsp;.doc</span>,
               <span className="highlight">&nbsp;.docx</span>,
@@ -148,12 +179,19 @@ const ResumeUploader: React.FC<ResumeUploaderProps> = ({
           accept=".pdf,.doc,.docx,.txt"
           multiple
           style={{ display: "none" }}
+          disabled={files.length >= MAX_FILES}
         />
       </div>
 
       {duplicateError && (
         <div className="file-error-message">
           <span>{duplicateError}</span>
+        </div>
+      )}
+
+      {maxFilesError && (
+        <div className="file-error-message">
+          <span>{maxFilesError}</span>
         </div>
       )}
 

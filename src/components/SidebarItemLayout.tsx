@@ -5,14 +5,21 @@ import Breadcrumbs from "./Breadcrumbs";
 import ChatWithAI from "./ChatWithAI";
 import ResumeChatWithAI from "./ResumeChatWithAI";
 import { useLocation } from "react-router-dom";
+import { ResumeResultRow } from "../types/resumeTypes";
 
 interface SidebarItemLayoutProps {
   children: ReactNode;
   title?: string;
   showChatOption?: boolean;
-  isScrollable?: boolean;
   showChat?: boolean;
   onToggleChat?: () => void;
+  isScrollable?: boolean;
+  chatProps?: {
+    resumeResults: ResumeResultRow[];
+    selectedResumeIds: string[];
+    onResumeSelect: (resumeId: string | null) => void;
+    jobId?: string; // Add jobId property
+  };
 }
 
 const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
@@ -21,6 +28,7 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
   isScrollable = false,
   showChat = false,
   onToggleChat,
+  chatProps,
 }) => {
   const [apiError, setApiError] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
@@ -134,7 +142,11 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
                   <path d="M12 2C8.14 2 5 5.14 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.14 15.86 2 12 2Z" />
                   <path d="M9 21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V20H9V21Z" />
                 </svg>
-                <h3>AI Assistant</h3>
+                {isResumeScreener ? (
+                  <h3>Resume AI Assistant</h3>
+                ) : (
+                  <h3>AI Assistant</h3>
+                )}
               </div>
               <button
                 className="assistant-close-btn"
@@ -164,9 +176,11 @@ const SidebarItemLayout: React.FC<SidebarItemLayoutProps> = ({
               <div className="chat-with-ai-wrapper">
                 {isResumeScreener ? (
                   <ResumeChatWithAI
-                    apiEndpoint={API_ENDPOINTS.CHAT_AI}
+                    apiEndpoint={API_ENDPOINTS.RESUME_CHAT_AI}
                     useQueryParam={true}
                     onError={handleApiError}
+                    initialMessages={[]}
+                    chatProps={chatProps}
                   />
                 ) : (
                   <ChatWithAI

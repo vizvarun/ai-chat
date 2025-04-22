@@ -46,6 +46,9 @@ const ResumeScreener = () => {
   // Add new state to track if scores have been received
   const [scoresReceived, setScoresReceived] = useState(false);
 
+  // Add new state for selected resume pill (updated for multi-select)
+  const [selectedResumeIds, setSelectedResumeIds] = useState<string[]>([]);
+
   // Handle job description text input
   const handleJobDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -121,6 +124,7 @@ const ResumeScreener = () => {
     setJdResponse(null);
     setInputCollapsed(false);
     setScoresReceived(false);
+    setSelectedResumeIds([]);
   };
 
   // Toggle input section visibility
@@ -248,6 +252,17 @@ const ResumeScreener = () => {
       setShowChat(true); // Auto-open chat when ranking completes
     }
   }, [scoresReceived]);
+
+  // Find and select the top ranked resume when scores are received
+  useEffect(() => {
+    if (scoresReceived && tableResults.length > 0) {
+      // Find the resume with rank 1
+      const topRankedResume = tableResults.find((resume) => resume.rank === 1);
+      if (topRankedResume) {
+        setSelectedResumeIds([topRankedResume.resumeId]);
+      }
+    }
+  }, [scoresReceived, tableResults]);
 
   // Handle form submission - updated workflow
   const rankResumes = async () => {
@@ -466,6 +481,23 @@ const ResumeScreener = () => {
   // Check if form is valid for submission
   const isFormValid = jobDescription.trim() !== "" && resumes.length > 0;
 
+  // Handle selecting a resume pill (updated for multi-select)
+  const handleResumeSelect = (resumeId: string | null) => {
+    if (resumeId === null) {
+      // Clear selection when null is passed
+      setSelectedResumeIds([]);
+    } else {
+      // Toggle the selection - add if not present, remove if present
+      setSelectedResumeIds((prevSelected) => {
+        if (prevSelected.includes(resumeId)) {
+          return prevSelected.filter((id) => id !== resumeId);
+        } else {
+          return [...prevSelected, resumeId];
+        }
+      });
+    }
+  };
+
   return (
     <SidebarItemLayout
       title="Resume Screening"
@@ -473,6 +505,13 @@ const ResumeScreener = () => {
       showChat={showChat && scoresReceived} // Only enable chat after ranking is complete
       onToggleChat={() => setShowChat(!showChat)}
       isScrollable={!inputCollapsed || tableResults.length > 0}
+      // Add props to pass resume data to chat component with proper job ID
+      chatProps={{
+        resumeResults: tableResults.filter((resume) => resume.hasFinalRanking),
+        selectedResumeIds: selectedResumeIds, // Change to selectedResumeIds
+        onResumeSelect: handleResumeSelect,
+        jobId: jdResponse?.requestId || "", // Use jobDescriptionId instead of requestId
+      }}
     >
       {(tableResults.length > 0 || inputCollapsed) && (
         <div className="input-collapse-control">
@@ -699,7 +738,7 @@ const ResumeScreener = () => {
       {tableResults.length > 0 && (
         <div className="results-section">
           <ResumeResultsTable
-            results={tableResults}
+            results={tableResults} // Show all results, not filtered
             isProcessing={processingResumes}
             isRanking={rankingInProgress}
             onViewParsedResume={showParsedResume}
