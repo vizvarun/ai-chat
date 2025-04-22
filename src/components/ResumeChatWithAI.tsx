@@ -445,13 +445,23 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
                   <button
                     className="chat-resume-pill chat-clear-pill"
                     onClick={() => {
-                      // Instead of clearing all, select the resume with rank 1 if available
+                      // First find the top resume
                       const topResume = chatProps.resumeResults.find(
                         (r) => r.rank === 1
                       );
-                      chatProps.onResumeSelect(
-                        topResume ? topResume.resumeId : null
-                      );
+
+                      if (topResume) {
+                        // First clear all selections by passing null
+                        chatProps.onResumeSelect(null);
+
+                        // Then specifically select just the top resume in the next render cycle
+                        setTimeout(() => {
+                          chatProps.onResumeSelect(topResume.resumeId);
+                        }, 0);
+                      } else {
+                        // If no top resume found, just clear all
+                        chatProps.onResumeSelect(null);
+                      }
                     }}
                   >
                     <svg
