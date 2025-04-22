@@ -566,6 +566,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  outline: none !important;
 }
 
 .chat-resume-pill.active {

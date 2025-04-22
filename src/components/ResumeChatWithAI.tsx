@@ -202,9 +202,10 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
           timeout: API_CONFIG.TIMEOUT,
         })
         .then((response) => {
-          const responseText =
-            response?.data?.choices?.[0]?.message?.content ||
-            "Sorry, I couldn't process your request.";
+          console.log("CHAT RESPONSE", response);
+          const responseText = response
+            ? response.data.data
+            : "Sorry, I couldn't process your request.";
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === botMessageId
@@ -260,9 +261,10 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
           timeout: API_CONFIG.TIMEOUT,
         })
         .then((response) => {
-          const responseText =
-            response?.data?.choices?.[0]?.message?.content ||
-            "Sorry, I couldn't process your request.";
+          console.log("CHAT RESPONSE", response);
+          const responseText = response
+            ? response.data.data
+            : "Sorry, I couldn't process your request.";
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === botMessageId
@@ -442,7 +444,15 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
                 {chatProps.selectedResumeIds.length > 0 && (
                   <button
                     className="chat-resume-pill chat-clear-pill"
-                    onClick={() => chatProps.onResumeSelect(null)}
+                    onClick={() => {
+                      // Instead of clearing all, select the resume with rank 1 if available
+                      const topResume = chatProps.resumeResults.find(
+                        (r) => r.rank === 1
+                      );
+                      chatProps.onResumeSelect(
+                        topResume ? topResume.resumeId : null
+                      );
+                    }}
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -457,7 +467,7 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
                       <line x1="18" y1="6" x2="6" y2="18"></line>
                       <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
-                    Clear
+                    Reset
                   </button>
                 )}
               </div>

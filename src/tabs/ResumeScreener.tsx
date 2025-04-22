@@ -49,6 +49,9 @@ const ResumeScreener = () => {
   // Add new state for selected resume pill (updated for multi-select)
   const [selectedResumeIds, setSelectedResumeIds] = useState<string[]>([]);
 
+  // Add a new state to track if the selection was explicitly cleared
+  const [selectionCleared, setSelectionCleared] = useState(false);
+
   // Handle job description text input
   const handleJobDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -125,6 +128,7 @@ const ResumeScreener = () => {
     setInputCollapsed(false);
     setScoresReceived(false);
     setSelectedResumeIds([]);
+    setSelectionCleared(true); // Set this flag to true when explicitly cleared
   };
 
   // Toggle input section visibility
@@ -250,6 +254,13 @@ const ResumeScreener = () => {
   useEffect(() => {
     if (scoresReceived) {
       setShowChat(true); // Auto-open chat when ranking completes
+    }
+  }, [scoresReceived]);
+
+  // Reset the selectionCleared flag when new scores are received
+  useEffect(() => {
+    if (scoresReceived) {
+      setSelectionCleared(false);
     }
   }, [scoresReceived]);
 
@@ -483,6 +494,9 @@ const ResumeScreener = () => {
 
   // Handle selecting a resume pill (updated for multi-select)
   const handleResumeSelect = (resumeId: string | null) => {
+    // When user actively selects something, clear the "cleared" flag
+    setSelectionCleared(false);
+
     if (resumeId === null) {
       // Clear selection when null is passed
       setSelectedResumeIds([]);
@@ -508,7 +522,13 @@ const ResumeScreener = () => {
       // Add props to pass resume data to chat component with proper job ID
       chatProps={{
         resumeResults: tableResults.filter((resume) => resume.hasFinalRanking),
-        selectedResumeIds: selectedResumeIds, // Change to selectedResumeIds
+        selectedResumeIds: selectionCleared
+          ? []
+          : selectedResumeIds.length === 0
+          ? tableResults
+              .filter((resume) => resume.hasFinalRanking)
+              .map((resume) => resume.resumeId)
+          : selectedResumeIds,
         onResumeSelect: handleResumeSelect,
         jobId: jdResponse?.requestId || "", // Use jobDescriptionId instead of requestId
       }}
