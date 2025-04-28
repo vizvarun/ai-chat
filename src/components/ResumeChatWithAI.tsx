@@ -315,9 +315,23 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
   };
 
   const copyToClipboard = (text: string) => {
+    // Create a temporary div to extract plain text from HTML
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = text;
+
+    // Properly preserve spacing by using textContent
+    // Replace multiple spaces with single spaces and trim
+    let plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+    // Ensure proper spacing between paragraphs in plain text
+    plainText = plainText
+      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+      .replace(/\n\s*/g, "\n\n") // Add proper paragraph spacing
+      .trim(); // Remove leading/trailing whitespace
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
-        .writeText(text)
+        .writeText(plainText)
         .then(() => {
           console.log("Copied to clipboard!");
         })
@@ -327,7 +341,7 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
     } else {
       // Fallback method using temporary textarea
       const textarea = document.createElement("textarea");
-      textarea.value = text;
+      textarea.value = plainText;
       document.body.appendChild(textarea);
       textarea.select();
       try {
@@ -353,7 +367,19 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
       }
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      // Strip HTML tags for speech with proper spacing
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = text;
+
+      // Ensure proper spacing for speech synthesis
+      let plainText = tempDiv.textContent || tempDiv.innerText || "";
+      plainText = plainText
+        .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+        .replace(/\.\s*/g, ". ") // Ensure proper spacing after periods
+        .replace(/\,\s*/g, ", ") // Ensure proper spacing after commas
+        .trim(); // Remove leading/trailing whitespace
+
+      const utterance = new SpeechSynthesisUtterance(plainText);
       utterance.lang = "en-US";
 
       setIsSpeaking((prev) => ({ ...prev, [messageId]: true }));
@@ -527,8 +553,13 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
                           <div className="loader-dot primary"></div>
                         </div>
                       </div>
-                    ) : (
+                    ) : message.sender === "user" ? (
                       <p>{message.text}</p>
+                    ) : (
+                      <p
+                        dangerouslySetInnerHTML={{ __html: message.text }}
+                        style={{ paddingLeft: 4 }}
+                      ></p>
                     )}
                   </div>
 
