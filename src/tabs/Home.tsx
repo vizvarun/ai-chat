@@ -3,9 +3,18 @@ import "../styles/Tabs.css";
 import "../styles/Home.css";
 import mockingbirdLogo from "../assets/mockingbird.svg";
 import Breadcrumbs from "../components/Breadcrumbs";
+import { useAuth } from "../context/AuthContext";
+import FeatureLock from "../components/FeatureLock";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    navigate("/login");
+    return null;
+  }
 
   return (
     <div className="tab-container home-container">
@@ -28,44 +37,49 @@ const Home = () => {
         <div className="home-content">
           <section className="tools-section">
             <div className="tools-grid">
-              <div
-                className="tool-card"
-                onClick={() => navigate("/test-case-generator")}
-                aria-label="Test Case Generator"
-              >
-                <div className="tool-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="9 11 12 14 22 4"></polyline>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                  </svg>
+              <FeatureLock isLocked={!user?.authorized}>
+                <div
+                  className="tool-card"
+                  onClick={() =>
+                    user?.authorized && navigate("/test-case-generator")
+                  }
+                  aria-label="Test Case Generator"
+                >
+                  <div className="tool-icon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                  </div>
+                  <h2 className="tool-title">Test Case Generator</h2>
+                  <p className="tool-description">
+                    Generate comprehensive test plans from requirements and user
+                    stories with AI-powered analysis
+                  </p>
+                  <div className="tool-action">
+                    Get started
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </div>
                 </div>
-                <h2 className="tool-title">Test Case Generator</h2>
-                <p className="tool-description">
-                  Generate comprehensive test plans from requirements and user
-                  stories with AI-powered analysis
-                </p>
-                <div className="tool-action">
-                  Get started
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </div>
-              </div>
+              </FeatureLock>
+
               <div
                 className="tool-card"
                 onClick={() => navigate("/resume-screener")}
@@ -197,26 +211,6 @@ const Home = () => {
                   improve coverage
                 </p>
               </div>
-
-              {/* <div className="feature-item">
-                <div className="feature-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
-                  </svg>
-                </div>
-                <h3 className="feature-title">Voice Interactions</h3>
-                <p className="feature-description">
-                  Hands-free operation with voice recognition for efficient
-                  workflow
-                </p>
-              </div> */}
             </div>
           </section>
         </div>

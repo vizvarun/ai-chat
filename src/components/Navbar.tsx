@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom";
 import "../styles/Navbar.css";
-import MagnitLogo from "../assets/magnit-logo.svg"; // Adjust the path as necessary
+import MagnitLogo from "../assets/magnit-logo.svg";
+import UserMenu from "./UserMenu";
+import { useAuth } from "../context/AuthContext";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -8,6 +10,8 @@ interface NavbarProps {
 }
 
 const Navbar = ({ toggleSidebar, isSidebarOpen }: NavbarProps) => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <nav className="navbar">
       <div className="sidebar-toggle" onClick={toggleSidebar}>
@@ -41,11 +45,12 @@ const Navbar = ({ toggleSidebar, isSidebarOpen }: NavbarProps) => {
         <NavLink to="/" className="brand-link">
           <div className="brand-content">
             <img src={MagnitLogo} alt="Magnit Logo" className="magnit-logo" />
-            {/* <span className="divider">|</span>
-            <span className="app-name">MockingBird</span> */}
           </div>
         </NavLink>
       </div>
+
+      {/* Add the user menu on the right */}
+      <div className="navbar-right">{isAuthenticated && <UserMenu />}</div>
     </nav>
   );
 };

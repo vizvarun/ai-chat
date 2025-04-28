@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import React from "react"; // Add import for React
+import React from "react";
 import "../styles/Sidebar.css";
+import { useAuth } from "../context/AuthContext";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -11,7 +12,9 @@ interface SidebarProps {
 interface NavItem {
   path: string;
   label: string;
-  icon: React.ReactNode; // Changed from JSX.Element to React.ReactNode
+  icon: React.ReactNode;
+  requiresAuth?: boolean;
+  requiresAuthorization?: boolean;
 }
 
 // Sidebar Link Component
@@ -19,18 +22,39 @@ const SidebarLink = ({
   item,
   isActive,
   onClick,
+  isLocked = false,
 }: {
   item: NavItem;
   isActive: boolean;
   onClick: () => void;
+  isLocked?: boolean;
 }) => {
   return (
     <div
-      className={`sidebar-link ${isActive ? "active" : ""}`}
-      onClick={onClick}
+      className={`sidebar-link ${isActive ? "active" : ""} ${
+        isLocked ? "locked" : ""
+      }`}
+      onClick={isLocked ? undefined : onClick}
     >
       {item.icon}
       <span className="sidebar-link-text">{item.label}</span>
+      {isLocked && (
+        <svg
+          className="lock-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      )}
     </div>
   );
 };
@@ -38,6 +62,7 @@ const SidebarLink = ({
 const Sidebar = ({ isOpen, onBackdropClick, closeSidebar }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   // Handler for navigation that also closes sidebar
   const handleNavigation = (path: string) => {
@@ -77,9 +102,10 @@ const Sidebar = ({ isOpen, onBackdropClick, closeSidebar }: SidebarProps) => {
           strokeLinejoin="round"
         >
           <polyline points="9 11 12 14 22 4"></polyline>
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1-2-2h11"></path>
         </svg>
       ),
+      requiresAuthorization: true,
     },
     {
       path: "/resume-screener",
@@ -112,14 +138,19 @@ const Sidebar = ({ isOpen, onBackdropClick, closeSidebar }: SidebarProps) => {
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
         <div className="sidebar-content">
           <nav className="sidebar-menu">
-            {navigationItems.map((item) => (
-              <SidebarLink
-                key={item.path}
-                item={item}
-                isActive={location.pathname === item.path}
-                onClick={() => handleNavigation(item.path)}
-              />
-            ))}
+            {navigationItems.map((item) => {
+              const isLocked = item.requiresAuthorization && !user?.authorized;
+
+              return (
+                <SidebarLink
+                  key={item.path}
+                  item={item}
+                  isActive={location.pathname === item.path}
+                  onClick={() => handleNavigation(item.path)}
+                  isLocked={isLocked}
+                />
+              );
+            })}
           </nav>
         </div>
       </div>

@@ -211,7 +211,7 @@ const ResumeChatWithAI: React.FC<ResumeChatWithAIProps> = ({
               msg.id === botMessageId
                 ? {
                     id: botMessageId,
-                    text: responseText,
+                    text: markdownToHtml(responseText),
                     sender: "bot",
                     loading: false,
                   }

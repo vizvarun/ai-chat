@@ -1,6 +1,7 @@
 .navbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 1.5rem;
   background-color: #ffffff;
   min-height: 60px !important;
@@ -9,6 +10,12 @@
   z-index: 10;
   font-family: "Work Sans", sans-serif;
   border-bottom: 1px solid #eaeaea;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
 }
 
 .navbar-brand {

@@ -7,10 +7,15 @@ import Footer from "./components/Footer";
 import Home from "./tabs/Home";
 import TestCaseGenerator from "./tabs/TestCaseGenerator";
 import ResumeScreener from "./tabs/ResumeScreener";
+import Login from "./components/Auth/Login";
+import Signup from "./components/Auth/Signup";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-function App() {
+function AppContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -40,23 +45,69 @@ function App() {
     };
   }, [isSidebarOpen]);
 
+  // Don't render nav/sidebar for auth routes
+  const isAuthRoute =
+    location.pathname === "/login" || location.pathname === "/signup";
+
+  if (isAuthRoute) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    );
+  }
+
   return (
     <div className={`app-container ${isSidebarOpen ? "sidebar-open" : ""}`}>
       <Navbar toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onBackdropClick={closeSidebar}
-        closeSidebar={closeSidebar}
-      />
+      {isAuthenticated && (
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onBackdropClick={closeSidebar}
+          closeSidebar={closeSidebar}
+        />
+      )}
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/test-case-generator" element={<TestCaseGenerator />} />
-          <Route path="/resume-screener" element={<ResumeScreener />} />
+
+          {/* Protected routes requiring authorization */}
+          <Route
+            element={
+              <ProtectedRoute requireAuth={true} requireAuthorization={true} />
+            }
+          >
+            <Route
+              path="/test-case-generator"
+              element={<TestCaseGenerator />}
+            />
+          </Route>
+
+          {/* Protected routes requiring only authentication */}
+          <Route
+            element={
+              <ProtectedRoute requireAuth={true} requireAuthorization={false} />
+            }
+          >
+            <Route path="/resume-screener" element={<ResumeScreener />} />
+          </Route>
+
+          {/* Fallback route */}
+          <Route path="*" element={<Home />} />
         </Routes>
       </main>
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
